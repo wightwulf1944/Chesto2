@@ -24,17 +24,18 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = MainActivity.class.getSimpleName();
     private static final PostList postList = PostList.getInstance();
 
+    private Toolbar toolbar;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
 
-        final SwipeRefreshLayout swipeLayout = (SwipeRefreshLayout) findViewById(R.id.swipeLayout);
-        swipeLayout.setColorSchemeColors(ContextCompat.getColor(this, R.color.colorPrimaryDark));
-        swipeLayout.setOnRefreshListener(postList);
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
         final GreedoLayoutManager layoutManager = new GreedoLayoutManager(postList);
+
         final int maxRowHeight = getResources().getDisplayMetrics().heightPixels / 3;
         layoutManager.setMaxRowHeight(maxRowHeight);
 
@@ -44,13 +45,33 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setAdapter(new PostAdapter(this));
         recyclerView.setLayoutManager(layoutManager);
 
-        postList.search("");
+        final SwipeRefreshLayout swipeLayout = (SwipeRefreshLayout) findViewById(R.id.swipeLayout);
+        swipeLayout.setColorSchemeColors(ContextCompat.getColor(this, R.color.colorPrimaryDark));
+        postList.setSwipeLayout(swipeLayout);
+
+        handleIntent(getIntent());
     }
 
     @Override
     protected void onNewIntent(Intent intent) {
-        Log.d(TAG, "onNewIntent: " + intent.getDataString());
-        postList.search(intent.getDataString());
+        handleIntent(intent);
+    }
+
+    private void handleIntent(Intent intent) {
+
+        Log.d(TAG, "ACTION: " + intent.getAction());
+        Log.d(TAG, "DATA: " + intent.getDataString());
+
+        switch (intent.getAction()) {
+            case Intent.ACTION_SEARCH:
+                final String query = intent.getDataString();
+                postList.newSearch(query);
+                toolbar.setSubtitle(query);
+                break;
+            default:
+                postList.newSearch("");
+                break;
+        }
     }
 
     @Override

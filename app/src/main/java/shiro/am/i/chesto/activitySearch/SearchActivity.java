@@ -7,6 +7,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
 import android.widget.SearchView;
 
 import shiro.am.i.chesto.R;
@@ -41,10 +42,19 @@ public class SearchActivity extends AppCompatActivity
     }
 
     @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    @Override
     public boolean onQueryTextSubmit(String s) {
-        Intent intent = new Intent(this, MainActivity.class);
-        intent.setData(Uri.parse(s));
-        startActivity(intent);
+        startActivity(new Intent(Intent.ACTION_SEARCH, Uri.parse(s), this, MainActivity.class));
         return true;
     }
 

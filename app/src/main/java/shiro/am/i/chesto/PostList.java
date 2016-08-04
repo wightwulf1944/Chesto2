@@ -27,6 +27,7 @@ public class PostList extends ArrayList<Post>
     private static final PostList instance = new PostList();
 
     private PostAdapter mAdapter;
+    private SwipeRefreshLayout mSwipeLayout;
     private String currentQuery;
     private int currentPage;
 
@@ -42,14 +43,19 @@ public class PostList extends ArrayList<Post>
         mAdapter = adapter;
     }
 
-    public void search(String tags) {
+    public void setSwipeLayout(SwipeRefreshLayout swipeLayout) {
+        mSwipeLayout = swipeLayout;
+        mSwipeLayout.setOnRefreshListener(this);
+    }
+
+    public void newSearch(String tags) {
         currentQuery = tags;
         currentPage = 0;
         clear();
         requestMorePosts();
     }
 
-    private void requestMorePosts() {
+    public void requestMorePosts() {
         danbooru.getPosts(currentQuery, ++currentPage).enqueue(this);
     }
 
@@ -71,6 +77,8 @@ public class PostList extends ArrayList<Post>
             addAll(newPostList);
             mAdapter.notifyItemRangeInserted(positionStart, itemCount);
         }
+
+        mSwipeLayout.setRefreshing(false);
     }
 
     @Override
@@ -90,6 +98,6 @@ public class PostList extends ArrayList<Post>
 
     @Override
     public void onRefresh() {
-
+        newSearch(currentQuery);
     }
 }

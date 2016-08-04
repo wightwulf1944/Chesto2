@@ -31,6 +31,10 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
+        if (position >= postList.size() - 5) {
+            postList.requestMorePosts();
+        }
+
         Glide.with(mContext)
                 .load(postList.get(position).getPreviewFileUrl())
                 .error(R.drawable.ic_image_broken)

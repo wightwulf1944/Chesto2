@@ -2,8 +2,6 @@ package shiro.am.i.chesto.retrofitDanbooru;
 
 import com.google.gson.annotations.SerializedName;
 
-import io.realm.RealmObject;
-
 /**
  * Created by Shiro on 7/29/2016.
  */
