@@ -1,5 +1,6 @@
 package shiro.am.i.chesto;
 
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 
 import com.fivehundredpx.greedolayout.GreedoLayoutSizeCalculator;
@@ -11,6 +12,7 @@ import java.util.List;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import shiro.am.i.chesto.activityMain.PostAdapter;
 import shiro.am.i.chesto.retrofitDanbooru.Danbooru;
 import shiro.am.i.chesto.retrofitDanbooru.Post;
 
@@ -18,11 +20,15 @@ import shiro.am.i.chesto.retrofitDanbooru.Post;
  * Created by UGZ on 8/4/2016.
  */
 public class PostList extends ArrayList<Post>
-        implements Callback<List<Post>>, GreedoLayoutSizeCalculator.SizeCalculatorDelegate {
+        implements Callback<List<Post>>, GreedoLayoutSizeCalculator.SizeCalculatorDelegate, SwipeRefreshLayout.OnRefreshListener {
 
     private static final String TAG = PostList.class.getSimpleName();
     private static final Danbooru danbooru = Chesto.getDanbooru();
     private static final PostList instance = new PostList();
+
+    private PostAdapter mAdapter;
+    private String currentQuery;
+    private int currentPage;
 
     private PostList() {
         // disable instantiation
@@ -32,8 +38,19 @@ public class PostList extends ArrayList<Post>
         return instance;
     }
 
+    public void setAdapter(PostAdapter adapter) {
+        mAdapter = adapter;
+    }
+
     public void search(String tags) {
-        danbooru.getPosts(tags + "*", 1).enqueue(this);
+        currentQuery = tags;
+        currentPage = 0;
+        clear();
+        requestMorePosts();
+    }
+
+    private void requestMorePosts() {
+        danbooru.getPosts(currentQuery, ++currentPage).enqueue(this);
     }
 
     @Override
@@ -52,6 +69,7 @@ public class PostList extends ArrayList<Post>
             final int positionStart = size();
             final int itemCount = newPostList.size();
             addAll(newPostList);
+            mAdapter.notifyItemRangeInserted(positionStart, itemCount);
         }
     }
 
@@ -68,5 +86,10 @@ public class PostList extends ArrayList<Post>
             Post post = get(i);
             return (double) post.getImageWidth() / post.getImageHeight();
         }
+    }
+
+    @Override
+    public void onRefresh() {
+
     }
 }

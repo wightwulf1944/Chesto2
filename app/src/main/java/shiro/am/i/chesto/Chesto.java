@@ -1,6 +1,7 @@
 package shiro.am.i.chesto;
 
 import android.app.Application;
+import android.content.Context;
 
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
@@ -14,6 +15,7 @@ import shiro.am.i.chesto.retrofitDanbooru.Danbooru;
 public class Chesto extends Application {
 
     private static Danbooru danbooru;
+    private static Context appContext;
 
     @Override
     public void onCreate() {
@@ -26,9 +28,15 @@ public class Chesto extends Application {
                 .addConverterFactory(GsonConverterFactory.create())
                 .build()
                 .create(Danbooru.class);
+
+        appContext = this;
     }
 
     public static Danbooru getDanbooru() {
         return danbooru;
+    }
+
+    public static Context getAppContext() {
+        return appContext;
     }
 }

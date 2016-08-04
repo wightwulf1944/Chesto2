@@ -21,6 +21,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
 
     PostAdapter(Context context) {
         mContext = context;
+        postList.setAdapter(this);
     }
 
     @Override

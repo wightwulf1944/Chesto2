@@ -2,6 +2,8 @@ package shiro.am.i.chesto.activityMain;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -10,9 +12,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.fivehundredpx.greedolayout.GreedoLayoutManager;
+import com.fivehundredpx.greedolayout.GreedoSpacingItemDecoration;
 
 import shiro.am.i.chesto.PostList;
 import shiro.am.i.chesto.R;
+import shiro.am.i.chesto.U;
 import shiro.am.i.chesto.activitySearch.SearchActivity;
 
 public class MainActivity extends AppCompatActivity {
@@ -26,7 +30,9 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
 
-        final PostAdapter postAdapter = new PostAdapter(this);
+        final SwipeRefreshLayout swipeLayout = (SwipeRefreshLayout) findViewById(R.id.swipeLayout);
+        swipeLayout.setColorSchemeColors(ContextCompat.getColor(this, R.color.colorPrimaryDark));
+        swipeLayout.setOnRefreshListener(postList);
 
         final GreedoLayoutManager layoutManager = new GreedoLayoutManager(postList);
         final int maxRowHeight = getResources().getDisplayMetrics().heightPixels / 3;
@@ -34,8 +40,11 @@ public class MainActivity extends AppCompatActivity {
 
         final RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
         recyclerView.setHasFixedSize(true);
-        recyclerView.setAdapter(postAdapter);
+        recyclerView.addItemDecoration(new GreedoSpacingItemDecoration(U.dpToPx(4)));
+        recyclerView.setAdapter(new PostAdapter(this));
         recyclerView.setLayoutManager(layoutManager);
+
+        postList.search("");
     }
 
     @Override
