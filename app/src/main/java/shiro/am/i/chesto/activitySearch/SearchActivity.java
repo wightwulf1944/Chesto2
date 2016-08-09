@@ -34,7 +34,7 @@ public class SearchActivity extends AppCompatActivity
         final SearchView searchView = (SearchView) findViewById(R.id.search_view);
         searchView.setOnQueryTextListener(this);
 
-        adapter = new SuggestionsAdapter(this);
+        adapter = new SuggestionsAdapter(this, searchView);
 
         final RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
         recyclerView.setAdapter(adapter);

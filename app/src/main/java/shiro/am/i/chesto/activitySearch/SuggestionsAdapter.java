@@ -5,6 +5,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.SearchView;
 import android.widget.TextView;
 
 import java.util.List;
@@ -35,24 +36,24 @@ public class SuggestionsAdapter extends RecyclerView.Adapter<SuggestionsAdapter.
     private final LayoutInflater inflater;
     private RealmResults<Tag> suggestionsList;
 
-    SuggestionsAdapter(Context context) {
+    SuggestionsAdapter(Context context, SearchView searchView) {
         inflater = LayoutInflater.from(context);
         suggestionsList = realm.where(Tag.class)
                 .findAllSorted("postCount", Sort.DESCENDING);
+
         realm.addChangeListener(this);
+
+        ViewHolder.searchView = searchView;
     }
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        final View view = inflater.inflate(R.layout.item_tag, parent, false);
-        return new ViewHolder(view);
+        return new ViewHolder(inflater.inflate(R.layout.item_tag, parent, false));
     }
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        final Tag tag = suggestionsList.get(position);
-        holder.postCount.setText(tag.getPostCountStr());
-        holder.name.setText(tag.getName());
+        holder.setTag(suggestionsList.get(position));
     }
 
     @Override
@@ -60,8 +61,9 @@ public class SuggestionsAdapter extends RecyclerView.Adapter<SuggestionsAdapter.
         return suggestionsList.size();
     }
 
-    static class ViewHolder extends RecyclerView.ViewHolder {
+    static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
+        private static SearchView searchView;
         private final TextView postCount;
         private final TextView name;
 
@@ -69,8 +71,19 @@ public class SuggestionsAdapter extends RecyclerView.Adapter<SuggestionsAdapter.
             super(v);
             postCount = (TextView) v.findViewById(R.id.postCount);
             name = (TextView) v.findViewById(R.id.name);
+
+            v.setOnClickListener(this);
         }
 
+        private void setTag(Tag tag) {
+            postCount.setText(tag.getPostCountStr());
+            name.setText(tag.getName());
+        }
+
+        @Override
+        public void onClick(View view) {
+            searchView.setQuery(name.getText(), false);
+        }
     }
 
     @Override
