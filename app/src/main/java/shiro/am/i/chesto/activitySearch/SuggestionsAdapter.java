@@ -34,16 +34,17 @@ public class SuggestionsAdapter extends RecyclerView.Adapter<SuggestionsAdapter.
     private static final Realm realm = Realm.getDefaultInstance();
 
     private final LayoutInflater inflater;
+    private final SearchView mSearchView;
     private RealmResults<Tag> suggestionsList;
 
     SuggestionsAdapter(Context context, SearchView searchView) {
         inflater = LayoutInflater.from(context);
+        mSearchView = searchView;
+
         suggestionsList = realm.where(Tag.class)
                 .findAllSorted("postCount", Sort.DESCENDING);
 
         realm.addChangeListener(this);
-
-        ViewHolder.searchView = searchView;
     }
 
     @Override
@@ -53,7 +54,9 @@ public class SuggestionsAdapter extends RecyclerView.Adapter<SuggestionsAdapter.
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        holder.setTag(suggestionsList.get(position));
+        final Tag tag = suggestionsList.get(position);
+        holder.postCount.setText(tag.getPostCountStr());
+        holder.name.setText(tag.getName());
     }
 
     @Override
@@ -61,9 +64,7 @@ public class SuggestionsAdapter extends RecyclerView.Adapter<SuggestionsAdapter.
         return suggestionsList.size();
     }
 
-    static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-
-        private static SearchView searchView;
+    class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         private final TextView postCount;
         private final TextView name;
 
@@ -71,18 +72,13 @@ public class SuggestionsAdapter extends RecyclerView.Adapter<SuggestionsAdapter.
             super(v);
             postCount = (TextView) v.findViewById(R.id.postCount);
             name = (TextView) v.findViewById(R.id.name);
-
             v.setOnClickListener(this);
-        }
-
-        private void setTag(Tag tag) {
-            postCount.setText(tag.getPostCountStr());
-            name.setText(tag.getName());
         }
 
         @Override
         public void onClick(View view) {
-            searchView.setQuery(name.getText(), false);
+            final String currentQ = mSearchView.getQuery().toString();
+            mSearchView.setQuery(currentQ + name.getText(), false);
         }
     }
 
