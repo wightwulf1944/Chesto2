@@ -7,17 +7,24 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.view.KeyEvent;
+import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.SearchView;
+import android.view.inputmethod.EditorInfo;
+import android.widget.EditText;
+import android.widget.TextView;
 
 import shiro.am.i.chesto.R;
 import shiro.am.i.chesto.activityMain.MainActivity;
 
 public class SearchActivity extends AppCompatActivity
-        implements SearchView.OnQueryTextListener {
+        implements TextView.OnEditorActionListener, TextWatcher {
 
     private static final String TAG = SearchActivity.class.getSimpleName();
     private SuggestionsAdapter adapter;
+    private EditText searchField;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,14 +38,32 @@ public class SearchActivity extends AppCompatActivity
             actionBar.setDisplayShowTitleEnabled(false);
         }
 
-        final SearchView searchView = (SearchView) findViewById(R.id.search_view);
-        searchView.setOnQueryTextListener(this);
+        searchField = (EditText) findViewById(R.id.edit_text);
+        searchField.addTextChangedListener(this);
+        searchField.setOnEditorActionListener(this);
 
-        adapter = new SuggestionsAdapter(this, searchView);
+        adapter = new SuggestionsAdapter(this, searchField);
 
         final RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
         recyclerView.setAdapter(adapter);
         recyclerView.setHasFixedSize(true);
+    }
+
+    private void goSearch() {
+        startActivity(
+                new Intent(
+                        Intent.ACTION_SEARCH,
+                        Uri.parse(searchField.getText().toString()),
+                        this,
+                        MainActivity.class
+                )
+        );
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_search, menu);
+        return true;
     }
 
     @Override
@@ -47,20 +72,40 @@ public class SearchActivity extends AppCompatActivity
             case android.R.id.home:
                 finish();
                 return true;
+            case R.id.action_clear:
+                searchField.setText("");
+                return true;
+            case R.id.action_go:
+                goSearch();
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
     }
 
     @Override
-    public boolean onQueryTextSubmit(String s) {
-        startActivity(new Intent(Intent.ACTION_SEARCH, Uri.parse(s), this, MainActivity.class));
-        return true;
+    public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
+        switch (i) {
+            case EditorInfo.IME_ACTION_SEARCH:
+                goSearch();
+                return true;
+            default:
+                return false;
+        }
     }
 
     @Override
-    public boolean onQueryTextChange(String s) {
-        adapter.setQuery(s);
-        return true;
+    public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+    }
+
+    @Override
+    public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+        adapter.setQuery(charSequence.toString());
+    }
+
+    @Override
+    public void afterTextChanged(Editable editable) {
+
     }
 }

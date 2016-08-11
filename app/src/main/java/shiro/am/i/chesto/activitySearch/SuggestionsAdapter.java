@@ -5,7 +5,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.SearchView;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import java.util.List;
@@ -34,12 +34,12 @@ public class SuggestionsAdapter extends RecyclerView.Adapter<SuggestionsAdapter.
     private static final Realm realm = Realm.getDefaultInstance();
 
     private final LayoutInflater inflater;
-    private final SearchView mSearchView;
+    private final EditText mSearchField;
     private RealmResults<Tag> suggestionsList;
 
-    SuggestionsAdapter(Context context, SearchView searchView) {
+    SuggestionsAdapter(Context context, EditText searchField) {
         inflater = LayoutInflater.from(context);
-        mSearchView = searchView;
+        mSearchField = searchField;
 
         suggestionsList = realm.where(Tag.class)
                 .findAllSorted("postCount", Sort.DESCENDING);
@@ -77,8 +77,7 @@ public class SuggestionsAdapter extends RecyclerView.Adapter<SuggestionsAdapter.
 
         @Override
         public void onClick(View view) {
-            final String currentQ = mSearchView.getQuery().toString();
-            mSearchView.setQuery(currentQ + name.getText(), false);
+            mSearchField.append(name.getText());
         }
     }
 
