@@ -22,6 +22,15 @@
         </activity>
 
         <activity
+            android:name=".activityPost.PostActivity"
+            android:launchMode="singleTop"
+            android:parentActivityName=".activityMain.MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".activityMain.MainActivity" />
+        </activity>
+
+        <activity
             android:name=".activitySearch.SearchActivity"
             android:launchMode="singleTop"
             android:parentActivityName=".activityMain.MainActivity"
