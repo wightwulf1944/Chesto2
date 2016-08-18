@@ -23,7 +23,7 @@ public class SearchActivity extends AppCompatActivity
         implements TextView.OnEditorActionListener, TextWatcher {
 
     private static final String TAG = SearchActivity.class.getSimpleName();
-    private SuggestionsAdapter adapter;
+    private SearchAdapter adapter;
     private EditText searchField;
 
     @Override
@@ -42,7 +42,7 @@ public class SearchActivity extends AppCompatActivity
         searchField.addTextChangedListener(this);
         searchField.setOnEditorActionListener(this);
 
-        adapter = new SuggestionsAdapter(this, searchField);
+        adapter = new SearchAdapter(this, searchField);
 
         final RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
         recyclerView.setAdapter(adapter);

@@ -12,7 +12,7 @@ import java.util.List;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import shiro.am.i.chesto.activityMain.PostAdapter;
+import shiro.am.i.chesto.activityMain.MainAdapter;
 import shiro.am.i.chesto.retrofitDanbooru.Danbooru;
 import shiro.am.i.chesto.retrofitDanbooru.Post;
 
@@ -26,7 +26,7 @@ public class PostList extends ArrayList<Post>
     private static final Danbooru danbooru = Chesto.getDanbooru();
     private static final PostList instance = new PostList();
 
-    private PostAdapter mAdapter;
+    private MainAdapter mAdapter;
     private SwipeRefreshLayout mSwipeLayout;
     private String currentQuery;
     private int currentPage;
@@ -39,7 +39,7 @@ public class PostList extends ArrayList<Post>
         return instance;
     }
 
-    public void setAdapter(PostAdapter adapter) {
+    public void setAdapter(MainAdapter adapter) {
         mAdapter = adapter;
     }
 

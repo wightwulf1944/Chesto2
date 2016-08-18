@@ -26,10 +26,10 @@ import shiro.am.i.chesto.retrofitDanbooru.Tag;
 /**
  * Created by Shiro on 7/29/2016.
  */
-public class SuggestionsAdapter extends RecyclerView.Adapter<SuggestionsAdapter.ViewHolder>
+public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder>
         implements RealmChangeListener<Realm>, Callback<List<Tag>> {
 
-    private static final String TAG = SuggestionsAdapter.class.getSimpleName();
+    private static final String TAG = SearchAdapter.class.getSimpleName();
     private static final Danbooru danbooru = Chesto.getDanbooru();
     private static final Realm realm = Realm.getDefaultInstance();
 
@@ -37,7 +37,7 @@ public class SuggestionsAdapter extends RecyclerView.Adapter<SuggestionsAdapter.
     private final EditText mSearchField;
     private RealmResults<Tag> suggestionsList;
 
-    SuggestionsAdapter(Context context, EditText searchField) {
+    SearchAdapter(Context context, EditText searchField) {
         inflater = LayoutInflater.from(context);
         mSearchField = searchField;
 

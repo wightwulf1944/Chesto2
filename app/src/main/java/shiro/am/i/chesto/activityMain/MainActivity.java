@@ -42,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
         final RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
         recyclerView.setHasFixedSize(true);
         recyclerView.addItemDecoration(new GreedoSpacingItemDecoration(U.dpToPx(4)));
-        recyclerView.setAdapter(new PostAdapter(this));
+        recyclerView.setAdapter(new MainAdapter(this));
         recyclerView.setLayoutManager(layoutManager);
 
         final SwipeRefreshLayout swipeLayout = (SwipeRefreshLayout) findViewById(R.id.swipeLayout);

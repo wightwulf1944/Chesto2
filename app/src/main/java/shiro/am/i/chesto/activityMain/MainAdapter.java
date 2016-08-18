@@ -1,7 +1,9 @@
 package shiro.am.i.chesto.activityMain;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
@@ -10,16 +12,17 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
 import shiro.am.i.chesto.PostList;
 import shiro.am.i.chesto.R;
+import shiro.am.i.chesto.activityPost.PostActivity;
 
 /**
  * Created by UGZ on 8/4/2016.
  */
-public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
+public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
 
     private static final PostList postList = PostList.getInstance();
     private final Context mContext;
 
-    PostAdapter(Context context) {
+    MainAdapter(Context context) {
         mContext = context;
         postList.setAdapter(this);
     }
@@ -47,13 +50,19 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
         return postList.size();
     }
 
-    static class ViewHolder extends RecyclerView.ViewHolder {
+    class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         final ImageView imageView;
 
-        public ViewHolder(ImageView imageview) {
-            super(imageview);
-            imageView = imageview;
+        public ViewHolder(ImageView v) {
+            super(v);
+            imageView = v;
+            v.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View view) {
+            mContext.startActivity(new Intent(mContext, PostActivity.class));
         }
     }
 }
