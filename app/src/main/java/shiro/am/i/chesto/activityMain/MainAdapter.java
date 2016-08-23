@@ -63,7 +63,9 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
 
         @Override
         public void onClick(View view) {
-            mContext.startActivity(new Intent(mContext, PostActivity.class));
+            Intent intent = new Intent(mContext, PostActivity.class);
+            intent.putExtra("DEFAULT", getAdapterPosition());
+            mContext.startActivity(intent);
         }
     }
 }
