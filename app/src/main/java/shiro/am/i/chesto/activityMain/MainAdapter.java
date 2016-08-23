@@ -41,6 +41,7 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
         Glide.with(mContext)
                 .load(postList.get(position).getPreviewFileUrl())
                 .error(R.drawable.ic_image_broken)
+                .placeholder(R.drawable.ic_image_placeholder)
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .into(holder.imageView);
     }
