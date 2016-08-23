@@ -2,6 +2,8 @@ package shiro.am.i.chesto.activityMain;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.AppBarLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -25,21 +27,26 @@ public class MainActivity extends AppCompatActivity {
     private static final PostList postList = PostList.getInstance();
 
     private Toolbar toolbar;
+    private AppBarLayout appbar;
+    private GreedoLayoutManager layoutManager;
+    private RecyclerView recyclerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        appbar = (AppBarLayout) findViewById(R.id.appbar);
+
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        final GreedoLayoutManager layoutManager = new GreedoLayoutManager(postList);
+        layoutManager = new GreedoLayoutManager(postList);
 
         final int maxRowHeight = getResources().getDisplayMetrics().heightPixels / 3;
         layoutManager.setMaxRowHeight(maxRowHeight);
 
-        final RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
+        recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
         recyclerView.setHasFixedSize(true);
         recyclerView.addItemDecoration(new GreedoSpacingItemDecoration(U.dpToPx(4)));
         recyclerView.setAdapter(new MainAdapter(this));
@@ -88,6 +95,21 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        final boolean appbarIsCollapsed = (appbar.getHeight() - appbar.getBottom()) != 0;
+        final boolean recyclerViewIsAtTop = layoutManager.findFirstVisibleItemPosition() == 0;
+
+        if (appbarIsCollapsed || !recyclerViewIsAtTop) {
+            recyclerView.stopScroll();
+            layoutManager.scrollToPosition(0);
+            appbar.setExpanded(true);
+            Snackbar.make(recyclerView, "Back at top", Snackbar.LENGTH_SHORT).show();
+        } else {
+            super.onBackPressed();
         }
     }
 }
