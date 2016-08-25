@@ -29,4 +29,10 @@ public final class PostActivity extends AppCompatActivity {
     public void onUpButtonClicked(View view) {
         finish();
     }
+
+    public void onInfoButtonClicked(View view) {
+    }
+
+    public void onDownloadButtonClicked(View view) {
+    }
 }
