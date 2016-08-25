@@ -1,7 +1,7 @@
 package shiro.am.i.chesto.activityMain;
 
-import android.content.Context;
 import android.content.Intent;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,19 +17,19 @@ import shiro.am.i.chesto.activityPost.PostActivity;
 /**
  * Created by UGZ on 8/4/2016.
  */
-public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
+public final class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
 
     private static final PostList postList = PostList.getInstance();
-    private final Context mContext;
+    private final AppCompatActivity mParent;
 
-    MainAdapter(Context context) {
-        mContext = context;
+    MainAdapter(AppCompatActivity parent) {
+        mParent = parent;
         postList.setAdapter(this);
     }
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        return new ViewHolder(new ImageView(mContext));
+        return new ViewHolder(new ImageView(mParent));
     }
 
     @Override
@@ -38,11 +38,12 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
             postList.requestMorePosts();
         }
 
-        Glide.with(mContext)
+        Glide.with(mParent)
                 .load(postList.get(position).getPreviewFileUrl())
                 .error(R.drawable.ic_image_broken)
                 .placeholder(R.drawable.ic_image_placeholder)
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .dontAnimate()
                 .into(holder.imageView);
     }
 
@@ -58,14 +59,14 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
         public ViewHolder(ImageView v) {
             super(v);
             imageView = v;
-            v.setOnClickListener(this);
+            imageView.setOnClickListener(this);
         }
 
         @Override
         public void onClick(View view) {
-            Intent intent = new Intent(mContext, PostActivity.class);
+            Intent intent = new Intent(mParent, PostActivity.class);
             intent.putExtra("DEFAULT", getAdapterPosition());
-            mContext.startActivity(intent);
+            mParent.startActivity(intent);
         }
     }
 }

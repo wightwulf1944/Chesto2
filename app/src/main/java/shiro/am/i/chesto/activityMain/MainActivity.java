@@ -21,7 +21,7 @@ import shiro.am.i.chesto.R;
 import shiro.am.i.chesto.U;
 import shiro.am.i.chesto.activitySearch.SearchActivity;
 
-public class MainActivity extends AppCompatActivity {
+public final class MainActivity extends AppCompatActivity {
 
     private static final String TAG = MainActivity.class.getSimpleName();
     private static final PostList postList = PostList.getInstance();

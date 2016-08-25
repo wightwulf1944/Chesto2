@@ -19,7 +19,7 @@ import android.widget.TextView;
 import shiro.am.i.chesto.R;
 import shiro.am.i.chesto.activityMain.MainActivity;
 
-public class SearchActivity extends AppCompatActivity
+public final class SearchActivity extends AppCompatActivity
         implements TextView.OnEditorActionListener, TextWatcher {
 
     private static final String TAG = SearchActivity.class.getSimpleName();

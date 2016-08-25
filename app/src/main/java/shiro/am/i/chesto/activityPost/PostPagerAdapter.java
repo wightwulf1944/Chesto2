@@ -1,11 +1,12 @@
 package shiro.am.i.chesto.activityPost;
 
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.PagerAdapter;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import com.bumptech.glide.DrawableRequestBuilder;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestManager;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
@@ -17,35 +18,39 @@ import shiro.am.i.chesto.retrofitDanbooru.Post;
 /**
  * Created by UGZ on 8/23/2016.
  */
-public class PostPagerAdapter extends PagerAdapter {
+public final class PostPagerAdapter extends PagerAdapter {
 
     private static final PostList postList = PostList.getInstance();
-    private final FragmentActivity mParent;
+    private final AppCompatActivity mParent;
 
-    PostPagerAdapter(FragmentActivity parent) {
+    PostPagerAdapter(AppCompatActivity parent) {
         mParent = parent;
     }
 
     @Override
     public Object instantiateItem(ViewGroup container, int position) {
-        final ImageView imageView = new ImageView(mParent);
+        final ImageView imageView = ImageViewRecycler.getView(mParent, container);
         final Post post = postList.get(position);
 
         final RequestManager requestManager = Glide.with(mParent);
+
+        final DrawableRequestBuilder thumbnail = requestManager
+                .load(post.getPreviewFileUrl())
+                .diskCacheStrategy(DiskCacheStrategy.SOURCE);
+
         requestManager
                 .load(postList.get(position).getFileUrl())
-                .thumbnail(requestManager.load(post.getPreviewFileUrl()))
+                .thumbnail(thumbnail)
                 .error(R.drawable.ic_image_broken)
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .into(imageView);
 
-        container.addView(imageView);
         return imageView;
     }
 
     @Override
     public void destroyItem(ViewGroup container, int position, Object object) {
-        container.removeView((View) object);
+        ImageViewRecycler.recycleView((ImageView) object, container);
     }
 
     @Override

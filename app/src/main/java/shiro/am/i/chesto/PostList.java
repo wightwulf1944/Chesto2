@@ -19,7 +19,7 @@ import shiro.am.i.chesto.retrofitDanbooru.Post;
 /**
  * Created by UGZ on 8/4/2016.
  */
-public class PostList extends ArrayList<Post>
+public final class PostList extends ArrayList<Post>
         implements Callback<List<Post>>, GreedoLayoutSizeCalculator.SizeCalculatorDelegate, SwipeRefreshLayout.OnRefreshListener {
 
     private static final String TAG = PostList.class.getSimpleName();

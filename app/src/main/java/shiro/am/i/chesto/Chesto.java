@@ -12,7 +12,7 @@ import shiro.am.i.chesto.retrofitDanbooru.Danbooru;
 /**
  * Created by Shiro on 7/29/2016.
  */
-public class Chesto extends Application {
+public final class Chesto extends Application {
 
     private static Danbooru danbooru;
     private static Context appContext;
