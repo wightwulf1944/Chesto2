@@ -18,7 +18,7 @@ import shiro.am.i.chesto.retrofitDanbooru.Post;
 /**
  * Created by UGZ on 8/23/2016.
  */
-public final class PostPagerAdapter extends PagerAdapter {
+final class PostPagerAdapter extends PagerAdapter {
 
     private static final PostList postList = PostList.getInstance();
     private final AppCompatActivity mParent;

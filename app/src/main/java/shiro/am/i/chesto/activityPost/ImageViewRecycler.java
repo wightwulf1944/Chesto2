@@ -10,7 +10,7 @@ import java.util.Queue;
 /**
  * Created by UGZ on 8/25/2016.
  */
-public final class ImageViewRecycler {
+final class ImageViewRecycler {
     private static final Queue<ImageView> recycledViews = new LinkedList<>();
 
     static ImageView getView(Context context, ViewGroup container) {

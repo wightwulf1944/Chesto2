@@ -26,7 +26,7 @@ import shiro.am.i.chesto.retrofitDanbooru.Tag;
 /**
  * Created by Shiro on 7/29/2016.
  */
-public final class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder>
+final class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder>
         implements RealmChangeListener<Realm>, Callback<List<Tag>> {
 
     private static final String TAG = SearchAdapter.class.getSimpleName();

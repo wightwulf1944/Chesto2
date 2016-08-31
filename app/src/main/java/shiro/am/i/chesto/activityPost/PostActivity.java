@@ -13,6 +13,7 @@ import shiro.am.i.chesto.R;
 public final class PostActivity extends AppCompatActivity {
 
     private static final String TAG = PostActivity.class.getName();
+    private XBottomSheet bottomSheet;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,6 +25,8 @@ public final class PostActivity extends AppCompatActivity {
         final ViewPager viewPager = (ViewPager) findViewById(R.id.viewPager);
         viewPager.setAdapter(new PostPagerAdapter(this));
         viewPager.setCurrentItem(index);
+
+        bottomSheet = XBottomSheet.from(findViewById(R.id.bottomSheet));
     }
 
     public void onUpButtonClicked(View view) {
@@ -31,6 +34,7 @@ public final class PostActivity extends AppCompatActivity {
     }
 
     public void onInfoButtonClicked(View view) {
+        bottomSheet.toggleState();
     }
 
     public void onDownloadButtonClicked(View view) {
