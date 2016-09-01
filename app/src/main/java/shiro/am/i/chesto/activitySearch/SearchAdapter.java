@@ -49,7 +49,7 @@ final class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder>
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        return new ViewHolder(inflater.inflate(R.layout.item_tag, parent, false));
+        return new ViewHolder(inflater.inflate(R.layout.item_tag_searchsuggestion, parent, false));
     }
 
     @Override

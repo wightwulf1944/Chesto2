@@ -12,15 +12,11 @@ import shiro.am.i.chesto.R;
  */
 final class XBottomSheet extends BottomSheetBehavior.BottomSheetCallback {
 
-    static XBottomSheet from(View view) {
-        return new XBottomSheet(view);
-    }
-
     private BottomSheetBehavior bottomSheetBehavior;
     private ImageButton infoButton;
     private View bottomSheetHeader;
 
-    private XBottomSheet(View view) {
+    XBottomSheet(View view) {
         bottomSheetBehavior = BottomSheetBehavior.from(view);
         bottomSheetBehavior.setBottomSheetCallback(this);
 
@@ -37,6 +33,16 @@ final class XBottomSheet extends BottomSheetBehavior.BottomSheetCallback {
             default:
                 bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
                 break;
+        }
+    }
+
+    boolean toggleIsCollapsed() {
+        switch (bottomSheetBehavior.getState()) {
+            case BottomSheetBehavior.STATE_COLLAPSED:
+                return true;
+            default:
+                bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+                return false;
         }
     }
 

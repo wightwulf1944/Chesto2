@@ -51,12 +51,10 @@ public final class SearchActivity extends AppCompatActivity
 
     private void goSearch() {
         startActivity(
-                new Intent(
-                        Intent.ACTION_SEARCH,
+                new Intent(Intent.ACTION_SEARCH,
                         Uri.parse(searchField.getText().toString()),
                         this,
-                        MainActivity.class
-                )
+                        MainActivity.class)
         );
     }
 
