@@ -61,6 +61,7 @@ public final class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onNewIntent(Intent intent) {
+        scrollToTop();
         handleIntent(intent);
     }
 
@@ -104,12 +105,16 @@ public final class MainActivity extends AppCompatActivity {
         final boolean recyclerViewIsAtTop = layoutManager.findFirstVisibleItemPosition() == 0;
 
         if (appbarIsCollapsed || !recyclerViewIsAtTop) {
-            recyclerView.stopScroll();
-            layoutManager.scrollToPosition(0);
-            appbar.setExpanded(true);
+            scrollToTop();
             Snackbar.make(recyclerView, "Back at top", Snackbar.LENGTH_SHORT).show();
         } else {
             super.onBackPressed();
         }
+    }
+
+    private void scrollToTop() {
+        recyclerView.stopScroll();
+        layoutManager.scrollToPosition(0);
+        appbar.setExpanded(true);
     }
 }
