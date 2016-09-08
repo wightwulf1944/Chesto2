@@ -2,6 +2,7 @@ package shiro.am.i.chesto.activitySearch;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -110,6 +111,6 @@ final class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder>
 
     @Override
     public void onFailure(Call<List<Tag>> call, Throwable t) {
-        //TODO:
+        Log.e(TAG, "Error fetching tag suggestions", t);
     }
 }

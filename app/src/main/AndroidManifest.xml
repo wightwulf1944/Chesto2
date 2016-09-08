@@ -40,6 +40,8 @@
                 android:value=".activityMain.MainActivity" />
         </activity>
 
+        <service android:name=".ImageDownloadService" />
+
     </application>
 
 </manifest>

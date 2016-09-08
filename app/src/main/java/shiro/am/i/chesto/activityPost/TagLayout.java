@@ -17,7 +17,6 @@ import shiro.am.i.chesto.retrofitDanbooru.Post;
 
 /**
  * Created by UGZ on 9/1/2016.
- * TODO: do not split from here, save string array in Post object
  */
 final class TagLayout extends FlowLayout {
 

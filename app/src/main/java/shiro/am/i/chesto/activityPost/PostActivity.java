@@ -1,10 +1,12 @@
 package shiro.am.i.chesto.activityPost;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
+import shiro.am.i.chesto.ImageDownloadService;
 import shiro.am.i.chesto.R;
 
 /**
@@ -14,13 +16,14 @@ public final class PostActivity extends AppCompatActivity {
 
     private static final String TAG = PostActivity.class.getName();
     private XBottomSheet bottomSheet;
+    private int postIndex;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_post);
 
-        final int postIndex = getIntent().getIntExtra("DEFAULT", -1);
+        postIndex = getIntent().getIntExtra("DEFAULT", -1);
 
         final TagLayout tagLayout = (TagLayout) findViewById(R.id.tagLayout);
         tagLayout.setCurrentPost(postIndex);
@@ -32,6 +35,7 @@ public final class PostActivity extends AppCompatActivity {
             @Override
             public void onPageSelected(int position) {
                 tagLayout.setCurrentPost(position);
+                postIndex = position;
             }
         });
 
@@ -54,5 +58,8 @@ public final class PostActivity extends AppCompatActivity {
     }
 
     public void onDownloadButtonClicked(View view) {
+        Intent intent = new Intent(this, ImageDownloadService.class);
+        intent.putExtra("DEFAULT", postIndex);
+        startService(intent);
     }
 }
