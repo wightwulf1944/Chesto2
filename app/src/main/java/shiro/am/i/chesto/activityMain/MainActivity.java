@@ -106,7 +106,7 @@ public final class MainActivity extends AppCompatActivity {
 
         if (appbarIsCollapsed || !recyclerViewIsAtTop) {
             scrollToTop();
-            Snackbar.make(recyclerView, "Back at top", Snackbar.LENGTH_SHORT).show();
+            Snackbar.make(recyclerView, getString(R.string.snackbar_mainActivity), Snackbar.LENGTH_SHORT).show();
         } else {
             super.onBackPressed();
         }

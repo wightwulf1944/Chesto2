@@ -3,4 +3,5 @@
     <string name="action_search">Search</string>
     <string name="action_go">Go</string>
     <string name="action_clear">Clear</string>
+    <string name="snackbar_mainActivity">Back at top. Tap back again to exit.</string>
 </resources>

@@ -36,6 +36,7 @@ final class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder>
     private final LayoutInflater inflater;
     private final EditText mSearchField;
     private RealmResults<Tag> suggestionsList;
+    private String currentWord;
 
     SearchAdapter(Context context, EditText searchField) {
         inflater = LayoutInflater.from(context);
@@ -77,7 +78,11 @@ final class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder>
 
         @Override
         public void onClick(View view) {
-            mSearchField.append(name.getText());
+            String text = mSearchField.getText()
+                    .toString()
+                    .replace(currentWord, name.getText().toString());
+
+            mSearchField.setText(text);
         }
     }
 
@@ -87,12 +92,7 @@ final class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder>
     }
 
     void setQuery(String s) {
-        //  get the last word
-        final int wordIndex = s.lastIndexOf(" ");
-        if (wordIndex >= 0) {
-            s = s.substring(wordIndex + 1);
-        }
-
+        currentWord = s;
         suggestionsList = realm.where(Tag.class)
                 .beginsWith("name", s, Case.INSENSITIVE)
                 .findAllSorted("postCount", Sort.DESCENDING);

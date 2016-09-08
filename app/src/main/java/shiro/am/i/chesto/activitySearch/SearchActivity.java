@@ -99,7 +99,12 @@ public final class SearchActivity extends AppCompatActivity
 
     @Override
     public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-        adapter.setQuery(charSequence.toString());
+        final String s = charSequence.toString();
+        final int iBeginTemp = s.lastIndexOf(' ', i);
+        final int iBegin = iBeginTemp == -1 ? 0 : iBeginTemp;
+        final int iEndTemp = s.indexOf(' ', i);
+        final int iEnd = iEndTemp == -1 ? s.length() : iEndTemp;
+        adapter.setQuery(s.substring(iBegin, iEnd).trim());
     }
 
     @Override
