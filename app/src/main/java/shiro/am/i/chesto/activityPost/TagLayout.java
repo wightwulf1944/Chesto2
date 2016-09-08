@@ -41,23 +41,24 @@ final class TagLayout extends FlowLayout {
         final Post post = postList.get(postIndex);
         removeAllViews();
 
-        addLabel("Copyrights:");
-        addTags(post.getTagStringCopyright(), R.layout.item_tag_copyright);
-        addLabel("Characters:");
-        addTags(post.getTagStringCharacter(), R.layout.item_tag_character);
-        addLabel("Artist:");
-        addTags(post.getTagStringArtist(), R.layout.item_tag_artist);
-        addLabel("Tags:");
-        addTags(post.getTagStringGeneral(), R.layout.item_tag_general);
+        addCategory("Copyrights: ", R.layout.item_tag_copyright, post.getTagStringCopyright());
+        addCategory("Characters: ", R.layout.item_tag_character, post.getTagStringCharacter());
+        addCategory("Artist:", R.layout.item_tag_artist, post.getTagStringArtist());
+        addCategory("Tags:", R.layout.item_tag_general, post.getTagStringGeneral());
     }
 
-    private void addLabel(String label) {
-        add(label, R.layout.item_tag_label);
+    private void addCategory(String label, int layoutId, String tags) {
+        if (tags.isEmpty()) {
+            return;
+        }
+
+        addView(label, R.layout.item_tag_label);
+        addTags(tags, layoutId);
     }
 
     private void addTags(String tags, int layoutId) {
         for (final String tag : tags.split(" ")) {
-            add(tag, layoutId).setOnClickListener(new OnClickListener() {
+            addView(tag, layoutId).setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     mContext.startActivity(
@@ -71,7 +72,7 @@ final class TagLayout extends FlowLayout {
         }
     }
 
-    private TextView add(String text, int layoutId) {
+    private TextView addView(String text, int layoutId) {
         TextView textView = (TextView) inflater.inflate(layoutId, this, false);
         textView.setText(text);
         addView(textView);
