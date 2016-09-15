@@ -1,10 +1,15 @@
 package shiro.am.i.chesto.activityPost;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.Toast;
 
 import shiro.am.i.chesto.ImageDownloadService;
 import shiro.am.i.chesto.R;
@@ -58,8 +63,20 @@ public final class PostActivity extends AppCompatActivity {
     }
 
     public void onDownloadButtonClicked(View view) {
-        Intent intent = new Intent(this, ImageDownloadService.class);
-        intent.putExtra("default", postIndex);
-        startService(intent);
+        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 0);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (grantResults[0]) {
+            case PackageManager.PERMISSION_GRANTED:
+                Intent intent = new Intent(this, ImageDownloadService.class);
+                intent.putExtra("default", postIndex);
+                startService(intent);
+                break;
+            case PackageManager.PERMISSION_DENIED:
+                Toast.makeText(this, "Please allow access to save image", Toast.LENGTH_SHORT).show();
+                break;
+        }
     }
 }
