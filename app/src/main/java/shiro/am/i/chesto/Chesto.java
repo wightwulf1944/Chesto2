@@ -1,7 +1,6 @@
 package shiro.am.i.chesto;
 
 import android.app.Application;
-import android.content.Context;
 
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
@@ -15,7 +14,7 @@ import shiro.am.i.chesto.retrofitDanbooru.Danbooru;
 public final class Chesto extends Application {
 
     private static Danbooru danbooru;
-    private static Context appContext;
+    private static Chesto instance;
 
     @Override
     public void onCreate() {
@@ -29,14 +28,14 @@ public final class Chesto extends Application {
                 .build()
                 .create(Danbooru.class);
 
-        appContext = this;
+        instance = this;
     }
 
     public static Danbooru getDanbooru() {
         return danbooru;
     }
 
-    public static Context getAppContext() {
-        return appContext;
+    public static Chesto getInstance() {
+        return instance;
     }
 }

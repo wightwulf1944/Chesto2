@@ -23,7 +23,7 @@ public final class PostActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_post);
 
-        postIndex = getIntent().getIntExtra("DEFAULT", -1);
+        postIndex = getIntent().getIntExtra("default", -1);
 
         final TagLayout tagLayout = (TagLayout) findViewById(R.id.tagLayout);
         tagLayout.setCurrentPost(postIndex);
@@ -59,7 +59,7 @@ public final class PostActivity extends AppCompatActivity {
 
     public void onDownloadButtonClicked(View view) {
         Intent intent = new Intent(this, ImageDownloadService.class);
-        intent.putExtra("DEFAULT", postIndex);
+        intent.putExtra("default", postIndex);
         startService(intent);
     }
 }
