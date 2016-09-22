@@ -18,7 +18,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.channels.FileChannel;
 
-import shiro.am.i.chesto.PostList;
+import shiro.am.i.chesto.PostStore;
 import shiro.am.i.chesto.retrofitDanbooru.Post;
 import timber.log.Timber;
 
@@ -45,7 +45,7 @@ public final class ImageDownloaderService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, final int startId) {
-        final Post post = PostList.getInstance().get(intent.getIntExtra("default", -1));
+        final Post post = PostStore.getInstance().get(intent.getIntExtra("default", -1));
         final File destinationFile = createSavedFile(post);
 
         notifyStarted(post);

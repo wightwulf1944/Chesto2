@@ -15,7 +15,7 @@ import android.view.MenuItem;
 import com.fivehundredpx.greedolayout.GreedoLayoutManager;
 import com.fivehundredpx.greedolayout.GreedoSpacingItemDecoration;
 
-import shiro.am.i.chesto.PostList;
+import shiro.am.i.chesto.PostStore;
 import shiro.am.i.chesto.R;
 import shiro.am.i.chesto.U;
 import shiro.am.i.chesto.activitySearch.SearchActivity;
@@ -23,7 +23,7 @@ import timber.log.Timber;
 
 public final class MainActivity extends AppCompatActivity {
 
-    private static final PostList postList = PostList.getInstance();
+    private static final PostStore POST_STORE = PostStore.getInstance();
 
     private Toolbar toolbar;
     private AppBarLayout appbar;
@@ -40,7 +40,7 @@ public final class MainActivity extends AppCompatActivity {
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        layoutManager = new GreedoLayoutManager(postList);
+        layoutManager = new GreedoLayoutManager(POST_STORE);
 
         final int maxRowHeight = getResources().getDisplayMetrics().heightPixels / 3;
         layoutManager.setMaxRowHeight(maxRowHeight);
@@ -53,7 +53,7 @@ public final class MainActivity extends AppCompatActivity {
 
         final SwipeRefreshLayout swipeLayout = (SwipeRefreshLayout) findViewById(R.id.swipeLayout);
         swipeLayout.setColorSchemeColors(ContextCompat.getColor(this, R.color.colorPrimaryDark));
-        postList.setSwipeLayout(swipeLayout);
+        POST_STORE.setSwipeLayout(swipeLayout);
 
         handleIntent(getIntent());
     }
@@ -71,7 +71,7 @@ public final class MainActivity extends AppCompatActivity {
 
         if (intent.getAction() == Intent.ACTION_SEARCH) {
             final String query = intent.getDataString();
-            postList.newSearch(query);
+            POST_STORE.newSearch(query);
             toolbar.setSubtitle(query);
         }
     }

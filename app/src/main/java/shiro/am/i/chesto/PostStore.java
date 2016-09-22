@@ -1,7 +1,6 @@
 package shiro.am.i.chesto;
 
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.util.Log;
 
 import com.fivehundredpx.greedolayout.GreedoLayoutSizeCalculator;
 
@@ -15,28 +14,28 @@ import retrofit2.Response;
 import shiro.am.i.chesto.activityMain.MainAdapter;
 import shiro.am.i.chesto.retrofitDanbooru.Danbooru;
 import shiro.am.i.chesto.retrofitDanbooru.Post;
+import timber.log.Timber;
 
 /**
  * Created by Shiro on 8/4/2016.
  */
-public final class PostList extends ArrayList<Post>
+public final class PostStore extends ArrayList<Post>
         implements Callback<List<Post>>, GreedoLayoutSizeCalculator.SizeCalculatorDelegate, SwipeRefreshLayout.OnRefreshListener {
 
-    private static final String TAG = PostList.class.getSimpleName();
     private static final Danbooru danbooru = Chesto.getDanbooru();
-    private static final PostList instance = new PostList();
+    private static final PostStore instance = new PostStore();
 
     private MainAdapter mAdapter;
     private SwipeRefreshLayout mSwipeLayout;
     private String currentQuery;
     private int currentPage;
 
-    private PostList() {
+    private PostStore() {
         // disable instantiation
         requestMorePosts();
     }
 
-    public static PostList getInstance() {
+    public static PostStore getInstance() {
         return instance;
     }
 
@@ -84,7 +83,7 @@ public final class PostList extends ArrayList<Post>
 
     @Override
     public void onFailure(Call<List<Post>> call, Throwable t) {
-        Log.e(TAG, "Error fetching more posts", t);
+        Timber.e(t, "Error fetching more posts");
     }
 
     @Override

@@ -11,7 +11,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestManager;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
-import shiro.am.i.chesto.PostList;
+import shiro.am.i.chesto.PostStore;
 import shiro.am.i.chesto.R;
 import shiro.am.i.chesto.retrofitDanbooru.Post;
 
@@ -20,7 +20,7 @@ import shiro.am.i.chesto.retrofitDanbooru.Post;
  */
 final class PostPagerAdapter extends PagerAdapter {
 
-    private static final PostList postList = PostList.getInstance();
+    private static final PostStore POST_STORE = PostStore.getInstance();
     private final AppCompatActivity mParent;
 
     PostPagerAdapter(AppCompatActivity parent) {
@@ -30,7 +30,7 @@ final class PostPagerAdapter extends PagerAdapter {
     @Override
     public Object instantiateItem(ViewGroup container, int position) {
         final ImageView imageView = ImageViewRecycler.getView(mParent, container);
-        final Post post = postList.get(position);
+        final Post post = POST_STORE.get(position);
 
         final RequestManager requestManager = Glide.with(mParent);
 
@@ -39,7 +39,7 @@ final class PostPagerAdapter extends PagerAdapter {
                 .diskCacheStrategy(DiskCacheStrategy.SOURCE);
 
         requestManager
-                .load(postList.get(position).getFileUrl())
+                .load(POST_STORE.get(position).getFileUrl())
                 .thumbnail(thumbnail)
                 .error(R.drawable.ic_image_broken)
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
@@ -55,7 +55,7 @@ final class PostPagerAdapter extends PagerAdapter {
 
     @Override
     public int getCount() {
-        return postList.size();
+        return POST_STORE.size();
     }
 
     @Override

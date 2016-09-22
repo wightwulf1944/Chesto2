@@ -10,7 +10,7 @@ import android.widget.ImageView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
-import shiro.am.i.chesto.PostList;
+import shiro.am.i.chesto.PostStore;
 import shiro.am.i.chesto.R;
 import shiro.am.i.chesto.activityPost.PostActivity;
 
@@ -19,12 +19,12 @@ import shiro.am.i.chesto.activityPost.PostActivity;
  */
 public final class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
 
-    private static final PostList postList = PostList.getInstance();
+    private static final PostStore POST_STORE = PostStore.getInstance();
     private final AppCompatActivity mParent;
 
     MainAdapter(AppCompatActivity parent) {
         mParent = parent;
-        postList.setAdapter(this);
+        POST_STORE.setAdapter(this);
     }
 
     @Override
@@ -34,12 +34,12 @@ public final class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHold
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        if (position >= postList.size() - 5) {
-            postList.requestMorePosts();
+        if (position >= POST_STORE.size() - 5) {
+            POST_STORE.requestMorePosts();
         }
 
         Glide.with(mParent)
-                .load(postList.get(position).getPreviewFileUrl())
+                .load(POST_STORE.get(position).getPreviewFileUrl())
                 .error(R.drawable.ic_image_broken)
                 .placeholder(R.drawable.ic_image_placeholder)
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
@@ -49,7 +49,7 @@ public final class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHold
 
     @Override
     public int getItemCount() {
-        return postList.size();
+        return POST_STORE.size();
     }
 
     class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
