@@ -22,7 +22,6 @@ import shiro.am.i.chesto.activityMain.MainActivity;
 public final class SearchActivity extends AppCompatActivity
         implements TextView.OnEditorActionListener, TextWatcher {
 
-    private static final String TAG = SearchActivity.class.getSimpleName();
     private SearchAdapter adapter;
     private EditText searchField;
 

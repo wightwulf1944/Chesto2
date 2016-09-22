@@ -6,7 +6,6 @@ import android.net.Uri;
 import android.os.Environment;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
-import android.util.Log;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
@@ -21,6 +20,7 @@ import java.nio.channels.FileChannel;
 
 import shiro.am.i.chesto.PostList;
 import shiro.am.i.chesto.retrofitDanbooru.Post;
+import timber.log.Timber;
 
 /**
  * Created by Shiro on 9/22/2016.
@@ -28,8 +28,6 @@ import shiro.am.i.chesto.retrofitDanbooru.Post;
  */
 
 public final class ImageDownloaderService extends Service {
-
-    private static final String TAG = ImageDownloaderService.class.getName();
 
     @Nullable
     @Override
@@ -70,7 +68,7 @@ public final class ImageDownloaderService extends Service {
         final File picturesDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
         final File saveDir = new File(picturesDir, "Chesto");
         if (!saveDir.mkdirs()) {
-            Log.d(TAG, "createSavedFile: save folder not created");
+            Timber.d("createSavedFile: save folder not created");
         }
         return new File(saveDir, post.getFileName());
     }
@@ -83,7 +81,7 @@ public final class ImageDownloaderService extends Service {
             inChannel.close();
             outChannel.close();
         } catch (IOException e) {
-            Log.e(TAG, "copyFile: error copying file");
+            Timber.e(e, "copyFile: error copying file");
         }
     }
 

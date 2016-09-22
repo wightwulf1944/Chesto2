@@ -19,7 +19,6 @@ import shiro.am.i.chesto.serviceImageDownloader.ImageDownloaderService;
  */
 public final class PostActivity extends AppCompatActivity {
 
-    private static final String TAG = PostActivity.class.getName();
     private XBottomSheet bottomSheet;
     private ViewPager viewPager;
 

@@ -9,7 +9,6 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -20,10 +19,10 @@ import shiro.am.i.chesto.PostList;
 import shiro.am.i.chesto.R;
 import shiro.am.i.chesto.U;
 import shiro.am.i.chesto.activitySearch.SearchActivity;
+import timber.log.Timber;
 
 public final class MainActivity extends AppCompatActivity {
 
-    private static final String TAG = MainActivity.class.getSimpleName();
     private static final PostList postList = PostList.getInstance();
 
     private Toolbar toolbar;
@@ -67,8 +66,8 @@ public final class MainActivity extends AppCompatActivity {
 
     private void handleIntent(Intent intent) {
 
-        Log.d(TAG, "ACTION: " + intent.getAction());
-        Log.d(TAG, "DATA: " + intent.getDataString());
+        Timber.d("ACTION: " + intent.getAction());
+        Timber.d("DATA: " + intent.getDataString());
 
         if (intent.getAction() == Intent.ACTION_SEARCH) {
             final String query = intent.getDataString();

@@ -30,4 +30,6 @@ dependencies {
     compile 'com.github.bumptech.glide:glide:3.7.0'
     //    https://github.com/ApmeM/android-flowlayout
     compile 'org.apmem.tools:layouts:1.10@aar'
+    //    https://github.com/JakeWharton/timber
+    compile 'com.jakewharton.timber:timber:4.3.1'
 }

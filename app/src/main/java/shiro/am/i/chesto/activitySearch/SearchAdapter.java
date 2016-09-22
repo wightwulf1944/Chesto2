@@ -2,7 +2,6 @@ package shiro.am.i.chesto.activitySearch;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,6 +22,7 @@ import shiro.am.i.chesto.Chesto;
 import shiro.am.i.chesto.R;
 import shiro.am.i.chesto.retrofitDanbooru.Danbooru;
 import shiro.am.i.chesto.retrofitDanbooru.Tag;
+import timber.log.Timber;
 
 /**
  * Created by Shiro on 7/29/2016.
@@ -30,7 +30,6 @@ import shiro.am.i.chesto.retrofitDanbooru.Tag;
 final class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder>
         implements RealmChangeListener<Realm>, Callback<List<Tag>> {
 
-    private static final String TAG = SearchAdapter.class.getSimpleName();
     private static final Danbooru danbooru = Chesto.getDanbooru();
     private static final Realm realm = Realm.getDefaultInstance();
 
@@ -111,6 +110,6 @@ final class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder>
 
     @Override
     public void onFailure(Call<List<Tag>> call, Throwable t) {
-        Log.e(TAG, "Error fetching tag suggestions", t);
+        Timber.e(t, "Error fetching tag suggestions");
     }
 }
