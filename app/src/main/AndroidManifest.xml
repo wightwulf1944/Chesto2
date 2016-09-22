@@ -41,7 +41,7 @@
                 android:value=".activityMain.MainActivity" />
         </activity>
 
-        <service android:name=".ImageDownloadService" />
+        <service android:name=".serviceImageDownloader.ImageDownloaderService" />
 
     </application>
 

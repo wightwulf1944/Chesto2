@@ -11,8 +11,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Toast;
 
-import shiro.am.i.chesto.ImageDownloadService;
 import shiro.am.i.chesto.R;
+import shiro.am.i.chesto.serviceImageDownloader.ImageDownloaderService;
 
 /**
  * Created by UGZ on 8/18/2016.
@@ -36,6 +36,7 @@ public final class PostActivity extends AppCompatActivity {
         final ViewPager viewPager = (ViewPager) findViewById(R.id.viewPager);
         viewPager.setAdapter(new PostPagerAdapter(this));
         viewPager.setCurrentItem(postIndex);
+        //TODO: set tagLayout as listener and use getcurrent to get index
         viewPager.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
             @Override
             public void onPageSelected(int position) {
@@ -70,7 +71,7 @@ public final class PostActivity extends AppCompatActivity {
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         switch (grantResults[0]) {
             case PackageManager.PERMISSION_GRANTED:
-                Intent intent = new Intent(this, ImageDownloadService.class);
+                Intent intent = new Intent(this, ImageDownloaderService.class);
                 intent.putExtra("default", postIndex);
                 startService(intent);
                 break;

@@ -33,6 +33,7 @@ public final class PostList extends ArrayList<Post>
 
     private PostList() {
         // disable instantiation
+        requestMorePosts();
     }
 
     public static PostList getInstance() {

@@ -70,15 +70,10 @@ public final class MainActivity extends AppCompatActivity {
         Log.d(TAG, "ACTION: " + intent.getAction());
         Log.d(TAG, "DATA: " + intent.getDataString());
 
-        switch (intent.getAction()) {
-            case Intent.ACTION_SEARCH:
-                final String query = intent.getDataString();
-                postList.newSearch(query);
-                toolbar.setSubtitle(query);
-                break;
-            default:
-                postList.newSearch("");
-                break;
+        if (intent.getAction() == Intent.ACTION_SEARCH) {
+            final String query = intent.getDataString();
+            postList.newSearch(query);
+            toolbar.setSubtitle(query);
         }
     }
 
