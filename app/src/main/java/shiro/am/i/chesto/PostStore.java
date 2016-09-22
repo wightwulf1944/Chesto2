@@ -18,6 +18,7 @@ import timber.log.Timber;
 
 /**
  * Created by Shiro on 8/4/2016.
+ * TODO: make this class subscribable that returns a DiffUtil.DiffResult to observers
  */
 public final class PostStore extends ArrayList<Post>
         implements Callback<List<Post>>, GreedoLayoutSizeCalculator.SizeCalculatorDelegate, SwipeRefreshLayout.OnRefreshListener {
