@@ -15,7 +15,7 @@ import shiro.am.i.chesto.R;
 import shiro.am.i.chesto.activityPost.PostActivity;
 
 /**
- * Created by UGZ on 8/4/2016.
+ * Created by Shiro on 8/4/2016.
  */
 public final class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
 

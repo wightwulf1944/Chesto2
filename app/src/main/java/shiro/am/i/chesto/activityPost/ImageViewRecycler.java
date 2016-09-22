@@ -8,7 +8,7 @@ import java.util.LinkedList;
 import java.util.Queue;
 
 /**
- * Created by UGZ on 8/25/2016.
+ * Created by Shiro on 8/25/2016.
  */
 final class ImageViewRecycler {
     private static final Queue<ImageView> recycledViews = new LinkedList<>();

@@ -16,7 +16,7 @@ import shiro.am.i.chesto.R;
 import shiro.am.i.chesto.retrofitDanbooru.Post;
 
 /**
- * Created by UGZ on 8/23/2016.
+ * Created by Shiro on 8/23/2016.
  */
 final class PostPagerAdapter extends PagerAdapter {
 

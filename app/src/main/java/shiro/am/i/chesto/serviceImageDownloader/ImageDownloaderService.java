@@ -23,7 +23,7 @@ import shiro.am.i.chesto.PostList;
 import shiro.am.i.chesto.retrofitDanbooru.Post;
 
 /**
- * Created by UGZ on 9/22/2016.
+ * Created by Shiro on 9/22/2016.
  * TODO: this service does not stop on it's own
  */
 

@@ -17,7 +17,7 @@ import shiro.am.i.chesto.retrofitDanbooru.Danbooru;
 import shiro.am.i.chesto.retrofitDanbooru.Post;
 
 /**
- * Created by UGZ on 8/4/2016.
+ * Created by Shiro on 8/4/2016.
  */
 public final class PostList extends ArrayList<Post>
         implements Callback<List<Post>>, GreedoLayoutSizeCalculator.SizeCalculatorDelegate, SwipeRefreshLayout.OnRefreshListener {

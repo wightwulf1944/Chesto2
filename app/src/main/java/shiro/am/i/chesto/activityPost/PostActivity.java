@@ -15,7 +15,7 @@ import shiro.am.i.chesto.R;
 import shiro.am.i.chesto.serviceImageDownloader.ImageDownloaderService;
 
 /**
- * Created by UGZ on 8/18/2016.
+ * Created by Shiro on 8/18/2016.
  */
 public final class PostActivity extends AppCompatActivity {
 

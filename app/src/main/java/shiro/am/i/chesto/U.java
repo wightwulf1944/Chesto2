@@ -3,7 +3,7 @@ package shiro.am.i.chesto;
 import android.util.TypedValue;
 
 /**
- * Created by UGZ on 8/4/2016.
+ * Created by Shiro on 8/4/2016.
  */
 public final class U {
 

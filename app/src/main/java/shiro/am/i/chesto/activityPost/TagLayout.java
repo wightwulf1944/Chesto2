@@ -16,7 +16,7 @@ import shiro.am.i.chesto.activityMain.MainActivity;
 import shiro.am.i.chesto.retrofitDanbooru.Post;
 
 /**
- * Created by UGZ on 9/1/2016.
+ * Created by Shiro on 9/1/2016.
  */
 final class TagLayout extends FlowLayout {
 

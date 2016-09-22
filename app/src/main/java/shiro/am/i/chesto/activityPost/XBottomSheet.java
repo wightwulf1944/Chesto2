@@ -8,7 +8,7 @@ import android.widget.ImageButton;
 import shiro.am.i.chesto.R;
 
 /**
- * Created by UGZ on 9/1/2016.
+ * Created by Shiro on 9/1/2016.
  */
 final class XBottomSheet extends BottomSheetBehavior.BottomSheetCallback {
 
