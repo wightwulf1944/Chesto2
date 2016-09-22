@@ -21,14 +21,14 @@ public final class PostActivity extends AppCompatActivity {
 
     private static final String TAG = PostActivity.class.getName();
     private XBottomSheet bottomSheet;
-    private int postIndex;
+    private ViewPager viewPager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_post);
 
-        postIndex = getIntent().getIntExtra("default", -1);
+        final int postIndex = getIntent().getIntExtra("default", -1);
 
         final TagLayout tagLayout = (TagLayout) findViewById(R.id.tagLayout);
         tagLayout.setCurrentPost(postIndex);
@@ -36,12 +36,10 @@ public final class PostActivity extends AppCompatActivity {
         final ViewPager viewPager = (ViewPager) findViewById(R.id.viewPager);
         viewPager.setAdapter(new PostPagerAdapter(this));
         viewPager.setCurrentItem(postIndex);
-        //TODO: set tagLayout as listener and use getcurrent to get index
         viewPager.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
             @Override
             public void onPageSelected(int position) {
                 tagLayout.setCurrentPost(position);
-                postIndex = position;
             }
         });
 
@@ -72,7 +70,7 @@ public final class PostActivity extends AppCompatActivity {
         switch (grantResults[0]) {
             case PackageManager.PERMISSION_GRANTED:
                 Intent intent = new Intent(this, ImageDownloaderService.class);
-                intent.putExtra("default", postIndex);
+                intent.putExtra("default", viewPager.getCurrentItem());
                 startService(intent);
                 break;
             case PackageManager.PERMISSION_DENIED:
