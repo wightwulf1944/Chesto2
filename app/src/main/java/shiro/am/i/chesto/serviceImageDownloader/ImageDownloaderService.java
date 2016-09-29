@@ -1,88 +1,80 @@
 package shiro.am.i.chesto.serviceImageDownloader;
 
-import android.app.Service;
+import android.app.IntentService;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Environment;
-import android.os.IBinder;
-import android.support.annotation.Nullable;
 import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.animation.GlideAnimation;
-import com.bumptech.glide.request.target.SimpleTarget;
+import com.squareup.picasso.Picasso;
 
 import java.io.File;
-import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.nio.channels.FileChannel;
 
 import shiro.am.i.chesto.PostStore;
 import shiro.am.i.chesto.retrofitDanbooru.Post;
 import timber.log.Timber;
 
 /**
- * Created by Shiro on 9/22/2016.
- * TODO: this service does not stop on it's own
+ * Created by UGZ on 9/29/2016.
  */
 
-public final class ImageDownloaderService extends Service {
+public final class ImageDownloaderService extends IntentService {
 
-    @Nullable
-    @Override
-    public IBinder onBind(Intent intent) {
-        return null;
-    }
-
-    private void notifyStarted(Post post) {
-        Toast.makeText(this, "Saving: " + post.getFileName(), Toast.LENGTH_SHORT).show();
-    }
-
-    private void notifyFinished(Post post) {
-        Toast.makeText(this, "Saved: " + post.getFileName(), Toast.LENGTH_SHORT).show();
+    public ImageDownloaderService() {
+        super(ImageDownloaderService.class.getName());
     }
 
     @Override
-    public int onStartCommand(Intent intent, int flags, final int startId) {
+    protected void onHandleIntent(Intent intent) {
         final Post post = PostStore.getInstance().get(intent.getIntExtra("default", -1));
-        final File destinationFile = createSavedFile(post);
 
-        notifyStarted(post);
+        Toast.makeText(this, "Saving: " + post.getId() + ".png", Toast.LENGTH_SHORT).show();
 
-        Glide.with(this)
-                .load(post.getFileUrl())
-                .downloadOnly(new SimpleTarget<File>() {
-                    @Override
-                    public void onResourceReady(File resource, GlideAnimation<? super File> glideAnimation) {
-                        copyFile(resource, destinationFile);
-                        notifyMediaScanner(destinationFile);
-                        notifyFinished(post);
-                    }
-                });
+        final Bitmap bitmap = getImageBitmap(post.getFileUrl());
+        final File file = getImageFile(post.getFileName());
+        if (saveImage(bitmap, file)) {
+            notifyMediaScanner(file);
+        }
 
-        return super.onStartCommand(intent, flags, startId);
+        Toast.makeText(this, "Saved: " + post.getId() + ".png", Toast.LENGTH_SHORT).show();
     }
 
-    private File createSavedFile(Post post) {
+    private Bitmap getImageBitmap(String fileUrl) {
+        Bitmap bitmap = null;
+        try {
+            bitmap = Picasso.with(this)
+                    .load(fileUrl)
+                    .get();
+        } catch (IOException e) {
+            Timber.e(e, "getImageBitmap: error getting bitmap");
+        }
+        return bitmap;
+    }
+
+    private static File getImageFile(String fileName) {
         final File picturesDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
         final File saveDir = new File(picturesDir, "Chesto");
+        final File imageFile = new File(saveDir, fileName);
+
         if (!saveDir.mkdirs()) {
-            Timber.d("createSavedFile: save folder not created");
+            Timber.d("getImageFile: saveDir not created");
         }
-        return new File(saveDir, post.getFileName());
+
+        return imageFile;
     }
 
-    private static void copyFile(File sourceFile, File destinationFile) {
+    private boolean saveImage(Bitmap bitmap, File file) {
+        FileOutputStream out = null;
         try {
-            FileChannel inChannel = new FileInputStream(sourceFile).getChannel();
-            FileChannel outChannel = new FileOutputStream(destinationFile).getChannel();
-            inChannel.transferTo(0, inChannel.size(), outChannel);
-            inChannel.close();
-            outChannel.close();
-        } catch (IOException e) {
-            Timber.e(e, "copyFile: error copying file");
+            out = new FileOutputStream(file);
+        } catch (FileNotFoundException e) {
+            Timber.e(e, "saveImage: error creating FileOutputStream");
         }
+        return bitmap.compress(Bitmap.CompressFormat.PNG, 0, out);
     }
 
     private void notifyMediaScanner(File file) {

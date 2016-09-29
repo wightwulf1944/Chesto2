@@ -7,8 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.squareup.picasso.Picasso;
 
 import shiro.am.i.chesto.PostStore;
 import shiro.am.i.chesto.R;
@@ -38,12 +37,10 @@ public final class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHold
             POST_STORE.requestMorePosts();
         }
 
-        Glide.with(mParent)
+        Picasso.with(mParent)
                 .load(POST_STORE.get(position).getPreviewFileUrl())
                 .error(R.drawable.ic_image_broken)
                 .placeholder(R.drawable.ic_image_placeholder)
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .dontAnimate()
                 .into(holder.imageView);
     }
 

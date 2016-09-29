@@ -6,13 +6,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
-import com.bumptech.glide.DrawableRequestBuilder;
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.RequestManager;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.squareup.picasso.Picasso;
 
+import jp.wasabeef.picasso.transformations.BlurTransformation;
 import shiro.am.i.chesto.PostStore;
 import shiro.am.i.chesto.R;
+import shiro.am.i.chesto.U;
 import shiro.am.i.chesto.retrofitDanbooru.Post;
 
 /**
@@ -32,18 +31,16 @@ final class PostPagerAdapter extends PagerAdapter {
         final ImageView imageView = ImageViewRecycler.getView(mParent, container);
         final Post post = POST_STORE.get(position);
 
-        final RequestManager requestManager = Glide.with(mParent);
-
-        final DrawableRequestBuilder thumbnail = requestManager
-                .load(post.getPreviewFileUrl())
-                .diskCacheStrategy(DiskCacheStrategy.SOURCE);
-
-        requestManager
-                .load(POST_STORE.get(position).getFileUrl())
-                .thumbnail(thumbnail)
-                .error(R.drawable.ic_image_broken)
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .into(imageView);
+        U.picassoCombo(
+                imageView,
+                Picasso.with(mParent)
+                        .load(post.getPreviewFileUrl())
+                        .placeholder(R.drawable.ic_image_placeholder)
+                        .transform(new BlurTransformation(mParent, 1)),
+                Picasso.with(mParent)
+                        .load(post.getFileUrl())
+                        .error(R.drawable.ic_image_broken)
+        );
 
         return imageView;
     }
