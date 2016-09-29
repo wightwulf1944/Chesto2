@@ -32,7 +32,7 @@ public final class PostActivity extends AppCompatActivity {
         final TagLayout tagLayout = (TagLayout) findViewById(R.id.tagLayout);
         tagLayout.setCurrentPost(postIndex);
 
-        final ViewPager viewPager = (ViewPager) findViewById(R.id.viewPager);
+        viewPager = (ViewPager) findViewById(R.id.viewPager);
         viewPager.setAdapter(new PostPagerAdapter(this));
         viewPager.setCurrentItem(postIndex);
         viewPager.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {

@@ -32,9 +32,9 @@ public final class PostDiffCallback extends DiffUtil.Callback {
 
     @Override
     public boolean areItemsTheSame(int oldItemPosition, int newItemPosition) {
-        final Post oldPost = oldPostList.get(oldItemPosition);
-        final Post newPost = newPostList.get(newItemPosition);
-        return oldPost.getId() == newPost.getId();
+        final int oldPostId = oldPostList.get(oldItemPosition).getId();
+        final int newPostId = newPostList.get(newItemPosition).getId();
+        return oldPostId == newPostId;
     }
 
     @Override

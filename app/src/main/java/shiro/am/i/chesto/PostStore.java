@@ -12,7 +12,6 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import shiro.am.i.chesto.activityMain.MainAdapter;
-import shiro.am.i.chesto.retrofitDanbooru.Danbooru;
 import shiro.am.i.chesto.retrofitDanbooru.Post;
 import timber.log.Timber;
 
@@ -20,10 +19,13 @@ import timber.log.Timber;
  * Created by Shiro on 8/4/2016.
  * TODO: make this class subscribable that returns a DiffUtil.DiffResult to observers
  */
-public final class PostStore extends ArrayList<Post>
-        implements Callback<List<Post>>, GreedoLayoutSizeCalculator.SizeCalculatorDelegate, SwipeRefreshLayout.OnRefreshListener {
+public final class PostStore
+        extends ArrayList<Post>
+        implements
+        Callback<List<Post>>,
+        GreedoLayoutSizeCalculator.SizeCalculatorDelegate,
+        SwipeRefreshLayout.OnRefreshListener {
 
-    private static final Danbooru danbooru = Chesto.getDanbooru();
     private static final PostStore instance = new PostStore();
 
     private MainAdapter mAdapter;
@@ -57,7 +59,9 @@ public final class PostStore extends ArrayList<Post>
     }
 
     public void requestMorePosts() {
-        danbooru.getPosts(currentQuery, ++currentPage).enqueue(this);
+        Chesto.getDanbooru()
+                .getPosts(currentQuery, ++currentPage)
+                .enqueue(this);
     }
 
     @Override
