@@ -1,6 +1,8 @@
 package shiro.am.i.chesto;
 
 import android.app.Application;
+import android.os.Handler;
+import android.os.Looper;
 
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
@@ -14,12 +16,14 @@ import timber.log.Timber;
  */
 public final class Chesto extends Application {
 
-    private static Danbooru danbooru;
     private static Chesto instance;
+    private static Danbooru danbooru;
+    private static Handler mainHandler;
 
     @Override
     public void onCreate() {
         super.onCreate();
+        instance = this;
 
         Realm.setDefaultConfiguration(
                 new RealmConfiguration.Builder(this).build()
@@ -35,7 +39,7 @@ public final class Chesto extends Application {
                 .build()
                 .create(Danbooru.class);
 
-        instance = this;
+        mainHandler = new Handler(Looper.getMainLooper());
     }
 
     public static Danbooru getDanbooru() {
@@ -44,5 +48,9 @@ public final class Chesto extends Application {
 
     public static Chesto getInstance() {
         return instance;
+    }
+
+    public static Handler getMainHandler() {
+        return mainHandler;
     }
 }

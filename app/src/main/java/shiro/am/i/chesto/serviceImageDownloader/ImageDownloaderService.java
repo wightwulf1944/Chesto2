@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Environment;
-import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 
@@ -29,10 +28,16 @@ public final class ImageDownloaderService extends IntentService {
     }
 
     @Override
+    public void onCreate() {
+        super.onCreate();
+        NotificationHelper.bind(this);
+    }
+
+    @Override
     protected void onHandleIntent(Intent intent) {
         final Post post = PostStore.getInstance().get(intent.getIntExtra("default", -1));
 
-        Toast.makeText(this, "Saving: " + post.getId() + ".png", Toast.LENGTH_SHORT).show();
+        ToastHelper.show("Saving: " + post.getId() + ".png");
 
         final Bitmap bitmap = getImageBitmap(post.getFileUrl());
         final File file = getImageFile(post.getFileName());
@@ -40,18 +45,21 @@ public final class ImageDownloaderService extends IntentService {
             notifyMediaScanner(file);
         }
 
-        Toast.makeText(this, "Saved: " + post.getId() + ".png", Toast.LENGTH_SHORT).show();
+        ToastHelper.show("Saved: " + post.getId() + ".png");
     }
 
     private Bitmap getImageBitmap(String fileUrl) {
         Bitmap bitmap = null;
-        try {
-            bitmap = Picasso.with(this)
-                    .load(fileUrl)
-                    .get();
-        } catch (IOException e) {
-            Timber.e(e, "getImageBitmap: error getting bitmap");
-        }
+        do {
+            try {
+                bitmap = Picasso.with(this)
+                        .load(fileUrl)
+                        .get();
+            } catch (IOException e) {
+                Timber.e(e, "getImageBitmap: error getting bitmap");
+            }
+        } while (bitmap == null);
+
         return bitmap;
     }
 
@@ -59,15 +67,13 @@ public final class ImageDownloaderService extends IntentService {
         final File picturesDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
         final File saveDir = new File(picturesDir, "Chesto");
         final File imageFile = new File(saveDir, fileName);
-
         if (!saveDir.mkdirs()) {
             Timber.d("getImageFile: saveDir not created");
         }
-
         return imageFile;
     }
 
-    private boolean saveImage(Bitmap bitmap, File file) {
+    private static boolean saveImage(Bitmap bitmap, File file) {
         FileOutputStream out = null;
         try {
             out = new FileOutputStream(file);
