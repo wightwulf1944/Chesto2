@@ -9,7 +9,7 @@ import android.widget.ImageView;
 import com.squareup.picasso.Picasso;
 
 import jp.wasabeef.picasso.transformations.BlurTransformation;
-import shiro.am.i.chesto.PostStore;
+import shiro.am.i.chesto.databasePost.PostStore;
 import shiro.am.i.chesto.R;
 import shiro.am.i.chesto.U;
 import shiro.am.i.chesto.retrofitDanbooru.Post;
@@ -24,6 +24,7 @@ final class PostPagerAdapter extends PagerAdapter {
 
     PostPagerAdapter(AppCompatActivity parent) {
         mParent = parent;
+        POST_STORE.setPagerAdapter(this);
     }
 
     @Override

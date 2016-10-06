@@ -13,7 +13,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-import shiro.am.i.chesto.PostStore;
+import shiro.am.i.chesto.databasePost.PostStore;
 import shiro.am.i.chesto.retrofitDanbooru.Post;
 import timber.log.Timber;
 

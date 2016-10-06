@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Chesto</string>
+    <string name="app_name">Chesto!</string>
     <string name="action_search">Search</string>
     <string name="action_go">Go</string>
     <string name="action_clear">Clear</string>

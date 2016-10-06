@@ -9,7 +9,7 @@ import android.widget.ImageView;
 
 import com.squareup.picasso.Picasso;
 
-import shiro.am.i.chesto.PostStore;
+import shiro.am.i.chesto.databasePost.PostStore;
 import shiro.am.i.chesto.R;
 import shiro.am.i.chesto.activityPost.PostActivity;
 

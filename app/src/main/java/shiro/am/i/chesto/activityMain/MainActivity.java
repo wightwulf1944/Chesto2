@@ -15,13 +15,14 @@ import android.view.MenuItem;
 import com.fivehundredpx.greedolayout.GreedoLayoutManager;
 import com.fivehundredpx.greedolayout.GreedoSpacingItemDecoration;
 
-import shiro.am.i.chesto.PostStore;
 import shiro.am.i.chesto.R;
 import shiro.am.i.chesto.U;
 import shiro.am.i.chesto.activitySearch.SearchActivity;
+import shiro.am.i.chesto.databasePost.Observer;
+import shiro.am.i.chesto.databasePost.PostStore;
 import timber.log.Timber;
 
-public final class MainActivity extends AppCompatActivity {
+public final class MainActivity extends AppCompatActivity implements Observer {
 
     private static final PostStore POST_STORE = PostStore.getInstance();
 
@@ -29,6 +30,7 @@ public final class MainActivity extends AppCompatActivity {
     private AppBarLayout appbar;
     private GreedoLayoutManager layoutManager;
     private RecyclerView recyclerView;
+    private SwipeRefreshLayout swipeLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,7 +43,6 @@ public final class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         layoutManager = new GreedoLayoutManager(POST_STORE);
-
         final int maxRowHeight = getResources().getDisplayMetrics().heightPixels / 3;
         layoutManager.setMaxRowHeight(maxRowHeight);
 
@@ -51,9 +52,11 @@ public final class MainActivity extends AppCompatActivity {
         recyclerView.setAdapter(new MainAdapter(this));
         recyclerView.setLayoutManager(layoutManager);
 
-        final SwipeRefreshLayout swipeLayout = (SwipeRefreshLayout) findViewById(R.id.swipeLayout);
+        swipeLayout = (SwipeRefreshLayout) findViewById(R.id.swipeLayout);
         swipeLayout.setColorSchemeColors(ContextCompat.getColor(this, R.color.colorPrimaryDark));
-        POST_STORE.setSwipeLayout(swipeLayout);
+        swipeLayout.setOnRefreshListener(POST_STORE);
+
+        POST_STORE.setObserver(this);
 
         handleIntent(getIntent());
     }
@@ -66,8 +69,8 @@ public final class MainActivity extends AppCompatActivity {
 
     private void handleIntent(Intent intent) {
 
-        Timber.d("ACTION: " + intent.getAction());
-        Timber.d("DATA: " + intent.getDataString());
+        Timber.d("ACTION: %s", intent.getAction());
+        Timber.d("DATA: %s", intent.getDataString());
 
         if (intent.getAction() == Intent.ACTION_SEARCH) {
             final String query = intent.getDataString();
@@ -110,5 +113,10 @@ public final class MainActivity extends AppCompatActivity {
         recyclerView.stopScroll();
         layoutManager.scrollToPosition(0);
         appbar.setExpanded(true);
+    }
+
+    @Override
+    public void onUpdateDone() {
+        swipeLayout.setRefreshing(false);
     }
 }
