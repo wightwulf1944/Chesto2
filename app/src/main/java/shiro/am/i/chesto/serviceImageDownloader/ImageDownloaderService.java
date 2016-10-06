@@ -1,6 +1,7 @@
 package shiro.am.i.chesto.serviceImageDownloader;
 
 import android.app.IntentService;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -36,23 +37,24 @@ public final class ImageDownloaderService extends IntentService {
     @Override
     protected void onHandleIntent(Intent intent) {
         final Post post = PostStore.getInstance().get(intent.getIntExtra("default", -1));
+        final String fileName = post.getId() + ".png";
 
-        ToastHelper.show("Saving: " + post.getId() + ".png");
+        ToastHelper.show("Saving: " + fileName);
 
-        final Bitmap bitmap = getImageBitmap(post.getFileUrl());
-        final File file = getImageFile(post.getFileName());
+        final Bitmap bitmap = getImageBitmap(this, post.getFileUrl());
+        final File file = getImageFile(fileName);
         if (saveImage(bitmap, file)) {
-            notifyMediaScanner(file);
+            notifyMediaScanner(this, file);
         }
 
-        ToastHelper.show("Saved: " + post.getId() + ".png");
+        ToastHelper.show("Saved: " + fileName);
     }
 
-    private Bitmap getImageBitmap(String fileUrl) {
+    private static Bitmap getImageBitmap(Context context, String fileUrl) {
         Bitmap bitmap = null;
         do {
             try {
-                bitmap = Picasso.with(this)
+                bitmap = Picasso.with(context)
                         .load(fileUrl)
                         .get();
             } catch (IOException e) {
@@ -66,11 +68,10 @@ public final class ImageDownloaderService extends IntentService {
     private static File getImageFile(String fileName) {
         final File picturesDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
         final File saveDir = new File(picturesDir, "Chesto");
-        final File imageFile = new File(saveDir, fileName);
         if (!saveDir.mkdirs()) {
             Timber.d("getImageFile: saveDir not created");
         }
-        return imageFile;
+        return new File(saveDir, fileName);
     }
 
     private static boolean saveImage(Bitmap bitmap, File file) {
@@ -83,10 +84,10 @@ public final class ImageDownloaderService extends IntentService {
         return bitmap.compress(Bitmap.CompressFormat.PNG, 0, out);
     }
 
-    private void notifyMediaScanner(File file) {
+    private static void notifyMediaScanner(Context context, File file) {
         Uri data = Uri.fromFile(file);
         final Intent mediaIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
         mediaIntent.setData(data);
-        sendBroadcast(mediaIntent);
+        context.sendBroadcast(mediaIntent);
     }
 }

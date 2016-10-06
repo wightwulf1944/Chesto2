@@ -12,10 +12,6 @@ public class Post {
     private int imageWidth;
     @SerializedName("image_height")
     private int imageHeight;
-    @SerializedName("tag_string")
-    private String tagString;
-    @SerializedName("file_ext")
-    private String fileExt;
     @SerializedName("tag_string_artist")
     private String tagStringArtist;
     @SerializedName("tag_string_character")
@@ -41,10 +37,6 @@ public class Post {
         }
     }
 
-    public String getFileName() {
-        return id + "." + fileExt;
-    }
-
     public int getId() {
         return id;
     }
@@ -55,10 +47,6 @@ public class Post {
 
     public int getImageHeight() {
         return imageHeight;
-    }
-
-    public String getTagString() {
-        return tagString;
     }
 
     public String getTagStringArtist() {
