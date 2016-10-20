@@ -6,25 +6,21 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import com.fivehundredpx.greedolayout.GreedoLayoutSizeCalculator;
 
 import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-import shiro.am.i.chesto.Chesto;
+import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 import shiro.am.i.chesto.activityMain.MainAdapter;
+import shiro.am.i.chesto.retrofitDanbooru.Danbooru;
 import shiro.am.i.chesto.retrofitDanbooru.Post;
 import timber.log.Timber;
 
 /**
  * Created by Shiro on 8/4/2016.
- * TODO: make this class subscribable that returns a DiffUtil.DiffResult to observers
  */
 public final class PostStore
         extends ArrayList<Post>
         implements
-        Callback<List<Post>>,
         GreedoLayoutSizeCalculator.SizeCalculatorDelegate,
         SwipeRefreshLayout.OnRefreshListener {
 
@@ -66,45 +62,30 @@ public final class PostStore
     }
 
     public void requestMorePosts() {
-        Chesto.getDanbooru()
-                .getPosts(currentQuery, ++currentPage)
-                .enqueue(this);
-    }
+        Danbooru.api.getPosts(currentQuery, ++currentPage)
+                .subscribeOn(Schedulers.io())
+                .flatMap(Observable::from)
+                .filter(post -> post.getPreviewFileUrl() != null)
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnSubscribe(() -> mObserver.onUpdateDone())
+                .doOnTerminate(() -> mObserver.onUpdateDone())
+                .subscribe(
 
-    @Override
-    public void onResponse(Call<List<Post>> call, Response<List<Post>> response) {
-        final List<Post> fetchedPosts = response.body();
-        final Iterator<Post> i = fetchedPosts.iterator();
-        while (i.hasNext()) {
-            if (i.next().getPreviewFileUrl() == null) {
-                i.remove();
-            }
-        }
+                        post -> {
+                            final int i = lastIndexOf(post);
+                            if (i != -1) {
+                                set(i, post);
+                                mMainAdapter.notifyItemChanged(i);
+                            } else {
+                                add(post);
+                                mMainAdapter.notifyItemInserted(size());
+                            }
+                        },
 
-        if (!fetchedPosts.isEmpty()) {
-            final int size1 = size();
-            removeAll(fetchedPosts);
-            final int size2 = size();
-            addAll(fetchedPosts);
-            final int size3 = size();
+                        throwable -> Timber.e(throwable, "Error fetching more posts"),
 
-            if (mMainAdapter != null) {
-                mMainAdapter.notifyItemRangeChanged(size2, size1 - size2);
-                mMainAdapter.notifyItemRangeInserted(size1, size3 - size1);
-            }
-            if (mPagerAdapter != null) {
-                mPagerAdapter.notifyDataSetChanged();
-            }
-        }
-
-        if (mObserver != null) {
-            mObserver.onUpdateDone();
-        }
-    }
-
-    @Override
-    public void onFailure(Call<List<Post>> call, Throwable t) {
-        Timber.e(t, "Error fetching more posts");
+                        () -> mPagerAdapter.notifyDataSetChanged()
+                );
     }
 
     @Override
@@ -112,7 +93,7 @@ public final class PostStore
         if (i >= size()) {
             return 1.0;
         } else {
-            Post post = get(i);
+            final Post post = get(i);
             return (double) post.getImageWidth() / post.getImageHeight();
         }
     }

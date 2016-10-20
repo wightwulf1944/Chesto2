@@ -17,7 +17,6 @@ import timber.log.Timber;
 public final class Chesto extends Application {
 
     private static Chesto instance;
-    private static Danbooru danbooru;
     private static Handler mainHandler;
 
     @Override
@@ -33,17 +32,7 @@ public final class Chesto extends Application {
             Timber.plant(new Timber.DebugTree());
         }
 
-        danbooru = new Retrofit.Builder()
-                .baseUrl("http://danbooru.donmai.us/")
-                .addConverterFactory(GsonConverterFactory.create())
-                .build()
-                .create(Danbooru.class);
-
         mainHandler = new Handler(Looper.getMainLooper());
-    }
-
-    public static Danbooru getDanbooru() {
-        return danbooru;
     }
 
     public static Chesto getInstance() {
