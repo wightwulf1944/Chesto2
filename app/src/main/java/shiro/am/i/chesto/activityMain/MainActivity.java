@@ -73,7 +73,7 @@ public final class MainActivity extends AppCompatActivity implements Observer {
         Timber.d("ACTION: %s", intent.getAction());
         Timber.d("DATA: %s", intent.getDataString());
 
-        if (intent.getAction() == Intent.ACTION_SEARCH) {
+        if (intent.getAction().equals(Intent.ACTION_SEARCH)) {
             final String query = intent.getDataString();
             POST_STORE.newSearch(query);
             toolbar.setSubtitle(query);

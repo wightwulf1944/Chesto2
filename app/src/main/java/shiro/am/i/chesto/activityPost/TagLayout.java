@@ -5,14 +5,13 @@ import android.content.Intent;
 import android.net.Uri;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.widget.TextView;
 
 import org.apmem.tools.layouts.FlowLayout;
 
-import shiro.am.i.chesto.databasePost.PostStore;
 import shiro.am.i.chesto.R;
 import shiro.am.i.chesto.activityMain.MainActivity;
+import shiro.am.i.chesto.databasePost.PostStore;
 import shiro.am.i.chesto.retrofitDanbooru.Post;
 
 /**
@@ -57,17 +56,16 @@ final class TagLayout extends FlowLayout {
 
     private void addTags(String tags, int layoutId) {
         for (final String tag : tags.split(" ")) {
-            addView(tag, layoutId).setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(View v) {
+            addView(tag, layoutId).setOnClickListener(view ->
                     mContext.startActivity(
-                            new Intent(Intent.ACTION_SEARCH,
+                            new Intent(
+                                    Intent.ACTION_SEARCH,
                                     Uri.parse(tag),
                                     mContext,
-                                    MainActivity.class)
-                    );
-                }
-            });
+                                    MainActivity.class
+                            )
+                    )
+            );
         }
     }
 

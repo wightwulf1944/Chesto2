@@ -11,11 +11,8 @@ import shiro.am.i.chesto.Chesto;
 final class ToastHelper {
 
     static void show(final String text) {
-        Chesto.getMainHandler().post(new Runnable() {
-            @Override
-            public void run() {
-                Toast.makeText(Chesto.getInstance(), text, Toast.LENGTH_SHORT).show();
-            }
-        });
+        Chesto.getMainHandler().post(() ->
+                Toast.makeText(Chesto.getInstance(), text, Toast.LENGTH_SHORT).show()
+        );
     }
 }

@@ -6,9 +6,6 @@ import android.os.Looper;
 
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
-import shiro.am.i.chesto.retrofitDanbooru.Danbooru;
 import timber.log.Timber;
 
 /**
