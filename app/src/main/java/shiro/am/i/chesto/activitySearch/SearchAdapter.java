@@ -18,7 +18,6 @@ import io.realm.Sort;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import shiro.am.i.chesto.Chesto;
 import shiro.am.i.chesto.R;
 import shiro.am.i.chesto.retrofitDanbooru.Danbooru;
 import shiro.am.i.chesto.retrofitDanbooru.Tag;
@@ -30,7 +29,6 @@ import timber.log.Timber;
 final class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder>
         implements RealmChangeListener<Realm>, Callback<List<Tag>> {
 
-    private static final Danbooru danbooru = Chesto.getDanbooru();
     private static final Realm realm = Realm.getDefaultInstance();
 
     private final LayoutInflater inflater;
@@ -97,7 +95,7 @@ final class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder>
                 .beginsWith("name", s, Case.INSENSITIVE)
                 .findAllSorted("postCount", Sort.DESCENDING);
         notifyDataSetChanged();
-        danbooru.searchTags(s + "*").enqueue(this);
+        Danbooru.api.searchTags(s + "*").enqueue(this);
     }
 
     @Override

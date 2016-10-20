@@ -30,6 +30,7 @@ dependencies {
     //    http://square.github.io/retrofit/
     compile 'com.squareup.retrofit2:retrofit:2.1.0'
     compile 'com.squareup.retrofit2:converter-gson:2.1.0'
+    compile 'com.squareup.retrofit2:adapter-rxjava:2.1.0'
     //    https://github.com/500px/greedo-layout-for-android
     compile 'com.fivehundredpx:greedo-layout:1.0.0'
     //    https://github.com/ApmeM/android-flowlayout
@@ -40,4 +41,8 @@ dependencies {
     compile 'com.squareup.picasso:picasso:2.5.2'
     //    https://github.com/wasabeef/picasso-transformations
     compile 'jp.wasabeef:picasso-transformations:2.1.0'
+    //    https://github.com/ReactiveX/RxAndroid
+    compile 'io.reactivex:rxandroid:1.2.1'
+    //    https://github.com/ReactiveX/RxJava
+    compile 'io.reactivex:rxjava:1.2.1'
 }

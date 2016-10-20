@@ -57,6 +57,7 @@ public final class MainActivity extends AppCompatActivity implements Observer {
         swipeLayout.setOnRefreshListener(POST_STORE);
 
         POST_STORE.setObserver(this);
+        POST_STORE.newSearch("lowres rating:safe");
 
         handleIntent(getIntent());
     }
@@ -113,6 +114,11 @@ public final class MainActivity extends AppCompatActivity implements Observer {
         recyclerView.stopScroll();
         layoutManager.scrollToPosition(0);
         appbar.setExpanded(true);
+    }
+
+    @Override
+    public void onUpdateStart() {
+        swipeLayout.setRefreshing(true);
     }
 
     @Override
