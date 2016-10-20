@@ -5,6 +5,6 @@ package shiro.am.i.chesto.databasePost;
  */
 
 public interface Observer {
-
-    public void onUpdateDone();
+    void onUpdateStart();
+    void onUpdateDone();
 }

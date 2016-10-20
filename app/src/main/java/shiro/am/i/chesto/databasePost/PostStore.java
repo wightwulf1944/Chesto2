@@ -34,8 +34,6 @@ public final class PostStore
 
     private PostStore() {
         // disable instantiation
-        currentQuery = "lowres rating:safe";
-        requestMorePosts();
     }
 
     public static PostStore getInstance() {
@@ -67,25 +65,41 @@ public final class PostStore
                 .flatMap(Observable::from)
                 .filter(post -> post.getPreviewFileUrl() != null)
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnSubscribe(() -> mObserver.onUpdateDone())
-                .doOnTerminate(() -> mObserver.onUpdateDone())
-                .subscribe(
+                .doOnSubscribe(() -> {
+                    if (mObserver != null) {
+                        mObserver.onUpdateStart();
+                    }
+                })
+                .doOnTerminate(() -> {
+                    if (mObserver != null) {
+                        mObserver.onUpdateDone();
+                    }
+                })
+                .subscribe(new rx.Observer<Post>() {
+                    @Override
+                    public void onNext(Post post) {
+                        final int i = lastIndexOf(post);
+                        if (i != -1) {
+                            set(i, post);
+                            mMainAdapter.notifyItemChanged(i);
+                        } else {
+                            add(post);
+                            mMainAdapter.notifyItemInserted(size());
+                        }
+                    }
+                    
+                    @Override
+                    public void onCompleted() {
+                        if (mPagerAdapter != null) {
+                            mPagerAdapter.notifyDataSetChanged();
+                        }
+                    }
 
-                        post -> {
-                            final int i = lastIndexOf(post);
-                            if (i != -1) {
-                                set(i, post);
-                                mMainAdapter.notifyItemChanged(i);
-                            } else {
-                                add(post);
-                                mMainAdapter.notifyItemInserted(size());
-                            }
-                        },
-
-                        throwable -> Timber.e(throwable, "Error fetching more posts"),
-
-                        () -> mPagerAdapter.notifyDataSetChanged()
-                );
+                    @Override
+                    public void onError(Throwable e) {
+                        Timber.e(e, "Error fetching more posts");
+                    }
+                });
     }
 
     @Override
