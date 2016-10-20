@@ -87,7 +87,7 @@ public final class PostStore
                             mMainAdapter.notifyItemInserted(size());
                         }
                     }
-                    
+
                     @Override
                     public void onCompleted() {
                         if (mPagerAdapter != null) {
@@ -107,8 +107,18 @@ public final class PostStore
         if (i >= size()) {
             return 1.0;
         } else {
+            final double minRatio = 0.4;
+            final double maxRatio = 4;
             final Post post = get(i);
-            return (double) post.getImageWidth() / post.getImageHeight();
+            final double ratio = (double) post.getImageWidth() / post.getImageHeight();
+
+            if (ratio < minRatio) {
+                return minRatio;
+            } else if (ratio > maxRatio) {
+                return maxRatio;
+            } else {
+                return ratio;
+            }
         }
     }
 
