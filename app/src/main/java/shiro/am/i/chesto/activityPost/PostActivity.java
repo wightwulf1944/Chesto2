@@ -1,6 +1,7 @@
 package shiro.am.i.chesto.activityPost;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -45,15 +46,22 @@ public final class PostActivity extends AppCompatActivity {
         bottomSheet = new XBottomSheet(findViewById(R.id.bottomSheet));
     }
 
+    private void finishAndReturnResult() {
+        Intent resultIntent = new Intent();
+        resultIntent.putExtra("default", viewPager.getCurrentItem());
+        setResult(RESULT_OK, resultIntent);
+        finish();
+    }
+
     @Override
     public void onBackPressed() {
         if (bottomSheet.toggleIsCollapsed()) {
-            super.onBackPressed();
+            finishAndReturnResult();
         }
     }
 
     public void onUpButtonClicked(View view) {
-        finish();
+        finishAndReturnResult();
     }
 
     public void onInfoButtonClicked(View view) {

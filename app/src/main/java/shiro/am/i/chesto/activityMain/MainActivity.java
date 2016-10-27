@@ -81,6 +81,14 @@ public final class MainActivity extends AppCompatActivity implements Observer {
     }
 
     @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == 0 && resultCode == RESULT_OK) {
+            final int result = data.getIntExtra("default", -1);
+            recyclerView.scrollToPosition(result);
+        }
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;

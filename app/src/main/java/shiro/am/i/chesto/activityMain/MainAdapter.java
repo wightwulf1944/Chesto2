@@ -9,9 +9,9 @@ import android.widget.ImageView;
 
 import com.squareup.picasso.Picasso;
 
-import shiro.am.i.chesto.databasePost.PostStore;
 import shiro.am.i.chesto.R;
 import shiro.am.i.chesto.activityPost.PostActivity;
+import shiro.am.i.chesto.databasePost.PostStore;
 
 /**
  * Created by Shiro on 8/4/2016.
@@ -63,7 +63,7 @@ public final class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHold
         public void onClick(View view) {
             Intent intent = new Intent(mParent, PostActivity.class);
             intent.putExtra("default", getAdapterPosition());
-            mParent.startActivity(intent);
+            mParent.startActivityForResult(intent, 0);
         }
     }
 }
