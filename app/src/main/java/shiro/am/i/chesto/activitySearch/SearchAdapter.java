@@ -8,16 +8,13 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import java.util.List;
-
 import io.realm.Case;
 import io.realm.Realm;
 import io.realm.RealmChangeListener;
 import io.realm.RealmResults;
 import io.realm.Sort;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 import shiro.am.i.chesto.R;
 import shiro.am.i.chesto.retrofitDanbooru.Danbooru;
 import shiro.am.i.chesto.retrofitDanbooru.Tag;
@@ -27,7 +24,7 @@ import timber.log.Timber;
  * Created by Shiro on 7/29/2016.
  */
 final class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder>
-        implements RealmChangeListener<Realm>, Callback<List<Tag>> {
+        implements RealmChangeListener<Realm> {
 
     private static final Realm realm = Realm.getDefaultInstance();
 
@@ -95,19 +92,14 @@ final class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder>
                 .beginsWith("name", s, Case.INSENSITIVE)
                 .findAllSorted("postCount", Sort.DESCENDING);
         notifyDataSetChanged();
-        Danbooru.api.searchTags(s + "*").enqueue(this);
-    }
 
-    @Override
-    public void onResponse(Call<List<Tag>> call, Response<List<Tag>> response) {
-        realm.beginTransaction();
-        realm.copyToRealmOrUpdate(response.body());
-        realm.commitTransaction();
-        // above lines triggers onChange()
-    }
-
-    @Override
-    public void onFailure(Call<List<Tag>> call, Throwable t) {
-        Timber.e(t, "Error fetching tag suggestions");
+        Danbooru.api.searchTags(s + "*")
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        tags -> realm.executeTransaction(
+                                realm1 -> realm.copyToRealmOrUpdate(tags)),
+                        throwable -> Timber.e(throwable, "Error fetching tag suggestions")
+                );
     }
 }
