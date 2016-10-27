@@ -22,6 +22,11 @@ public final class U {
     public static void picassoCombo(final ImageView imageView,
                                     final RequestCreator thumbnail,
                                     final RequestCreator large) {
+        final Target previousReq = (Target) imageView.getTag();
+        if (previousReq != null) {
+            Picasso.with(Chesto.getInstance()).cancelRequest(previousReq);
+        }
+
         Target target = new Target() {
             @Override
             public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {

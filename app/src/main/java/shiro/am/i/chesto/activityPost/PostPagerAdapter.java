@@ -6,12 +6,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
 import jp.wasabeef.picasso.transformations.BlurTransformation;
-import shiro.am.i.chesto.databasePost.PostStore;
 import shiro.am.i.chesto.R;
-import shiro.am.i.chesto.U;
+import shiro.am.i.chesto.databasePost.PostStore;
 import shiro.am.i.chesto.retrofitDanbooru.Post;
 
 /**
@@ -32,16 +32,35 @@ final class PostPagerAdapter extends PagerAdapter {
         final ImageView imageView = ImageViewRecycler.getView(mParent, container);
         final Post post = POST_STORE.get(position);
 
-        U.picassoCombo(
-                imageView,
-                Picasso.with(mParent)
-                        .load(post.getPreviewFileUrl())
-                        .placeholder(R.drawable.ic_image_placeholder)
-                        .transform(new BlurTransformation(mParent, 1)),
-                Picasso.with(mParent)
-                        .load(post.getFileUrl())
-                        .error(R.drawable.ic_image_broken)
-        );
+        Picasso.with(mParent)
+                .load(post.getFileUrl())
+                .fetch();
+
+        Picasso.with(mParent)
+                .load(post.getPreviewFileUrl())
+                .placeholder(R.drawable.ic_image_placeholder)
+                .transform(new BlurTransformation(mParent, 1))
+                .into(imageView, new Callback() {
+                    @Override
+                    public void onSuccess() {
+                        loadLarge();
+                    }
+
+                    @Override
+                    public void onError() {
+                        loadLarge();
+                    }
+
+                    void loadLarge() {
+                        Picasso.with(mParent)
+                                .load(post.getFileUrl())
+                                .error(R.drawable.ic_image_placeholder)
+                                .noPlaceholder()
+                                .fit()
+                                .centerInside()
+                                .into(imageView);
+                    }
+                });
 
         return imageView;
     }
