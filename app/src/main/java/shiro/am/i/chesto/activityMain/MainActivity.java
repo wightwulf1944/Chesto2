@@ -57,7 +57,7 @@ public final class MainActivity extends AppCompatActivity implements Observer {
         swipeLayout.setOnRefreshListener(POST_STORE);
 
         POST_STORE.setObserver(this);
-        POST_STORE.newSearch("lowres rating:safe");
+        POST_STORE.newSearch("");
 
         handleIntent(getIntent());
     }
