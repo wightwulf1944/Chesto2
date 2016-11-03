@@ -33,6 +33,10 @@ final class PostPagerAdapter extends PagerAdapter {
 
     @Override
     public Object instantiateItem(ViewGroup container, int position) {
+        if (position >= POST_STORE.size() - 5) {
+            POST_STORE.requestMorePosts();
+        }
+
         final ImageView imageView = ImageViewRecycler.getView(mParent, container);
         final Post post = POST_STORE.get(position);
 
