@@ -15,14 +15,17 @@ import android.view.MenuItem;
 import com.fivehundredpx.greedolayout.GreedoLayoutManager;
 import com.fivehundredpx.greedolayout.GreedoSpacingItemDecoration;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
+import shiro.am.i.chesto.PostStore;
 import shiro.am.i.chesto.R;
 import shiro.am.i.chesto.U;
 import shiro.am.i.chesto.activitySearch.SearchActivity;
-import shiro.am.i.chesto.databasePost.Observer;
-import shiro.am.i.chesto.databasePost.PostStore;
 import timber.log.Timber;
 
-public final class MainActivity extends AppCompatActivity implements Observer {
+public final class MainActivity extends AppCompatActivity {
 
     private static final PostStore POST_STORE = PostStore.getInstance();
 
@@ -36,6 +39,7 @@ public final class MainActivity extends AppCompatActivity implements Observer {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        EventBus.getDefault().register(this);
 
         appbar = (AppBarLayout) findViewById(R.id.appbar);
 
@@ -43,8 +47,7 @@ public final class MainActivity extends AppCompatActivity implements Observer {
         setSupportActionBar(toolbar);
 
         layoutManager = new GreedoLayoutManager(POST_STORE);
-        final int maxRowHeight = getResources().getDisplayMetrics().heightPixels / 3;
-        layoutManager.setMaxRowHeight(maxRowHeight);
+        layoutManager.setMaxRowHeight(300);
 
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
         recyclerView.setHasFixedSize(true);
@@ -54,12 +57,16 @@ public final class MainActivity extends AppCompatActivity implements Observer {
 
         swipeLayout = (SwipeRefreshLayout) findViewById(R.id.swipeLayout);
         swipeLayout.setColorSchemeColors(ContextCompat.getColor(this, R.color.colorPrimaryDark));
-        swipeLayout.setOnRefreshListener(POST_STORE);
+        swipeLayout.setOnRefreshListener(POST_STORE::refresh);
 
-        POST_STORE.setObserver(this);
         POST_STORE.newSearch("");
-
         handleIntent(getIntent());
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        EventBus.getDefault().unregister(this);
     }
 
     @Override
@@ -96,21 +103,19 @@ public final class MainActivity extends AppCompatActivity implements Observer {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.action_search:
-                startActivity(new Intent(this, SearchActivity.class));
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
+        if (item.getItemId() == R.id.action_search) {
+            startActivity(new Intent(this, SearchActivity.class));
+            return true;
         }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
     public void onBackPressed() {
-        final boolean appbarIsCollapsed = (appbar.getHeight() - appbar.getBottom()) != 0;
+        final boolean appbarIsExpanded = appbar.getHeight() - appbar.getBottom() != 0;
         final boolean recyclerViewIsAtTop = layoutManager.findFirstVisibleItemPosition() == 0;
 
-        if (appbarIsCollapsed || !recyclerViewIsAtTop) {
+        if (appbarIsExpanded || !recyclerViewIsAtTop) {
             scrollToTop();
             Snackbar.make(recyclerView, getString(R.string.snackbar_mainActivity), Snackbar.LENGTH_SHORT).show();
         } else {
@@ -124,13 +129,18 @@ public final class MainActivity extends AppCompatActivity implements Observer {
         appbar.setExpanded(true);
     }
 
-    @Override
-    public void onUpdateStart() {
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEvent(PostStore.Event.LoadStarted event) {
         swipeLayout.setRefreshing(true);
     }
 
-    @Override
-    public void onUpdateDone() {
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEvent(PostStore.Event.LoadFinished event) {
         swipeLayout.setRefreshing(false);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEvent(PostStore.Event.LoadError event) {
+        Snackbar.make(recyclerView, "Failed to get posts", Snackbar.LENGTH_LONG).show();
     }
 }

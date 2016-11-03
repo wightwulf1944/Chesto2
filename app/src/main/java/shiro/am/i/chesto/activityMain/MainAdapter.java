@@ -9,21 +9,31 @@ import android.widget.ImageView;
 
 import com.squareup.picasso.Picasso;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
+import shiro.am.i.chesto.PostStore;
 import shiro.am.i.chesto.R;
 import shiro.am.i.chesto.activityPost.PostActivity;
-import shiro.am.i.chesto.databasePost.PostStore;
 
 /**
  * Created by Shiro on 8/4/2016.
  */
-public final class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
+final class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
 
     private static final PostStore POST_STORE = PostStore.getInstance();
     private final AppCompatActivity mParent;
 
     MainAdapter(AppCompatActivity parent) {
         mParent = parent;
-        POST_STORE.setAdapter(this);
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    protected void finalize() throws Throwable {
+        super.finalize();
+        EventBus.getDefault().unregister(this);
     }
 
     @Override
@@ -51,9 +61,9 @@ public final class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHold
 
     class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
-        final ImageView imageView;
+        private final ImageView imageView;
 
-        public ViewHolder(ImageView v) {
+        ViewHolder(ImageView v) {
             super(v);
             imageView = v;
             imageView.setOnClickListener(this);
@@ -65,5 +75,15 @@ public final class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHold
             intent.putExtra("default", getAdapterPosition());
             mParent.startActivityForResult(intent, 0);
         }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEvent(PostStore.Event.Cleared event) {
+        notifyDataSetChanged();
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEvent(PostStore.Event.PostAdded event) {
+        notifyItemInserted(event.index);
     }
 }

@@ -1,7 +1,6 @@
 package shiro.am.i.chesto.activityPost;
 
 import android.Manifest;
-import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -80,7 +79,7 @@ public final class PostActivity extends AppCompatActivity {
                 intent.putExtra("default", viewPager.getCurrentItem());
                 startService(intent);
                 break;
-            case PackageManager.PERMISSION_DENIED:
+            default:
                 Toast.makeText(this, "Please allow access to save image", Toast.LENGTH_SHORT).show();
                 break;
         }

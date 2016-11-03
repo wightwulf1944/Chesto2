@@ -1,5 +1,6 @@
 package shiro.am.i.chesto.activityPost;
 
+import android.content.Context;
 import android.support.v4.view.PagerAdapter;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -7,11 +8,15 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.squareup.picasso.Callback;
+import com.squareup.picasso.MemoryPolicy;
 import com.squareup.picasso.Picasso;
 
+import java.util.LinkedList;
+import java.util.Queue;
+
 import jp.wasabeef.picasso.transformations.BlurTransformation;
+import shiro.am.i.chesto.PostStore;
 import shiro.am.i.chesto.R;
-import shiro.am.i.chesto.databasePost.PostStore;
 import shiro.am.i.chesto.retrofitDanbooru.Post;
 
 /**
@@ -24,17 +29,12 @@ final class PostPagerAdapter extends PagerAdapter {
 
     PostPagerAdapter(AppCompatActivity parent) {
         mParent = parent;
-        POST_STORE.setPagerAdapter(this);
     }
 
     @Override
     public Object instantiateItem(ViewGroup container, int position) {
         final ImageView imageView = ImageViewRecycler.getView(mParent, container);
         final Post post = POST_STORE.get(position);
-
-        Picasso.with(mParent)
-                .load(post.getFileUrl())
-                .fetch();
 
         Picasso.with(mParent)
                 .load(post.getPreviewFileUrl())
@@ -58,6 +58,7 @@ final class PostPagerAdapter extends PagerAdapter {
                                 .noPlaceholder()
                                 .fit()
                                 .centerInside()
+                                .memoryPolicy(MemoryPolicy.NO_CACHE, MemoryPolicy.NO_STORE)
                                 .into(imageView);
                     }
                 });
@@ -77,6 +78,29 @@ final class PostPagerAdapter extends PagerAdapter {
 
     @Override
     public boolean isViewFromObject(View view, Object object) {
-        return view == object;
+        return view.equals(object);
+    }
+
+    // Handles preserving and recycling views for this adapter
+    private static final class ImageViewRecycler {
+        private static final Queue<ImageView> recycledViews = new LinkedList<>();
+
+        private static ImageView getView(Context context, ViewGroup container) {
+            final ImageView view;
+
+            if (recycledViews.isEmpty()) {
+                view = new ImageView(context);
+            } else {
+                view = recycledViews.remove();
+            }
+
+            container.addView(view);
+            return view;
+        }
+
+        private static void recycleView(ImageView view, ViewGroup container) {
+            recycledViews.add(view);
+            container.removeView(view);
+        }
     }
 }

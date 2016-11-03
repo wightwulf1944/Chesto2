@@ -45,4 +45,6 @@ dependencies {
     compile 'io.reactivex:rxandroid:1.2.1'
     //    https://github.com/ReactiveX/RxJava
     compile 'io.reactivex:rxjava:1.2.1'
+    //    https://github.com/greenrobot/EventBus
+    compile 'org.greenrobot:eventbus:3.0.0'
 }

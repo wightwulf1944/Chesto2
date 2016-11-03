@@ -9,9 +9,9 @@ import android.widget.TextView;
 
 import org.apmem.tools.layouts.FlowLayout;
 
+import shiro.am.i.chesto.PostStore;
 import shiro.am.i.chesto.R;
 import shiro.am.i.chesto.activityMain.MainActivity;
-import shiro.am.i.chesto.databasePost.PostStore;
 import shiro.am.i.chesto.retrofitDanbooru.Post;
 
 /**

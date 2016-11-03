@@ -93,7 +93,7 @@ public final class SearchActivity extends AppCompatActivity
 
     @Override
     public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
+        //         not needed
     }
 
     @Override
@@ -108,6 +108,6 @@ public final class SearchActivity extends AppCompatActivity
 
     @Override
     public void afterTextChanged(Editable editable) {
-
+        //         not needed
     }
 }
