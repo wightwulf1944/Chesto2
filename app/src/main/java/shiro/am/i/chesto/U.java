@@ -14,6 +14,10 @@ import com.squareup.picasso.Target;
  */
 public final class U {
 
+    private U() {
+        throw new AssertionError("Tried to create instance");
+    }
+
     public static int dpToPx(float dp) {
         return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp,
                 Chesto.getInstance().getResources().getDisplayMetrics());
