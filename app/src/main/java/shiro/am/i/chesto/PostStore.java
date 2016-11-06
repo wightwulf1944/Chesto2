@@ -4,11 +4,8 @@ import com.fivehundredpx.greedolayout.GreedoLayoutSizeCalculator;
 
 import org.greenrobot.eventbus.EventBus;
 
-import io.realm.Case;
-import io.realm.Realm;
-import io.realm.RealmQuery;
-import io.realm.RealmResults;
-import io.realm.Sort;
+import java.util.ArrayList;
+
 import rx.Observable;
 import rx.Observer;
 import rx.android.schedulers.AndroidSchedulers;
@@ -23,11 +20,9 @@ import timber.log.Timber;
 public final class PostStore {
 
     private static final EventBus eventBus = EventBus.getDefault();
-    private static final Realm realm = Realm.getDefaultInstance();
-    private static RealmResults<Post> results;
+    private static final ArrayList<Post> list = new ArrayList<>(40);
     private static String currentQuery;
     private static int currentPage;
-    private static int loadedPosts;
     private static boolean isLoading;
 
     private PostStore() {
@@ -35,15 +30,15 @@ public final class PostStore {
     }
 
     public static Post get(int i) {
-        if (i > loadedPosts - 5 && !isLoading) {
+        if (i >= list.size() - 5 && !isLoading) {
             fetchPosts();
         }
 
-        return results.get(i);
+        return list.get(i);
     }
 
     public static int size() {
-        return results.size();
+        return list.size();
     }
 
     public static void refresh() {
@@ -51,16 +46,13 @@ public final class PostStore {
     }
 
     public static void newSearch(String tags) {
-        RealmQuery<Post> query = realm.where(Post.class);
-        for (String tag : tags.split(" ")) {
-            query = query.contains("tagString", tag, Case.INSENSITIVE);
+        if (!list.isEmpty()) {
+            list.clear();
+            eventBus.post(new Event.Cleared());
         }
-        results = query.findAllSorted("id", Sort.DESCENDING);
-        eventBus.post(new Event.Cleared());
 
         currentQuery = tags;
         currentPage = 1;
-        loadedPosts = 0;
         fetchPosts();
     }
 
@@ -71,16 +63,10 @@ public final class PostStore {
                 .subscribeOn(Schedulers.io())
                 .flatMap(Observable::from)
                 .filter(post -> post.getPreviewFileUrl() != null)
+                .filter(post -> !list.contains(post))
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnSubscribe(() -> eventBus.post(new Event.LoadStarted()))
                 .doOnTerminate(() -> eventBus.post(new Event.LoadFinished()))
-                .doOnNext(post -> {
-                    realm.beginTransaction();
-                    realm.copyToRealmOrUpdate(post);
-                    realm.commitTransaction();
-                    ++loadedPosts;
-                })
-                .filter(post -> !results.contains(post))
                 .subscribe(new Observer<Post>() {
                     @Override
                     public void onCompleted() {
@@ -96,7 +82,8 @@ public final class PostStore {
 
                     @Override
                     public void onNext(Post post) {
-                        eventBus.post(new Event.PostAdded(loadedPosts));
+                        list.add(post);
+                        eventBus.post(new Event.PostAdded(list.size()));
                     }
                 });
     }
@@ -104,12 +91,12 @@ public final class PostStore {
     public static class RatioCalculator implements GreedoLayoutSizeCalculator.SizeCalculatorDelegate {
         @Override
         public double aspectRatioForIndex(int i) {
-            if (i >= results.size()) {
+            if (i >= list.size()) {
                 return 1.0;
             } else {
                 final double minRatio = 0.5;
                 final double maxRatio = 5;
-                final Post post = results.get(i);
+                final Post post = list.get(i);
                 final double ratio = (double) post.getImageWidth() / post.getImageHeight();
 
                 if (ratio < minRatio) {
