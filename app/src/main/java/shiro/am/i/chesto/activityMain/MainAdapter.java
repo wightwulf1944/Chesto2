@@ -44,6 +44,7 @@ final class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
     public void onBindViewHolder(ViewHolder holder, int position) {
         Picasso.with(mParent)
                 .load(PostStore.get(position).getPreviewFileUrl())
+                .tag("MAIN_ACTIVITY")
                 .error(R.drawable.ic_image_broken)
                 .placeholder(R.drawable.ic_image_placeholder)
                 .into(holder.imageView);

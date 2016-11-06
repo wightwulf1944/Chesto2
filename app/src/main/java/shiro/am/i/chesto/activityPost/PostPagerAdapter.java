@@ -25,18 +25,25 @@ import shiro.am.i.chesto.retrofitDanbooru.Post;
 final class PostPagerAdapter extends PagerAdapter {
 
     private final AppCompatActivity mParent;
+    private int lastPosition = -1;
 
     PostPagerAdapter(AppCompatActivity parent) {
         mParent = parent;
     }
 
     @Override
-    public Object instantiateItem(ViewGroup container, int position) {
-        final ImageView imageView = ImageViewRecycler.getView(mParent, container);
+    public void setPrimaryItem(ViewGroup container, int position, Object object) {
+        if (position == lastPosition) {
+            return;
+        }
+
+        lastPosition = position;
+        final ImageView imageView = (ImageView) object;
         final Post post = PostStore.get(position);
 
         Picasso.with(mParent)
                 .load(post.getPreviewFileUrl())
+                .tag("POST_ACTIVITY")
                 .placeholder(R.drawable.ic_image_placeholder)
                 .transform(new BlurTransformation(mParent, 1))
                 .into(imageView, new Callback() {
@@ -53,6 +60,7 @@ final class PostPagerAdapter extends PagerAdapter {
                     void loadLarge() {
                         Picasso.with(mParent)
                                 .load(post.getFileUrl())
+                                .tag("POST_ACTIVITY")
                                 .error(R.drawable.ic_image_placeholder)
                                 .noPlaceholder()
                                 .fit()
@@ -61,13 +69,27 @@ final class PostPagerAdapter extends PagerAdapter {
                                 .into(imageView);
                     }
                 });
+    }
+
+    @Override
+    public Object instantiateItem(ViewGroup container, int position) {
+        final ImageView imageView = ImageViewRecycler.getView(mParent, container);
+
+        Picasso.with(mParent)
+                .load(PostStore.get(position).getPreviewFileUrl())
+                .tag("POST_ACTIVITY")
+                .placeholder(R.drawable.ic_image_placeholder)
+                .transform(new BlurTransformation(mParent, 1))
+                .into(imageView);
 
         return imageView;
     }
 
     @Override
     public void destroyItem(ViewGroup container, int position, Object object) {
-        ImageViewRecycler.recycleView((ImageView) object, container);
+        final ImageView imageView = (ImageView) object;
+        Picasso.with(mParent).cancelRequest(imageView);
+        ImageViewRecycler.recycleView(imageView, container);
     }
 
     @Override
