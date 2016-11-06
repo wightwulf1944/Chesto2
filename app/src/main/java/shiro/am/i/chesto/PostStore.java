@@ -17,43 +17,48 @@ import timber.log.Timber;
 /**
  * Created by Shiro on 8/4/2016.
  */
-public final class PostStore
-        extends ArrayList<Post>
-        implements GreedoLayoutSizeCalculator.SizeCalculatorDelegate {
+public final class PostStore {
 
-    private static final PostStore instance = new PostStore();
     private static final EventBus eventBus = EventBus.getDefault();
-    private String currentQuery;
-    private int currentPage;
+    private static final ArrayList<Post> list = new ArrayList<>(20);
+    private static String currentQuery;
+    private static int currentPage;
 
     private PostStore() {
-        // disable instantiation
+        throw new AssertionError("Tried to create instance");
     }
 
-    public static PostStore getInstance() {
-        return instance;
+    public static Post get(int i) {
+        if (i >= list.size() - 5) {
+            fetchPosts();
+        }
+        return list.get(i);
     }
 
-    public void refresh() {
+    public static int size() {
+        return list.size();
+    }
+
+    public static void refresh() {
         newSearch(currentQuery);
     }
 
-    public void newSearch(String tags) {
-        if (!isEmpty()) {
-            clear();
+    public static void newSearch(String tags) {
+        if (!list.isEmpty()) {
+            list.clear();
             eventBus.post(new Event.Cleared());
         }
         currentQuery = tags;
         currentPage = 1;
-        requestMorePosts();
+        fetchPosts();
     }
 
-    public void requestMorePosts() {
+    private static void fetchPosts() {
         Danbooru.api.getPosts(currentQuery, currentPage)
                 .subscribeOn(Schedulers.io())
                 .flatMap(Observable::from)
                 .filter(post -> post.getPreviewFileUrl() != null)
-                .filter(post -> !contains(post))
+                .filter(post -> !list.contains(post))
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnSubscribe(() -> eventBus.post(new Event.LoadStarted()))
                 .doOnTerminate(() -> eventBus.post(new Event.LoadFinished()))
@@ -65,36 +70,38 @@ public final class PostStore
 
                     @Override
                     public void onError(Throwable e) {
-                        Timber.e(e, "Error getting posts");
+                        Timber.e(e, "Error fetching posts");
                         eventBus.post(new Event.LoadError());
                     }
 
                     @Override
                     public void onNext(Post post) {
-                        add(post);
+                        list.add(post);
                         Event.PostAdded event = new Event.PostAdded();
-                        event.index = size();
+                        event.index = list.size();
                         eventBus.post(event);
                     }
                 });
     }
 
-    @Override
-    public double aspectRatioForIndex(int i) {
-        if (i >= size()) {
-            return 1.0;
-        } else {
-            final double minRatio = 0.5;
-            final double maxRatio = 5;
-            final Post post = get(i);
-            final double ratio = (double) post.getImageWidth() / post.getImageHeight();
-
-            if (ratio < minRatio) {
-                return minRatio;
-            } else if (ratio > maxRatio) {
-                return maxRatio;
+    public static class RatioCalculator implements GreedoLayoutSizeCalculator.SizeCalculatorDelegate {
+        @Override
+        public double aspectRatioForIndex(int i) {
+            if (i >= list.size()) {
+                return 1.0;
             } else {
-                return ratio;
+                final double minRatio = 0.5;
+                final double maxRatio = 5;
+                final Post post = list.get(i);
+                final double ratio = (double) post.getImageWidth() / post.getImageHeight();
+
+                if (ratio < minRatio) {
+                    return minRatio;
+                } else if (ratio > maxRatio) {
+                    return maxRatio;
+                } else {
+                    return ratio;
+                }
             }
         }
     }

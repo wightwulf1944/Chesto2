@@ -36,7 +36,7 @@ public final class ImageDownloaderService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
-        final Post post = PostStore.getInstance().get(intent.getIntExtra("default", -1));
+        final Post post = PostStore.get(intent.getIntExtra("default", -1));
         final String fileName = post.getId() + ".png";
 
         ToastHelper.show("Saving: " + fileName);

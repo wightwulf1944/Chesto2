@@ -19,7 +19,6 @@ import shiro.am.i.chesto.retrofitDanbooru.Post;
  */
 final class TagLayout extends FlowLayout {
 
-    private static final PostStore POST_STORE = PostStore.getInstance();
     private final Context mContext = getContext();
     private final LayoutInflater inflater = LayoutInflater.from(mContext);
 
@@ -36,7 +35,7 @@ final class TagLayout extends FlowLayout {
     }
 
     void setCurrentPost(final int postIndex) {
-        final Post post = POST_STORE.get(postIndex);
+        final Post post = PostStore.get(postIndex);
         removeAllViews();
 
         addCategory("Copyrights: ", R.layout.item_tag_copyright, post.getTagStringCopyright());

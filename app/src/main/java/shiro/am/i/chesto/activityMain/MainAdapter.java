@@ -22,7 +22,6 @@ import shiro.am.i.chesto.activityPost.PostActivity;
  */
 final class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
 
-    private static final PostStore POST_STORE = PostStore.getInstance();
     private final AppCompatActivity mParent;
 
     MainAdapter(AppCompatActivity parent) {
@@ -43,12 +42,8 @@ final class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        if (position >= POST_STORE.size() - 5) {
-            POST_STORE.requestMorePosts();
-        }
-
         Picasso.with(mParent)
-                .load(POST_STORE.get(position).getPreviewFileUrl())
+                .load(PostStore.get(position).getPreviewFileUrl())
                 .error(R.drawable.ic_image_broken)
                 .placeholder(R.drawable.ic_image_placeholder)
                 .into(holder.imageView);
@@ -56,7 +51,7 @@ final class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
 
     @Override
     public int getItemCount() {
-        return POST_STORE.size();
+        return PostStore.size();
     }
 
     class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {

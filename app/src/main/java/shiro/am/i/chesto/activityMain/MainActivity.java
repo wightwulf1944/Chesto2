@@ -27,8 +27,6 @@ import timber.log.Timber;
 
 public final class MainActivity extends AppCompatActivity {
 
-    private static final PostStore POST_STORE = PostStore.getInstance();
-
     private Toolbar toolbar;
     private AppBarLayout appbar;
     private GreedoLayoutManager layoutManager;
@@ -46,7 +44,7 @@ public final class MainActivity extends AppCompatActivity {
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        layoutManager = new GreedoLayoutManager(POST_STORE);
+        layoutManager = new GreedoLayoutManager(new PostStore.RatioCalculator());
         layoutManager.setMaxRowHeight(300);
 
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
@@ -57,9 +55,9 @@ public final class MainActivity extends AppCompatActivity {
 
         swipeLayout = (SwipeRefreshLayout) findViewById(R.id.swipeLayout);
         swipeLayout.setColorSchemeColors(ContextCompat.getColor(this, R.color.colorPrimaryDark));
-        swipeLayout.setOnRefreshListener(POST_STORE::refresh);
+        swipeLayout.setOnRefreshListener(PostStore::refresh);
 
-        POST_STORE.newSearch("");
+        PostStore.newSearch("");
         handleIntent(getIntent());
     }
 
@@ -82,7 +80,7 @@ public final class MainActivity extends AppCompatActivity {
 
         if (intent.getAction().equals(Intent.ACTION_SEARCH)) {
             final String query = intent.getDataString();
-            POST_STORE.newSearch(query);
+            PostStore.newSearch(query);
             toolbar.setSubtitle(query);
         }
     }

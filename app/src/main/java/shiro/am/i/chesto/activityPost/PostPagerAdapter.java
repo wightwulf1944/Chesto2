@@ -24,7 +24,6 @@ import shiro.am.i.chesto.retrofitDanbooru.Post;
  */
 final class PostPagerAdapter extends PagerAdapter {
 
-    private static final PostStore POST_STORE = PostStore.getInstance();
     private final AppCompatActivity mParent;
 
     PostPagerAdapter(AppCompatActivity parent) {
@@ -33,12 +32,8 @@ final class PostPagerAdapter extends PagerAdapter {
 
     @Override
     public Object instantiateItem(ViewGroup container, int position) {
-        if (position >= POST_STORE.size() - 5) {
-            POST_STORE.requestMorePosts();
-        }
-
         final ImageView imageView = ImageViewRecycler.getView(mParent, container);
-        final Post post = POST_STORE.get(position);
+        final Post post = PostStore.get(position);
 
         Picasso.with(mParent)
                 .load(post.getPreviewFileUrl())
@@ -77,7 +72,7 @@ final class PostPagerAdapter extends PagerAdapter {
 
     @Override
     public int getCount() {
-        return POST_STORE.size();
+        return PostStore.size();
     }
 
     @Override
