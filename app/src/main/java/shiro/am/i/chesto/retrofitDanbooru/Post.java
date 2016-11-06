@@ -2,16 +2,22 @@ package shiro.am.i.chesto.retrofitDanbooru;
 
 import com.google.gson.annotations.SerializedName;
 
+import io.realm.RealmObject;
+import io.realm.annotations.PrimaryKey;
+
 /**
  * Created by Shiro on 7/29/2016.
  */
-public class Post {
+public class Post extends RealmObject {
+    @PrimaryKey
     @SerializedName("id")
     private int id;
     @SerializedName("image_width")
     private int imageWidth;
     @SerializedName("image_height")
     private int imageHeight;
+    @SerializedName("tag_string")
+    private String tagString;
     @SerializedName("tag_string_artist")
     private String tagStringArtist;
     @SerializedName("tag_string_character")

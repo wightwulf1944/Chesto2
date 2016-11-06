@@ -4,8 +4,11 @@ import com.fivehundredpx.greedolayout.GreedoLayoutSizeCalculator;
 
 import org.greenrobot.eventbus.EventBus;
 
-import java.util.ArrayList;
-
+import io.realm.Case;
+import io.realm.Realm;
+import io.realm.RealmQuery;
+import io.realm.RealmResults;
+import io.realm.Sort;
 import rx.Observable;
 import rx.Observer;
 import rx.android.schedulers.AndroidSchedulers;
@@ -20,23 +23,27 @@ import timber.log.Timber;
 public final class PostStore {
 
     private static final EventBus eventBus = EventBus.getDefault();
-    private static final ArrayList<Post> list = new ArrayList<>(20);
+    private static final Realm realm = Realm.getDefaultInstance();
+    private static RealmResults<Post> results;
     private static String currentQuery;
     private static int currentPage;
+    private static int loadedPosts;
+    private static boolean isLoading;
 
     private PostStore() {
         throw new AssertionError("Tried to create instance");
     }
 
     public static Post get(int i) {
-        if (i >= list.size() - 5) {
+        if (i > loadedPosts - 5 && !isLoading) {
             fetchPosts();
         }
-        return list.get(i);
+
+        return results.get(i);
     }
 
     public static int size() {
-        return list.size();
+        return results.size();
     }
 
     public static void refresh() {
@@ -44,28 +51,41 @@ public final class PostStore {
     }
 
     public static void newSearch(String tags) {
-        if (!list.isEmpty()) {
-            list.clear();
-            eventBus.post(new Event.Cleared());
+        RealmQuery<Post> query = realm.where(Post.class);
+        for (String tag : tags.split(" ")) {
+            query = query.contains("tagString", tag, Case.INSENSITIVE);
         }
+        results = query.findAllSorted("id", Sort.DESCENDING);
+        eventBus.post(new Event.Cleared());
+
         currentQuery = tags;
         currentPage = 1;
+        loadedPosts = 0;
         fetchPosts();
     }
 
     private static void fetchPosts() {
+        isLoading = true;
+
         Danbooru.api.getPosts(currentQuery, currentPage)
                 .subscribeOn(Schedulers.io())
                 .flatMap(Observable::from)
                 .filter(post -> post.getPreviewFileUrl() != null)
-                .filter(post -> !list.contains(post))
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnSubscribe(() -> eventBus.post(new Event.LoadStarted()))
                 .doOnTerminate(() -> eventBus.post(new Event.LoadFinished()))
+                .doOnNext(post -> {
+                    realm.beginTransaction();
+                    realm.copyToRealmOrUpdate(post);
+                    realm.commitTransaction();
+                    ++loadedPosts;
+                })
+                .filter(post -> !results.contains(post))
                 .subscribe(new Observer<Post>() {
                     @Override
                     public void onCompleted() {
                         ++currentPage;
+                        isLoading = false;
                     }
 
                     @Override
@@ -76,10 +96,7 @@ public final class PostStore {
 
                     @Override
                     public void onNext(Post post) {
-                        list.add(post);
-                        Event.PostAdded event = new Event.PostAdded();
-                        event.index = list.size();
-                        eventBus.post(event);
+                        eventBus.post(new Event.PostAdded(loadedPosts));
                     }
                 });
     }
@@ -87,12 +104,12 @@ public final class PostStore {
     public static class RatioCalculator implements GreedoLayoutSizeCalculator.SizeCalculatorDelegate {
         @Override
         public double aspectRatioForIndex(int i) {
-            if (i >= list.size()) {
+            if (i >= results.size()) {
                 return 1.0;
             } else {
                 final double minRatio = 0.5;
                 final double maxRatio = 5;
-                final Post post = list.get(i);
+                final Post post = results.get(i);
                 final double ratio = (double) post.getImageWidth() / post.getImageHeight();
 
                 if (ratio < minRatio) {
@@ -108,6 +125,7 @@ public final class PostStore {
 
     public static class Event {
         private Event() {
+            throw new AssertionError("Tried to create instance");
         }
 
         public static class LoadStarted {
@@ -124,6 +142,10 @@ public final class PostStore {
 
         public static class PostAdded {
             public int index;
+
+            private PostAdded(int i) {
+                index = i;
+            }
         }
     }
 }

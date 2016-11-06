@@ -152,6 +152,6 @@ public final class MainActivity extends AppCompatActivity {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(PostStore.Event.LoadError event) {
-        Snackbar.make(recyclerView, "Failed to get posts", Snackbar.LENGTH_LONG).show();
+        Snackbar.make(recyclerView, "Check your connection. Showing offline posts.", Snackbar.LENGTH_LONG).show();
     }
 }
