@@ -25,20 +25,14 @@ import shiro.am.i.chesto.retrofitDanbooru.Post;
 final class PostPagerAdapter extends PagerAdapter {
 
     private final AppCompatActivity mParent;
-    private int lastPosition = -1;
 
     PostPagerAdapter(AppCompatActivity parent) {
         mParent = parent;
     }
 
     @Override
-    public void setPrimaryItem(ViewGroup container, int position, Object object) {
-        if (position == lastPosition) {
-            return;
-        }
-
-        lastPosition = position;
-        final ImageView imageView = (ImageView) object;
+    public Object instantiateItem(ViewGroup container, int position) {
+        final ImageView imageView = ImageViewRecycler.getView(mParent, container);
         final Post post = PostStore.get(position);
 
         Picasso.with(mParent)
@@ -69,18 +63,6 @@ final class PostPagerAdapter extends PagerAdapter {
                                 .into(imageView);
                     }
                 });
-    }
-
-    @Override
-    public Object instantiateItem(ViewGroup container, int position) {
-        final ImageView imageView = ImageViewRecycler.getView(mParent, container);
-
-        Picasso.with(mParent)
-                .load(PostStore.get(position).getPreviewFileUrl())
-                .tag("POST_ACTIVITY")
-                .placeholder(R.drawable.ic_image_placeholder)
-                .transform(new BlurTransformation(mParent, 1))
-                .into(imageView);
 
         return imageView;
     }
