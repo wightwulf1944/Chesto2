@@ -7,8 +7,6 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Environment;
 
-import com.squareup.picasso.Picasso;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;

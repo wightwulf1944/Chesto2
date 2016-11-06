@@ -14,7 +14,6 @@ import android.view.MenuItem;
 
 import com.fivehundredpx.greedolayout.GreedoLayoutManager;
 import com.fivehundredpx.greedolayout.GreedoSpacingItemDecoration;
-import com.squareup.picasso.Picasso;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -60,18 +59,6 @@ public final class MainActivity extends AppCompatActivity {
 
         PostStore.newSearch("");
         handleIntent(getIntent());
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        Picasso.with(this).resumeTag("MAIN_ACTIVITY");
-    }
-
-    @Override
-    protected void onPause() {
-        Picasso.with(this).pauseTag("MAIN_ACTIVITY");
-        super.onPause();
     }
 
     @Override

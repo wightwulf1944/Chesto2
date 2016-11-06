@@ -7,14 +7,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
-import com.squareup.picasso.Callback;
-import com.squareup.picasso.MemoryPolicy;
-import com.squareup.picasso.Picasso;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
 import java.util.LinkedList;
 import java.util.Queue;
 
-import jp.wasabeef.picasso.transformations.BlurTransformation;
+import jp.wasabeef.glide.transformations.BlurTransformation;
 import shiro.am.i.chesto.PostStore;
 import shiro.am.i.chesto.R;
 import shiro.am.i.chesto.retrofitDanbooru.Post;
@@ -35,34 +34,18 @@ final class PostPagerAdapter extends PagerAdapter {
         final ImageView imageView = ImageViewRecycler.getView(mParent, container);
         final Post post = PostStore.get(position);
 
-        Picasso.with(mParent)
-                .load(post.getPreviewFileUrl())
-                .tag("POST_ACTIVITY")
+        Glide.with(mParent)
+                .load(post.getFileUrl())
                 .placeholder(R.drawable.ic_image_placeholder)
-                .transform(new BlurTransformation(mParent, 1))
-                .into(imageView, new Callback() {
-                    @Override
-                    public void onSuccess() {
-                        loadLarge();
-                    }
-
-                    @Override
-                    public void onError() {
-                        loadLarge();
-                    }
-
-                    void loadLarge() {
-                        Picasso.with(mParent)
-                                .load(post.getFileUrl())
-                                .tag("POST_ACTIVITY")
-                                .error(R.drawable.ic_image_placeholder)
-                                .noPlaceholder()
-                                .fit()
-                                .centerInside()
-                                .memoryPolicy(MemoryPolicy.NO_CACHE, MemoryPolicy.NO_STORE)
-                                .into(imageView);
-                    }
-                });
+                .error(R.drawable.ic_image_placeholder)
+                .thumbnail(
+                        Glide.with(mParent)
+                                .load(post.getPreviewFileUrl())
+                                .bitmapTransform(new BlurTransformation(mParent, 1))
+                                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+                )
+                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+                .into(imageView);
 
         return imageView;
     }
@@ -70,7 +53,7 @@ final class PostPagerAdapter extends PagerAdapter {
     @Override
     public void destroyItem(ViewGroup container, int position, Object object) {
         final ImageView imageView = (ImageView) object;
-        Picasso.with(mParent).cancelRequest(imageView);
+        Glide.clear(imageView);
         ImageViewRecycler.recycleView(imageView, container);
     }
 

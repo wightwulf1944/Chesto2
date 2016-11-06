@@ -7,7 +7,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
-import com.squareup.picasso.Picasso;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -42,11 +43,11 @@ final class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        Picasso.with(mParent)
+        Glide.with(mParent)
                 .load(PostStore.get(position).getPreviewFileUrl())
-                .tag("MAIN_ACTIVITY")
-                .error(R.drawable.ic_image_broken)
                 .placeholder(R.drawable.ic_image_placeholder)
+                .error(R.drawable.ic_image_broken)
+                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
                 .into(holder.imageView);
     }
 

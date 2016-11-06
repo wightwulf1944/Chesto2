@@ -11,8 +11,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Toast;
 
-import com.squareup.picasso.Picasso;
-
 import shiro.am.i.chesto.R;
 import shiro.am.i.chesto.serviceImageDownloader.ImageDownloaderService;
 
@@ -45,18 +43,6 @@ public final class PostActivity extends AppCompatActivity {
         });
 
         bottomSheet = new XBottomSheet(findViewById(R.id.bottomSheet));
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        Picasso.with(this).resumeTag("POST_ACTIVITY");
-    }
-
-    @Override
-    protected void onPause() {
-        Picasso.with(this).pauseTag("POST_ACTIVITY");
-        super.onPause();
     }
 
     private void finishAndReturnResult() {
