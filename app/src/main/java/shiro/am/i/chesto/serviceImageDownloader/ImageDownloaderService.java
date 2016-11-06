@@ -7,10 +7,11 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Environment;
 
+import com.bumptech.glide.Glide;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.IOException;
 
 import shiro.am.i.chesto.PostStore;
 import shiro.am.i.chesto.retrofitDanbooru.Post;
@@ -39,7 +40,7 @@ public final class ImageDownloaderService extends IntentService {
 
         ToastHelper.show("Saving: " + fileName);
 
-        final Bitmap bitmap = getImageBitmap(this, post.getFileUrl());
+        final Bitmap bitmap = getImageBitmap(this, post);
         final File file = getImageFile(fileName);
         if (saveImage(bitmap, file)) {
             notifyMediaScanner(this, file);
@@ -48,14 +49,16 @@ public final class ImageDownloaderService extends IntentService {
         ToastHelper.show("Saved: " + fileName);
     }
 
-    private static Bitmap getImageBitmap(Context context, String fileUrl) {
+    private static Bitmap getImageBitmap(Context context, Post post) {
         Bitmap bitmap = null;
         do {
             try {
-                bitmap = Picasso.with(context)
-                        .load(fileUrl)
+                bitmap = Glide.with(context)
+                        .load(post.getFileUrl())
+                        .asBitmap()
+                        .into(post.getImageWidth(), post.getImageHeight())
                         .get();
-            } catch (IOException e) {
+            } catch (Exception e) {
                 Timber.e(e, "getImageBitmap: error getting bitmap");
             }
         } while (bitmap == null);
