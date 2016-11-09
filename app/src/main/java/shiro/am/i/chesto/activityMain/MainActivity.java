@@ -30,6 +30,7 @@ public final class MainActivity extends AppCompatActivity {
     private Toolbar toolbar;
     private AppBarLayout appbar;
     private GreedoLayoutManager layoutManager;
+    private MainAdapter adapter;
     private RecyclerView recyclerView;
     private SwipeRefreshLayout swipeLayout;
 
@@ -47,10 +48,12 @@ public final class MainActivity extends AppCompatActivity {
         layoutManager = new GreedoLayoutManager(new PostStore.RatioCalculator());
         layoutManager.setMaxRowHeight(300);
 
+        adapter = new MainAdapter(this);
+
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
         recyclerView.setHasFixedSize(true);
         recyclerView.addItemDecoration(new GreedoSpacingItemDecoration(U.dpToPx(4)));
-        recyclerView.setAdapter(new MainAdapter(this));
+        recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(layoutManager);
 
         swipeLayout = (SwipeRefreshLayout) findViewById(R.id.swipeLayout);
@@ -140,5 +143,15 @@ public final class MainActivity extends AppCompatActivity {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(PostStore.Event.LoadError event) {
         Snackbar.make(recyclerView, "Check your connection.", Snackbar.LENGTH_LONG).show();
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEvent(PostStore.Event.Cleared event) {
+        adapter.notifyDataSetChanged();
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEvent(PostStore.Event.PostAdded event) {
+        adapter.notifyItemInserted(event.index);
     }
 }

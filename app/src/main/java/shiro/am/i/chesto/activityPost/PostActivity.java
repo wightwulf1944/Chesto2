@@ -11,6 +11,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Toast;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
+import shiro.am.i.chesto.PostStore;
 import shiro.am.i.chesto.R;
 import shiro.am.i.chesto.serviceImageDownloader.ImageDownloaderService;
 
@@ -20,20 +25,24 @@ import shiro.am.i.chesto.serviceImageDownloader.ImageDownloaderService;
 public final class PostActivity extends AppCompatActivity {
 
     private XBottomSheet bottomSheet;
+    private PostPagerAdapter adapter;
     private ViewPager viewPager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_post);
+        EventBus.getDefault().register(this);
 
         final int postIndex = getIntent().getIntExtra("default", -1);
 
         final TagLayout tagLayout = (TagLayout) findViewById(R.id.tagLayout);
         tagLayout.setCurrentPost(postIndex);
 
+        adapter = new PostPagerAdapter(this);
+
         viewPager = (ViewPager) findViewById(R.id.viewPager);
-        viewPager.setAdapter(new PostPagerAdapter(this));
+        viewPager.setAdapter(adapter);
         viewPager.setCurrentItem(postIndex);
         viewPager.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
             @Override
@@ -43,6 +52,12 @@ public final class PostActivity extends AppCompatActivity {
         });
 
         bottomSheet = new XBottomSheet(findViewById(R.id.bottomSheet));
+    }
+
+    @Override
+    protected void onDestroy() {
+        EventBus.getDefault().unregister(this);
+        super.onDestroy();
     }
 
     private void finishAndReturnResult() {
@@ -83,5 +98,10 @@ public final class PostActivity extends AppCompatActivity {
                 Toast.makeText(this, "Please allow access to save image", Toast.LENGTH_SHORT).show();
                 break;
         }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEvent(PostStore.Event.PostAdded event) {
+        adapter.notifyDataSetChanged();
     }
 }

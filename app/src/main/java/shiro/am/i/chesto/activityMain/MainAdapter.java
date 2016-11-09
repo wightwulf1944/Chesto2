@@ -27,13 +27,6 @@ final class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
 
     MainAdapter(AppCompatActivity parent) {
         mParent = parent;
-        EventBus.getDefault().register(this);
-    }
-
-    @Override
-    protected void finalize() throws Throwable {
-        super.finalize();
-        EventBus.getDefault().unregister(this);
     }
 
     @Override
@@ -72,15 +65,5 @@ final class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
             intent.putExtra("default", getAdapterPosition());
             mParent.startActivityForResult(intent, 0);
         }
-    }
-
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onEvent(PostStore.Event.Cleared event) {
-        notifyDataSetChanged();
-    }
-
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onEvent(PostStore.Event.PostAdded event) {
-        notifyItemInserted(event.index);
     }
 }
