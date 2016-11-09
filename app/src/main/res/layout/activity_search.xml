@@ -13,15 +13,14 @@
         android:layout_height="?attr/actionBarSize"
         android:background="?attr/colorPrimary"
         android:elevation="4dp"
-        android:theme="@style/AppTheme.AppBarOverlay">
+        android:theme="@style/AppTheme.AppBarOverlay"
+        app:contentInsetStartWithNavigation="0dp">
 
-        <EditText
-            android:id="@+id/edit_text"
+        <SearchView
+            android:id="@+id/search_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:hint="@string/action_search"
-            android:imeOptions="actionSearch"
-            android:singleLine="true" />
+            android:queryHint="Search" />
 
     </android.support.v7.widget.Toolbar>
 

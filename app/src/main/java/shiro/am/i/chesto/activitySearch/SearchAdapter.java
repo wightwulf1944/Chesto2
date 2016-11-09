@@ -5,12 +5,11 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
+import android.widget.SearchView;
 import android.widget.TextView;
 
 import io.realm.Case;
 import io.realm.Realm;
-import io.realm.RealmChangeListener;
 import io.realm.RealmResults;
 import io.realm.Sort;
 import rx.android.schedulers.AndroidSchedulers;
@@ -23,24 +22,21 @@ import timber.log.Timber;
 /**
  * Created by Shiro on 7/29/2016.
  */
-final class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder>
-        implements RealmChangeListener<Realm> {
+final class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder> {
 
     private static final Realm realm = Realm.getDefaultInstance();
 
     private final LayoutInflater inflater;
-    private final EditText mSearchField;
+    private final SearchView mSearchView;
     private RealmResults<Tag> suggestionsList;
-    private String currentWord;
+    private String currentWord = "";
 
-    SearchAdapter(Context context, EditText searchField) {
+    SearchAdapter(Context context, SearchView searchView) {
         inflater = LayoutInflater.from(context);
-        mSearchField = searchField;
+        mSearchView = searchView;
 
         suggestionsList = realm.where(Tag.class)
                 .findAllSorted("postCount", Sort.DESCENDING);
-
-        realm.addChangeListener(this);
     }
 
     @Override
@@ -73,23 +69,18 @@ final class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder>
 
         @Override
         public void onClick(View view) {
-            String text = mSearchField.getText()
+            String text = mSearchView.getQuery()
                     .toString()
-                    .replace(currentWord, name.getText().toString());
+                    .replaceFirst(currentWord, name.getText().toString());
 
-            mSearchField.setText(text);
+            mSearchView.setQuery(text, false);
         }
-    }
-
-    @Override
-    public void onChange(Realm element) {
-        notifyDataSetChanged();
     }
 
     void setQuery(String s) {
         currentWord = s;
         suggestionsList = realm.where(Tag.class)
-                .beginsWith("name", s, Case.INSENSITIVE)
+                .contains("name", s, Case.INSENSITIVE)
                 .findAllSorted("postCount", Sort.DESCENDING);
         notifyDataSetChanged();
 
@@ -97,8 +88,12 @@ final class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder>
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
-                        tags -> realm.executeTransaction(
-                                realm1 -> realm.copyToRealmOrUpdate(tags)),
+                        tags -> {
+                            realm.beginTransaction();
+                            realm.copyToRealmOrUpdate(tags);
+                            realm.commitTransaction();
+                            notifyDataSetChanged();
+                        },
                         throwable -> Timber.e(throwable, "Error fetching tag suggestions")
                 );
     }
