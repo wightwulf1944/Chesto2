@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Environment;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.content.ContextCompat;
 
 import com.bumptech.glide.Glide;
 
@@ -14,6 +16,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 
 import shiro.am.i.chesto.PostStore;
+import shiro.am.i.chesto.R;
 import shiro.am.i.chesto.retrofitDanbooru.Post;
 import timber.log.Timber;
 
@@ -30,7 +33,21 @@ public final class ImageDownloaderService extends IntentService {
     @Override
     public void onCreate() {
         super.onCreate();
-        NotificationHelper.bind(this);
+        final String title = getString(R.string.app_name);
+        final int color = ContextCompat.getColor(this, R.color.colorPrimary);
+        startForeground(1,
+                new NotificationCompat.Builder(this)
+                        .setSmallIcon(R.mipmap.ic_launcher)
+                        .setContentTitle(title)
+                        .setContentText("Downloading image(s)")
+                        .setColor(color)
+                        .setLocalOnly(true)
+                        .setOngoing(true)
+                        .setShowWhen(false)
+                        .setPriority(NotificationCompat.PRIORITY_LOW)
+                        .setCategory(NotificationCompat.CATEGORY_SERVICE)
+                        .build()
+        );
     }
 
     @Override

@@ -16,8 +16,6 @@ public class Post extends RealmObject {
     private int imageWidth;
     @SerializedName("image_height")
     private int imageHeight;
-    @SerializedName("tag_string")
-    private String tagString;
     @SerializedName("tag_string_artist")
     private String tagStringArtist;
     @SerializedName("tag_string_character")
