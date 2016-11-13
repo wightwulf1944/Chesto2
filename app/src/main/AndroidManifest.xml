@@ -25,7 +25,8 @@
         <activity
             android:name=".activityPost.PostActivity"
             android:launchMode="singleTop"
-            android:parentActivityName=".activityMain.MainActivity">
+            android:parentActivityName=".activityMain.MainActivity"
+            android:theme="@style/AppTheme.Fullscreen">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".activityMain.MainActivity" />
