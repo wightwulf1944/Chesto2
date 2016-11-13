@@ -55,10 +55,11 @@ public final class SearchActivity extends AppCompatActivity
     @Override
     public boolean onQueryTextChange(String s) {
         final int spaceIndex = s.lastIndexOf(" ");
-        if (spaceIndex >= 0) {
-            s = s.substring(spaceIndex + 1);
+        if (spaceIndex != -1) {
+            adapter.setQuery(s.substring(spaceIndex + 1));
+        } else {
+            adapter.setQuery(s);
         }
-        adapter.setQuery(s);
         return true;
     }
 }
