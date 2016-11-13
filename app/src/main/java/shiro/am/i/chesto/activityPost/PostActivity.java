@@ -31,7 +31,6 @@ public final class PostActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_post);
-        EventBus.getDefault().register(this);
 
         final int postIndex = getIntent().getIntExtra("default", -1);
 
@@ -51,6 +50,8 @@ public final class PostActivity extends AppCompatActivity {
         });
 
         bottomSheet = new XBottomSheet(findViewById(R.id.bottomSheet));
+
+        EventBus.getDefault().register(this);
     }
 
     @Override
