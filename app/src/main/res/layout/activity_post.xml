@@ -59,6 +59,14 @@
             android:onClick="onDownloadButtonClicked"
             android:src="@drawable/ic_download" />
 
+        <ImageButton
+            android:id="@+id/browserButton"
+            style="@style/AppTheme.NavButton"
+            android:layout_toLeftOf="@id/downloadButton"
+            android:layout_toStartOf="@id/downloadButton"
+            android:onClick="onBrowserButtonClicked"
+            android:src="@drawable/ic_open_in_browser" />
+        
     </RelativeLayout>
 
 </android.support.design.widget.CoordinatorLayout>

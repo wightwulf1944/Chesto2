@@ -82,6 +82,15 @@ public final class PostActivity extends AppCompatActivity {
         bottomSheet.toggleState();
     }
 
+    public void onBrowserButtonClicked(View view) {
+        startActivity(
+                new Intent(
+                        Intent.ACTION_VIEW,
+                        PostStore.get(viewPager.getCurrentItem()).getUri()
+                )
+        );
+    }
+
     public void onDownloadButtonClicked(View view) {
         ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 0);
     }

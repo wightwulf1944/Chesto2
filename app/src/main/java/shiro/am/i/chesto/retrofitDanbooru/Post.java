@@ -1,5 +1,7 @@
 package shiro.am.i.chesto.retrofitDanbooru;
 
+import android.net.Uri;
+
 import com.google.gson.annotations.SerializedName;
 
 import io.realm.RealmObject;
@@ -67,6 +69,10 @@ public class Post extends RealmObject {
 
     public String getTagStringGeneral() {
         return tagStringGeneral;
+    }
+
+    public Uri getUri() {
+        return Uri.parse(BASE_URL + "/posts/" + id);
     }
 
     public String getFileUrl() {

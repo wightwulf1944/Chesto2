@@ -58,7 +58,7 @@ public final class MainActivity extends AppCompatActivity {
         swipeLayout = (SwipeRefreshLayout) findViewById(R.id.swipeLayout);
         swipeLayout.setColorSchemeColors(ContextCompat.getColor(this, R.color.colorPrimaryDark));
         swipeLayout.setOnRefreshListener(PostStore::refresh);
-        
+
         EventBus.getDefault().register(this);
 
         PostStore.newSearch("");
