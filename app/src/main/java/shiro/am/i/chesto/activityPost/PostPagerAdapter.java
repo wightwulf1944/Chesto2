@@ -5,7 +5,6 @@ import android.support.v4.view.PagerAdapter;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
@@ -17,6 +16,7 @@ import jp.wasabeef.glide.transformations.BlurTransformation;
 import shiro.am.i.chesto.PostStore;
 import shiro.am.i.chesto.R;
 import shiro.am.i.chesto.retrofitDanbooru.Post;
+import uk.co.senab.photoview.PhotoView;
 
 /**
  * Created by Shiro on 8/23/2016.
@@ -31,7 +31,7 @@ final class PostPagerAdapter extends PagerAdapter {
 
     @Override
     public Object instantiateItem(ViewGroup container, int position) {
-        final ImageView imageView = ImageViewRecycler.getView(mParent, container);
+        final PhotoView photoView = PhotoViewRecycler.getView(mParent, container);
         final Post post = PostStore.get(position);
 
         Glide.with(mParent)
@@ -45,16 +45,16 @@ final class PostPagerAdapter extends PagerAdapter {
                                 .diskCacheStrategy(DiskCacheStrategy.SOURCE)
                 )
                 .diskCacheStrategy(DiskCacheStrategy.SOURCE)
-                .into(imageView);
+                .into(photoView);
 
-        return imageView;
+        return photoView;
     }
 
     @Override
     public void destroyItem(ViewGroup container, int position, Object object) {
-        final ImageView imageView = (ImageView) object;
-        Glide.clear(imageView);
-        ImageViewRecycler.recycleView(imageView, container);
+        final PhotoView photoView = (PhotoView) object;
+        Glide.clear(photoView);
+        PhotoViewRecycler.recycleView(photoView, container);
     }
 
     @Override
@@ -68,14 +68,14 @@ final class PostPagerAdapter extends PagerAdapter {
     }
 
     // Handles preserving and recycling views for this adapter
-    private static final class ImageViewRecycler {
-        private static final Queue<ImageView> recycledViews = new LinkedList<>();
+    private static final class PhotoViewRecycler {
+        private static final Queue<PhotoView> recycledViews = new LinkedList<>();
 
-        private static ImageView getView(Context context, ViewGroup container) {
-            final ImageView view;
+        private static PhotoView getView(Context context, ViewGroup container) {
+            final PhotoView view;
 
             if (recycledViews.isEmpty()) {
-                view = new ImageView(context);
+                view = new PhotoView(context);
             } else {
                 view = recycledViews.remove();
             }
@@ -84,7 +84,7 @@ final class PostPagerAdapter extends PagerAdapter {
             return view;
         }
 
-        private static void recycleView(ImageView view, ViewGroup container) {
+        private static void recycleView(PhotoView view, ViewGroup container) {
             recycledViews.add(view);
             container.removeView(view);
         }

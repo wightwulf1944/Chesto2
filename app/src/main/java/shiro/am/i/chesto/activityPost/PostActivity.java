@@ -6,7 +6,6 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Toast;
@@ -26,7 +25,7 @@ public final class PostActivity extends AppCompatActivity {
 
     private XBottomSheet bottomSheet;
     private PostPagerAdapter adapter;
-    private ViewPager viewPager;
+    private HackyViewPager viewPager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,10 +40,10 @@ public final class PostActivity extends AppCompatActivity {
 
         adapter = new PostPagerAdapter(this);
 
-        viewPager = (ViewPager) findViewById(R.id.viewPager);
+        viewPager = (HackyViewPager) findViewById(R.id.viewPager);
         viewPager.setAdapter(adapter);
         viewPager.setCurrentItem(postIndex);
-        viewPager.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
+        viewPager.addOnPageChangeListener(new HackyViewPager.SimpleOnPageChangeListener() {
             @Override
             public void onPageSelected(int position) {
                 tagLayout.setCurrentPost(position);
