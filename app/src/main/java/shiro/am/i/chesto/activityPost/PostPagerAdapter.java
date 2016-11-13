@@ -35,12 +35,12 @@ final class PostPagerAdapter extends PagerAdapter {
         final Post post = PostStore.get(position);
 
         Glide.with(mParent)
-                .load(post.getFileUrl())
+                .load(post.getLargeFileUrl())
                 .placeholder(R.drawable.ic_image_placeholder)
                 .error(R.drawable.ic_image_placeholder)
                 .thumbnail(
                         Glide.with(mParent)
-                                .load(post.getPreviewFileUrl())
+                                .load(post.getSmallFileUrl())
                                 .bitmapTransform(new BlurTransformation(mParent, 1))
                                 .diskCacheStrategy(DiskCacheStrategy.SOURCE)
                 )

@@ -62,7 +62,7 @@ public final class PostStore {
         Danbooru.api.getPosts(currentQuery, currentPage)
                 .subscribeOn(Schedulers.io())
                 .flatMap(Observable::from)
-                .filter(post -> post.getPreviewFileUrl() != null)
+                .filter(Post::hasFileUrl)
                 .filter(post -> !list.contains(post))
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnSubscribe(() -> eventBus.post(new Event.LoadStarted()))

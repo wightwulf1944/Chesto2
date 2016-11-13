@@ -27,9 +27,9 @@ public class Post extends RealmObject {
     @SerializedName("tag_string_general")
     private String tagStringGeneral;
     @SerializedName("file_url")
-    private String fileUrl;
+    private String largeFileUrl;
     @SerializedName("preview_file_url")
-    private String previewFileUrl;
+    private String smallFileUrl;
 
     private static final String BASE_URL = "http://danbooru.donmai.us";
 
@@ -41,6 +41,14 @@ public class Post extends RealmObject {
         } else {
             return false;
         }
+    }
+
+    public boolean hasFileUrl() {
+        return smallFileUrl != null && largeFileUrl != null;
+    }
+
+    public Uri getUri() {
+        return Uri.parse(BASE_URL + "/posts/" + id);
     }
 
     public int getId() {
@@ -71,15 +79,11 @@ public class Post extends RealmObject {
         return tagStringGeneral;
     }
 
-    public Uri getUri() {
-        return Uri.parse(BASE_URL + "/posts/" + id);
+    public String getLargeFileUrl() {
+        return BASE_URL + largeFileUrl;
     }
 
-    public String getFileUrl() {
-        return (fileUrl == null) ? null : BASE_URL + fileUrl;
-    }
-
-    public String getPreviewFileUrl() {
-        return (previewFileUrl == null) ? null : BASE_URL + previewFileUrl;
+    public String getSmallFileUrl() {
+        return BASE_URL + smallFileUrl;
     }
 }

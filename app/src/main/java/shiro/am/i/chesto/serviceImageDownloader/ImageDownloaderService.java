@@ -71,7 +71,7 @@ public final class ImageDownloaderService extends IntentService {
         do {
             try {
                 bitmap = Glide.with(context)
-                        .load(post.getFileUrl())
+                        .load(post.getLargeFileUrl())
                         .asBitmap()
                         .into(post.getImageWidth(), post.getImageHeight())
                         .get();
