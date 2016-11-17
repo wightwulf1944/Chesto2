@@ -46,7 +46,8 @@ final class NotificationHelper {
                 .setSmallIcon(R.mipmap.ic_launcher)
                 .setContentTitle(title)
                 .setColor(color)
-                .setLocalOnly(true);
+                .setLocalOnly(true)
+                .setAutoCancel(true);
 
         service.startForeground(PERSISTENT_ID, persistentBuilder.build());
     }
