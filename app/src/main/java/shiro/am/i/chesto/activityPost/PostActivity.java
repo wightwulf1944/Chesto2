@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -102,6 +103,7 @@ public final class PostActivity extends AppCompatActivity {
                 Intent intent = new Intent(this, ImageDownloaderService.class);
                 intent.putExtra("default", viewPager.getCurrentItem());
                 startService(intent);
+                Snackbar.make(viewPager, "Download queued", Snackbar.LENGTH_SHORT).show();
                 break;
             default:
                 Toast.makeText(this, "Please allow access to save image", Toast.LENGTH_SHORT).show();

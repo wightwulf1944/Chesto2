@@ -55,7 +55,6 @@ public final class ImageDownloaderService extends IntentService {
         final Post post = PostStore.get(intent.getIntExtra("default", -1));
         final String fileName = post.getId() + ".png";
 
-        ToastHelper.show("Saving: " + fileName);
 
         final Bitmap bitmap = getImageBitmap(this, post);
         final File file = getImageFile(fileName);
@@ -63,7 +62,6 @@ public final class ImageDownloaderService extends IntentService {
             notifyMediaScanner(this, file);
         }
 
-        ToastHelper.show("Saved: " + fileName);
     }
 
     private static Bitmap getImageBitmap(Context context, Post post) {
