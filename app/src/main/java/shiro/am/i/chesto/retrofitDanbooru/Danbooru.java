@@ -24,6 +24,6 @@ public interface Danbooru {
     @GET("posts.json?limit=100")
     Observable<List<Post>> getPosts(@Query("tags") String tags, @Query("page") int page);
 
-    @GET("tags.json?search[hide_empty]=yes")
+    @GET("tags.json?search[order]=count&search[hide_empty]=yes")
     Observable<List<Tag>> searchTags(@Query("search[name_matches]") String tags);
 }
