@@ -57,21 +57,25 @@ public final class PostStore {
     }
 
     private static void fetchPosts() {
-        isLoading = true;
-
+        //TODO: add refresh
         Danbooru.api.getPosts(currentQuery, currentPage)
                 .subscribeOn(Schedulers.io())
                 .flatMap(Observable::from)
                 .filter(Post::hasFileUrl)
                 .filter(post -> !list.contains(post))
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnSubscribe(() -> eventBus.post(new Event.LoadStarted()))
-                .doOnTerminate(() -> eventBus.post(new Event.LoadFinished()))
+                .doOnSubscribe(() -> {
+                    isLoading = true;
+                    eventBus.post(new Event.LoadStarted());
+                })
+                .doOnTerminate(() -> {
+                    isLoading = false;
+                    eventBus.post(new Event.LoadFinished());
+                })
                 .subscribe(new Observer<Post>() {
                     @Override
                     public void onCompleted() {
                         ++currentPage;
-                        isLoading = false;
                     }
 
                     @Override
