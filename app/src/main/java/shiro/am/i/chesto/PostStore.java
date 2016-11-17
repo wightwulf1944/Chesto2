@@ -56,8 +56,7 @@ public final class PostStore {
         fetchPosts();
     }
 
-    private static void fetchPosts() {
-        //TODO: add refresh
+    public static void fetchPosts() {
         Danbooru.api.getPosts(currentQuery, currentPage)
                 .subscribeOn(Schedulers.io())
                 .flatMap(Observable::from)
