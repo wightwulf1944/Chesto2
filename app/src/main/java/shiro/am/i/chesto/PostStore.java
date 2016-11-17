@@ -30,7 +30,7 @@ public final class PostStore {
     }
 
     public static Post get(int i) {
-        if (i >= list.size() - 5 && !isLoading) {
+        if (i >= list.size() - 15 && !isLoading) {
             fetchPosts();
         }
 
