@@ -30,6 +30,8 @@ public class Post extends RealmObject {
     private String largeFileUrl;
     @SerializedName("preview_file_url")
     private String smallFileUrl;
+    @SerializedName("file_ext")
+    private String fileExt;
 
     private static final String BASE_URL = "http://danbooru.donmai.us";
 
@@ -47,8 +49,12 @@ public class Post extends RealmObject {
         return smallFileUrl != null && largeFileUrl != null;
     }
 
-    public Uri getUri() {
+    public Uri getWebUri() {
         return Uri.parse(BASE_URL + "/posts/" + id);
+    }
+
+    public String getFileName() {
+        return String.format("%s.%s", id, fileExt);
     }
 
     public int getId() {

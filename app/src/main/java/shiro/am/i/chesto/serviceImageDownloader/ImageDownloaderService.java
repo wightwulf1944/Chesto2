@@ -52,12 +52,12 @@ public final class ImageDownloaderService extends IntentService {
             sendBroadcast(new Intent(
                     Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.fromFile(targetFile)
             ));
+            notificationHelper.notifyFinished(targetFile, post.getId());
         } catch (Exception e) {
             notificationHelper.notifyFailed();
             Timber.e(e, "Download error: %s", post.getLargeFileUrl());
         }
 
-        notificationHelper.notifyFinished();
     }
 
     private File getSourceFile(Post post) throws Exception {
@@ -73,7 +73,7 @@ public final class ImageDownloaderService extends IntentService {
         if (!saveDir.mkdirs()) {
             Timber.d("getTargetFile: saveDir not created");
         }
-        return new File(saveDir, post.getId() + ".png");
+        return new File(saveDir, post.getFileName());
     }
 
     private static void copy(File src, File dst) throws IOException {

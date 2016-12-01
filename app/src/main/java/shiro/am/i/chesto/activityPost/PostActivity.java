@@ -87,7 +87,7 @@ public final class PostActivity extends AppCompatActivity {
         startActivity(
                 new Intent(
                         Intent.ACTION_VIEW,
-                        PostStore.get(viewPager.getCurrentItem()).getUri()
+                        PostStore.get(viewPager.getCurrentItem()).getWebUri()
                 )
         );
     }

@@ -34,6 +34,8 @@ public final class MainActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private SwipeRefreshLayout swipeLayout;
 
+    private long mBackPressed;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,7 +63,7 @@ public final class MainActivity extends AppCompatActivity {
 
         EventBus.getDefault().register(this);
 
-        PostStore.newSearch("");
+        PostStore.newSearch("lowres rating:safe");
         handleIntent(getIntent());
     }
 
@@ -114,15 +116,19 @@ public final class MainActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        final boolean appbarIsExpanded = appbar.getHeight() - appbar.getBottom() != 0;
-        final boolean recyclerViewIsAtTop = layoutManager.findFirstVisibleItemPosition() == 0;
-
-        if (appbarIsExpanded || !recyclerViewIsAtTop) {
-            scrollToTop();
-            Snackbar.make(recyclerView, getString(R.string.snackbar_mainActivity), Snackbar.LENGTH_SHORT).show();
-        } else {
+        if (mBackPressed + 1000 > System.currentTimeMillis()) {
             super.onBackPressed();
+        } else {
+            final boolean appbarIsExpanded = appbar.getHeight() - appbar.getBottom() == 0;
+            final boolean recyclerViewIsAtTop = layoutManager.findFirstVisibleItemPosition() == 0;
+            if (!appbarIsExpanded || !recyclerViewIsAtTop) {
+                scrollToTop();
+                Snackbar.make(recyclerView, getString(R.string.snackbar_mainActivity_scrollToTop), Snackbar.LENGTH_SHORT).show();
+            } else {
+                Snackbar.make(recyclerView, getString(R.string.snackbar_mainActivity), Snackbar.LENGTH_SHORT).show();
+            }
         }
+        mBackPressed = System.currentTimeMillis();
     }
 
     private void scrollToTop() {
