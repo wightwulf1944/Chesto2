@@ -14,7 +14,6 @@ import java.io.File;
 
 import shiro.am.i.chesto.Chesto;
 import shiro.am.i.chesto.R;
-import timber.log.Timber;
 
 /**
  * Created by UGZ on 11/17/2016.

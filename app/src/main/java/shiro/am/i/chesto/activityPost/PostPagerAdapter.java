@@ -28,7 +28,7 @@ final class PostPagerAdapter extends PagerAdapter {
     private final Queue<ViewHolder> loadNewQueue;
     //    private final Queue<ViewHolder> setPrimaryQueue;
     private final Queue<PhotoView> recycledPhotoViews;
-    private int currentPrimaryPosition;
+//    private int currentPrimaryPosition;
 
     PostPagerAdapter(AppCompatActivity parent) {
         mParent = parent;
@@ -39,7 +39,7 @@ final class PostPagerAdapter extends PagerAdapter {
         recycledPhotoViews.add(new PhotoView(parent));
         recycledPhotoViews.add(new PhotoView(parent));
         recycledPhotoViews.add(new PhotoView(parent));
-        currentPrimaryPosition = -1;
+//        currentPrimaryPosition = -1;
     }
 
     @Override
