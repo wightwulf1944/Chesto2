@@ -9,6 +9,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.widget.SearchView;
 
+import shiro.am.i.chesto.PostStore;
 import shiro.am.i.chesto.R;
 import shiro.am.i.chesto.activityMain.MainActivity;
 
@@ -39,6 +40,8 @@ public final class SearchActivity extends AppCompatActivity
         final RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
         recyclerView.setAdapter(adapter);
         recyclerView.setHasFixedSize(true);
+
+        searchView.setQuery(PostStore.getCurrentQuery(), false);
     }
 
     @Override

@@ -37,6 +37,10 @@ public final class PostStore {
         return list.get(i);
     }
 
+    public static String getCurrentQuery() {
+        return currentQuery;
+    }
+
     public static int size() {
         return list.size();
     }
