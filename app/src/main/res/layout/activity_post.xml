@@ -66,7 +66,15 @@
             android:layout_toStartOf="@id/downloadButton"
             android:onClick="onBrowserButtonClicked"
             android:src="@drawable/ic_open_in_browser" />
-        
+
+        <ImageButton
+            android:id="@+id/shareButton"
+            style="@style/AppTheme.NavButton"
+            android:layout_toLeftOf="@id/browserButton"
+            android:layout_toStartOf="@id/browserButton"
+            android:onClick="onShareButtonClicked"
+            android:src="@drawable/ic_share" />
+
     </RelativeLayout>
 
 </android.support.design.widget.CoordinatorLayout>

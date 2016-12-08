@@ -84,12 +84,19 @@ public final class PostActivity extends AppCompatActivity {
     }
 
     public void onBrowserButtonClicked(View view) {
-        startActivity(
-                new Intent(
-                        Intent.ACTION_VIEW,
-                        PostStore.get(viewPager.getCurrentItem()).getWebUri()
-                )
+        Intent intent = new Intent(
+                Intent.ACTION_VIEW,
+                PostStore.get(viewPager.getCurrentItem()).getWebUri()
         );
+        startActivity(intent);
+    }
+
+    public void onShareButtonClicked(View view) {
+        String url = PostStore.get(viewPager.getCurrentItem()).getWebUrl();
+        Intent intent = new Intent(Intent.ACTION_SEND, PostStore.get(viewPager.getCurrentItem()).getWebUri());
+        intent.putExtra(Intent.EXTRA_TEXT, url);
+        intent.setType("text/plain");
+        startActivity(Intent.createChooser(intent, "Share link - " + url));
     }
 
     public void onDownloadButtonClicked(View view) {

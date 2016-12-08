@@ -49,8 +49,15 @@ public class Post extends RealmObject {
         return smallFileUrl != null && largeFileUrl != null;
     }
 
+    public String getWebUrl() {
+        StringBuilder str = new StringBuilder(BASE_URL);
+        str.append("/posts/");
+        str.append(id);
+        return str.toString();
+    }
+
     public Uri getWebUri() {
-        return Uri.parse(BASE_URL + "/posts/" + id);
+        return Uri.parse(getWebUrl());
     }
 
     public String getFileName() {
