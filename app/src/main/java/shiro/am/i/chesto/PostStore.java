@@ -20,7 +20,7 @@ import timber.log.Timber;
 public final class PostStore {
 
     private static final EventBus eventBus = EventBus.getDefault();
-    private static final ArrayList<Post> list = new ArrayList<>(40);
+    private static final ArrayList<Post> list = new ArrayList<>();
     private static String currentQuery;
     private static int currentPage;
     private static boolean isLoading;
@@ -59,6 +59,7 @@ public final class PostStore {
     public static void fetchPosts() {
         Danbooru.api.getPosts(currentQuery, currentPage)
                 .subscribeOn(Schedulers.io())
+                .doOnNext(posts -> list.ensureCapacity(list.size() + posts.size()))
                 .flatMap(Observable::from)
                 .filter(Post::hasFileUrl)
                 .filter(post -> !list.contains(post))
