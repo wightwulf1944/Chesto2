@@ -52,7 +52,7 @@ public final class ImageDownloaderService extends IntentService {
             sendBroadcast(new Intent(
                     Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.fromFile(targetFile)
             ));
-            notificationHelper.notifyFinished(targetFile, post.getId());
+            notificationHelper.notifySuccessful(targetFile, post.getId());
         } catch (Exception e) {
             notificationHelper.notifyFailed();
             Timber.e(e, "Download error: %s", post.getLargeFileUrl());

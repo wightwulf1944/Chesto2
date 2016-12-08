@@ -14,6 +14,7 @@ import java.io.File;
 
 import shiro.am.i.chesto.Chesto;
 import shiro.am.i.chesto.R;
+import timber.log.Timber;
 
 /**
  * Created by UGZ on 11/17/2016.
@@ -22,16 +23,16 @@ import shiro.am.i.chesto.R;
 final class NotificationHelper {
 
     private static final int PROGRESS_ID = 1;
-    private static final int SUMMARY_ID = 2;
+    private static final int FAILED_ID = 2;
 
     private final NotificationManager manager;
     private final NotificationCompat.Builder progressBuilder;
-    private final NotificationCompat.Builder summaryBuilder;
+    private final NotificationCompat.Builder failedBuilder;
     private final NotificationCompat.Builder finishBuilder;
     private final NotificationCompat.BigPictureStyle bigPictureStyle;
     private int downloadsQueued;
     private int downloadsFailed;
-    private int downloadsFinished;
+    private int downloadsSuccessful;
 
     NotificationHelper(Service service) {
         manager = (NotificationManager) service.getSystemService(Context.NOTIFICATION_SERVICE);
@@ -48,10 +49,10 @@ final class NotificationHelper {
                 .setOngoing(true)
                 .setPriority(NotificationCompat.PRIORITY_LOW)
                 .setCategory(NotificationCompat.CATEGORY_SERVICE)
-                .setProgress(downloadsQueued, downloadsFinished, true)
+                .setProgress(0, 0, true)
                 .setContentText("Downloading");
 
-        summaryBuilder = new NotificationCompat.Builder(service)
+        failedBuilder = new NotificationCompat.Builder(service)
                 .setSmallIcon(R.mipmap.ic_launcher)
                 .setContentTitle(title)
                 .setColor(color)
@@ -79,11 +80,13 @@ final class NotificationHelper {
 
     void notifyFailed() {
         ++downloadsFailed;
-        ++downloadsFinished;
         updateProgress();
     }
 
-    void notifyFinished(File file, int id) {
+    void notifySuccessful(File file, int id) {
+        ++downloadsSuccessful;
+        updateProgress();
+
         Intent viewIntent = new Intent(Intent.ACTION_VIEW);
         viewIntent.setDataAndType(Uri.fromFile(file), "image/*");
         viewIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -101,25 +104,22 @@ final class NotificationHelper {
                 .setStyle(bigPictureStyle);
 
         manager.notify(id, finishBuilder.build());
-
-        ++downloadsFinished;
-        updateProgress();
     }
 
     private void updateProgress() {
-        if (downloadsFinished < downloadsQueued) {
+        int downloadsCompleted = downloadsFailed + downloadsSuccessful;
+        if (downloadsCompleted < downloadsQueued) {
             progressBuilder
-                    .setProgress(downloadsQueued, downloadsFinished, false)
-                    .setContentInfo(String.format("%s/%s", downloadsFinished, downloadsQueued));
+                    .setProgress(downloadsQueued, downloadsCompleted, false)
+                    .setContentInfo(String.format("%s/%s", downloadsCompleted, downloadsQueued));
             manager.notify(PROGRESS_ID, progressBuilder.build());
         } else if (downloadsFailed > 0) {
             final String text = String.format(
-                    "%s Download(s) finished - %s Failed",
-                    downloadsFinished,
+                    "%s Download(s) Failed",
                     downloadsFailed
             );
-            summaryBuilder.setContentText(text);
-            manager.notify(SUMMARY_ID, summaryBuilder.build());
+            failedBuilder.setContentText(text);
+            manager.notify(FAILED_ID, failedBuilder.build());
         }
     }
 }
