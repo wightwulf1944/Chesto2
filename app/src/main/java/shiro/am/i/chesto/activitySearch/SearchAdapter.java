@@ -8,6 +8,10 @@ import android.view.ViewGroup;
 import android.widget.SearchView;
 import android.widget.TextView;
 
+import com.jakewharton.rxbinding.widget.RxSearchView;
+
+import java.util.concurrent.TimeUnit;
+
 import io.realm.Case;
 import io.realm.Realm;
 import io.realm.RealmResults;
@@ -15,6 +19,7 @@ import io.realm.Sort;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 import shiro.am.i.chesto.R;
+import shiro.am.i.chesto.U;
 import shiro.am.i.chesto.retrofitDanbooru.Danbooru;
 import shiro.am.i.chesto.retrofitDanbooru.Tag;
 import timber.log.Timber;
@@ -24,36 +29,59 @@ import timber.log.Timber;
  */
 final class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder> {
 
-    private static final Realm realm = Realm.getDefaultInstance();
-
     private final LayoutInflater inflater;
     private final SearchView mSearchView;
-    private RealmResults<Tag> suggestionsList;
-    private String currentWord = "";
+
+    private RealmResults<Tag> list;
+    private String currentQuery;
 
     SearchAdapter(Context context, SearchView searchView) {
         inflater = LayoutInflater.from(context);
         mSearchView = searchView;
 
-        suggestionsList = realm.where(Tag.class)
-                .findAllSorted("postCount", Sort.DESCENDING);
+        RxSearchView.queryTextChanges(searchView)
+                .map(CharSequence::toString)
+                .map(U::getLastWord)
+                .doOnNext(s -> {
+                    currentQuery = s;
+                    list = Realm.getDefaultInstance()
+                            .where(Tag.class)
+                            .contains("name", s, Case.INSENSITIVE)
+                            .findAllSorted("postCount", Sort.DESCENDING);
+                    notifyDataSetChanged();
+                })
+                .debounce(300, TimeUnit.MILLISECONDS)
+                .observeOn(Schedulers.io())
+                .flatMap(s -> Danbooru.api.searchTags(s + "*"))
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        tags -> {
+                            Realm realm = Realm.getDefaultInstance();
+                            realm.beginTransaction();
+                            realm.copyToRealmOrUpdate(tags);
+                            realm.commitTransaction();
+                            notifyDataSetChanged();
+                        },
+                        throwable -> Timber.e(throwable, "Error fetching tag suggestions")
+                );
     }
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        return new ViewHolder(inflater.inflate(R.layout.item_tag_searchsuggestion, parent, false));
+        View view = inflater.inflate(R.layout.item_tag_searchsuggestion, parent, false);
+        return new ViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        final Tag tag = suggestionsList.get(position);
+        final Tag tag = list.get(position);
         holder.postCount.setText(tag.getPostCountStr());
         holder.name.setText(tag.getName());
     }
 
     @Override
     public int getItemCount() {
-        return suggestionsList.size();
+        return list.size();
     }
 
     class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
@@ -71,30 +99,9 @@ final class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder>
         public void onClick(View view) {
             String text = mSearchView.getQuery()
                     .toString()
-                    .replaceFirst(currentWord, name.getText().toString());
+                    .replaceFirst(currentQuery, list.get(getAdapterPosition()).getName());
 
             mSearchView.setQuery(text, false);
         }
-    }
-
-    void setQuery(String s) {
-        currentWord = s;
-        suggestionsList = realm.where(Tag.class)
-                .contains("name", s, Case.INSENSITIVE)
-                .findAllSorted("postCount", Sort.DESCENDING);
-        notifyDataSetChanged();
-
-        Danbooru.api.searchTags(s + "*")
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                        tags -> {
-                            realm.beginTransaction();
-                            realm.copyToRealmOrUpdate(tags);
-                            realm.commitTransaction();
-                            notifyDataSetChanged();
-                        },
-                        throwable -> Timber.e(throwable, "Error fetching tag suggestions")
-                );
     }
 }

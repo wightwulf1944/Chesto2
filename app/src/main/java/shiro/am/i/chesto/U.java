@@ -15,4 +15,13 @@ public final class U {
         return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp,
                 Chesto.getInstance().getResources().getDisplayMetrics());
     }
+
+    public static String getLastWord(String s) {
+        final int spaceIndex = s.lastIndexOf(" ");
+        if (spaceIndex != -1) {
+            return s.substring(spaceIndex + 1);
+        } else {
+            return s;
+        }
+    }
 }
