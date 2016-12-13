@@ -21,40 +21,34 @@ final class XBottomSheet extends BottomSheetBehavior.BottomSheetCallback {
         bottomSheetBehavior.setBottomSheetCallback(this);
 
         infoButton = (ImageButton) view.findViewById(R.id.infoButton);
+        infoButton.setOnClickListener(v -> toggleState());
 
         bottomSheetHeader = view.findViewById(R.id.bottomSheetHeader);
     }
 
-    void toggleState() {
-        switch (bottomSheetBehavior.getState()) {
-            case BottomSheetBehavior.STATE_COLLAPSED:
-                bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
-                break;
-            default:
-                bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-                break;
+    private void toggleState() {
+        if (bottomSheetBehavior.getState() == BottomSheetBehavior.STATE_COLLAPSED) {
+            bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+        } else {
+            bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
         }
     }
 
-    boolean toggleIsCollapsed() {
-        switch (bottomSheetBehavior.getState()) {
-            case BottomSheetBehavior.STATE_COLLAPSED:
-                return true;
-            default:
-                bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-                return false;
+    boolean tryIsCollapsed() {
+        if (bottomSheetBehavior.getState() == BottomSheetBehavior.STATE_COLLAPSED) {
+            return true;
+        } else {
+            bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+            return false;
         }
     }
 
     @Override
     public void onStateChanged(@NonNull View bottomSheet, int newState) {
-        switch (newState) {
-            case BottomSheetBehavior.STATE_COLLAPSED:
-                infoButton.setImageResource(R.drawable.ic_info);
-                break;
-            default:
-                infoButton.setImageResource(R.drawable.ic_arrow_hide);
-                break;
+        if (newState == BottomSheetBehavior.STATE_COLLAPSED) {
+            infoButton.setImageResource(R.drawable.ic_info);
+        } else {
+            infoButton.setImageResource(R.drawable.ic_arrow_hide);
         }
     }
 

@@ -70,17 +70,13 @@ public final class PostActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        if (bottomSheet.toggleIsCollapsed()) {
+        if (bottomSheet.tryIsCollapsed()) {
             finishAndReturnResult();
         }
     }
 
     public void onUpButtonClicked(View view) {
         finishAndReturnResult();
-    }
-
-    public void onInfoButtonClicked(View view) {
-        bottomSheet.toggleState();
     }
 
     public void onBrowserButtonClicked(View view) {

@@ -50,7 +50,6 @@
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
             android:contentDescription="@string/information"
-            android:onClick="onInfoButtonClicked"
             android:src="@drawable/ic_info" />
 
         <ImageButton

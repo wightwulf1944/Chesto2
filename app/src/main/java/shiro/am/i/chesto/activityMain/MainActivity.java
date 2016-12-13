@@ -63,7 +63,7 @@ public final class MainActivity extends AppCompatActivity {
 
         EventBus.getDefault().register(this);
 
-        PostStore.newSearch("lowres rating:safe");
+        PostStore.newSearch("");
         handleIntent(getIntent());
     }
 
