@@ -5,4 +5,9 @@
     <string name="action_clear">Clear</string>
     <string name="snackbar_mainActivity">Tap back again to exit.</string>
     <string name="snackbar_mainActivity_scrollToTop">Back at top. Tap back again to exit.</string>
+    <string name="back">Back</string>
+    <string name="information">Information</string>
+    <string name="download">Download</string>
+    <string name="open_in_browser">Open in Browser</string>
+    <string name="share">Share</string>
 </resources>

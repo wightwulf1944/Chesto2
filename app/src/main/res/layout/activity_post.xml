@@ -13,6 +13,7 @@
         style="@style/AppTheme.NavButton"
         android:layout_gravity="start|top"
         android:onClick="onUpButtonClicked"
+        android:contentDescription="@string/back"
         android:src="@drawable/ic_arrow_back" />
 
     <RelativeLayout
@@ -48,6 +49,7 @@
             style="@style/AppTheme.NavButton"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
+            android:contentDescription="@string/information"
             android:onClick="onInfoButtonClicked"
             android:src="@drawable/ic_info" />
 
@@ -56,6 +58,7 @@
             style="@style/AppTheme.NavButton"
             android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"
+            android:contentDescription="@string/download"
             android:onClick="onDownloadButtonClicked"
             android:src="@drawable/ic_download" />
 
@@ -64,6 +67,7 @@
             style="@style/AppTheme.NavButton"
             android:layout_toLeftOf="@id/downloadButton"
             android:layout_toStartOf="@id/downloadButton"
+            android:contentDescription="@string/open_in_browser"
             android:onClick="onBrowserButtonClicked"
             android:src="@drawable/ic_open_in_browser" />
 
@@ -72,6 +76,7 @@
             style="@style/AppTheme.NavButton"
             android:layout_toLeftOf="@id/browserButton"
             android:layout_toStartOf="@id/browserButton"
+            android:contentDescription="@string/share"
             android:onClick="onShareButtonClicked"
             android:src="@drawable/ic_share" />
 
