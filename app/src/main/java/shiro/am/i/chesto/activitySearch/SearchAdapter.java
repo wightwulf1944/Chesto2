@@ -1,14 +1,11 @@
 package shiro.am.i.chesto.activitySearch;
 
-import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.SearchView;
 import android.widget.TextView;
-
-import com.jakewharton.rxbinding.widget.RxSearchView;
 
 import java.util.concurrent.TimeUnit;
 
@@ -18,6 +15,8 @@ import io.realm.RealmResults;
 import io.realm.Sort;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
+import rx.subjects.PublishSubject;
+import shiro.am.i.chesto.Chesto;
 import shiro.am.i.chesto.R;
 import shiro.am.i.chesto.U;
 import shiro.am.i.chesto.retrofitDanbooru.Danbooru;
@@ -31,15 +30,21 @@ final class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder>
 
     private final LayoutInflater inflater;
     private final SearchView mSearchView;
+    private final PublishSubject<String> subject;
 
     private RealmResults<Tag> list;
     private String currentQuery;
 
-    SearchAdapter(Context context, SearchView searchView) {
-        inflater = LayoutInflater.from(context);
+    SearchAdapter(SearchView searchView) {
+        inflater = LayoutInflater.from(Chesto.getInstance());
         mSearchView = searchView;
+        subject = PublishSubject.create();
 
-        RxSearchView.queryTextChanges(searchView)
+        list = Realm.getDefaultInstance()
+                .where(Tag.class)
+                .findAllSorted("postCount", Sort.DESCENDING);
+
+        subject.observeOn(AndroidSchedulers.mainThread())
                 .map(CharSequence::toString)
                 .map(U::getLastWord)
                 .doOnNext(s -> {
@@ -66,6 +71,10 @@ final class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder>
                 );
     }
 
+    void setQuery(String query) {
+        subject.onNext(query);
+    }
+
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = inflater.inflate(R.layout.item_tag_searchsuggestion, parent, false);
@@ -75,6 +84,7 @@ final class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder>
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         final Tag tag = list.get(position);
+        Timber.d(tag.getName());
         holder.postCount.setText(tag.getPostCountStr());
         holder.name.setText(tag.getName());
     }
@@ -97,9 +107,10 @@ final class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder>
 
         @Override
         public void onClick(View view) {
+
             String text = mSearchView.getQuery()
                     .toString()
-                    .replaceFirst(currentQuery, list.get(getAdapterPosition()).getName());
+                    .replaceFirst(currentQuery, name.getText().toString());
 
             mSearchView.setQuery(text, false);
         }
