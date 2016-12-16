@@ -25,7 +25,7 @@ import shiro.am.i.chesto.serviceImageDownloader.ImageDownloaderService;
  */
 public final class PostActivity extends AppCompatActivity {
 
-    private XBottomSheet bottomSheet;
+    private BottomSheetDecorator bottomSheet;
     private PostPagerAdapter adapter;
     private HackyViewPager viewPager;
 
@@ -51,7 +51,7 @@ public final class PostActivity extends AppCompatActivity {
             }
         });
 
-        bottomSheet = new XBottomSheet(findViewById(R.id.bottomSheet));
+        bottomSheet = new BottomSheetDecorator(findViewById(R.id.bottomSheet));
 
         EventBus.getDefault().register(this);
     }

@@ -10,13 +10,13 @@ import shiro.am.i.chesto.R;
 /**
  * Created by Shiro on 9/1/2016.
  */
-final class XBottomSheet extends BottomSheetBehavior.BottomSheetCallback {
+final class BottomSheetDecorator extends BottomSheetBehavior.BottomSheetCallback {
 
     private final BottomSheetBehavior bottomSheetBehavior;
     private final ImageButton infoButton;
     private final View bottomSheetHeader;
 
-    XBottomSheet(View view) {
+    BottomSheetDecorator(View view) {
         bottomSheetBehavior = BottomSheetBehavior.from(view);
         bottomSheetBehavior.setBottomSheetCallback(this);
 
