@@ -33,6 +33,7 @@ public final class MainActivity extends AppCompatActivity {
     private MainAdapter adapter;
     private RecyclerView recyclerView;
     private SwipeRefreshLayout swipeLayout;
+    private Snackbar snackbar;
 
     private long mBackPressed;
 
@@ -60,6 +61,9 @@ public final class MainActivity extends AppCompatActivity {
         swipeLayout = (SwipeRefreshLayout) findViewById(R.id.swipeLayout);
         swipeLayout.setColorSchemeColors(ContextCompat.getColor(this, R.color.colorPrimaryDark));
         swipeLayout.setOnRefreshListener(PostStore::refresh);
+
+        snackbar = Snackbar.make(recyclerView, "Check your connection", Snackbar.LENGTH_INDEFINITE)
+                .setAction("Retry", view -> PostStore.fetchPosts());
 
         EventBus.getDefault().register(this);
 
@@ -140,6 +144,7 @@ public final class MainActivity extends AppCompatActivity {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(PostStore.Event.LoadStarted event) {
         swipeLayout.setRefreshing(true);
+        snackbar.dismiss();
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -149,9 +154,7 @@ public final class MainActivity extends AppCompatActivity {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(PostStore.Event.LoadError event) {
-        Snackbar.make(recyclerView, "Check your connection", Snackbar.LENGTH_INDEFINITE)
-                .setAction("Retry", view -> PostStore.fetchPosts())
-                .show();
+        snackbar.show();
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
