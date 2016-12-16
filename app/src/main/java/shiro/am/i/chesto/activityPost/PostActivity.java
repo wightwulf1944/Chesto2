@@ -11,6 +11,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Toast;
 
+import org.apmem.tools.layouts.FlowLayout;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -35,8 +36,8 @@ public final class PostActivity extends AppCompatActivity {
 
         final int postIndex = getIntent().getIntExtra("default", -1);
 
-        final TagLayout tagLayout = (TagLayout) findViewById(R.id.tagLayout);
-        tagLayout.setCurrentPost(postIndex);
+        final TagLayoutDecorator tagLayoutDecorator = new TagLayoutDecorator((FlowLayout) findViewById(R.id.flowLayout));
+        tagLayoutDecorator.setPost(PostStore.get(postIndex));
 
         adapter = new PostPagerAdapter(this);
 
@@ -46,7 +47,7 @@ public final class PostActivity extends AppCompatActivity {
         viewPager.addOnPageChangeListener(new HackyViewPager.SimpleOnPageChangeListener() {
             @Override
             public void onPageSelected(int position) {
-                tagLayout.setCurrentPost(position);
+                tagLayoutDecorator.setPost(PostStore.get(position));
             }
         });
 
