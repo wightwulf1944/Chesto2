@@ -54,7 +54,7 @@ public final class MainActivity extends AppCompatActivity {
 
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
         recyclerView.setHasFixedSize(true);
-        recyclerView.addItemDecoration(new GreedoSpacingItemDecoration(U.dpToPx(4)));
+        recyclerView.addItemDecoration(new GreedoSpacingItemDecoration(U.dpToPx(8)));
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(layoutManager);
 
@@ -84,10 +84,6 @@ public final class MainActivity extends AppCompatActivity {
     }
 
     private void handleIntent(Intent intent) {
-
-        Timber.d("ACTION: %s", intent.getAction());
-        Timber.d("DATA: %s", intent.getDataString());
-
         if (intent.getAction().equals(Intent.ACTION_SEARCH)) {
             final String query = intent.getDataString();
             PostStore.newSearch(query);

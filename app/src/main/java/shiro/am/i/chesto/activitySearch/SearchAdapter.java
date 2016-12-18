@@ -84,7 +84,6 @@ final class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder>
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         final Tag tag = list.get(position);
-        Timber.d(tag.getName());
         holder.postCount.setText(tag.getPostCountStr());
         holder.name.setText(tag.getName());
     }
