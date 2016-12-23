@@ -46,9 +46,9 @@ final class BottomSheetDecorator extends BottomSheetBehavior.BottomSheetCallback
     @Override
     public void onStateChanged(@NonNull View bottomSheet, int newState) {
         if (newState == BottomSheetBehavior.STATE_COLLAPSED) {
-            infoButton.setImageResource(R.drawable.ic_info);
+            infoButton.setImageResource(R.drawable.ic_nav_info);
         } else {
-            infoButton.setImageResource(R.drawable.ic_arrow_hide);
+            infoButton.setImageResource(R.drawable.ic_nav_arrow_hide);
         }
     }
 

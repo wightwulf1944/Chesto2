@@ -88,8 +88,8 @@ final class PostPagerAdapter extends PagerAdapter {
 //                    .into(vh.photoView);
             Glide.with(mParent)
                     .load(vh.post.getLargeFileUrl())
-                    .placeholder(R.drawable.ic_image_placeholder)
-                    .error(R.drawable.ic_image_broken)
+                    .placeholder(R.drawable.image_placeholder)
+                    .error(R.drawable.image_broken)
                     .thumbnail(
                             Glide.with(mParent)
                                     .load(vh.post.getSmallFileUrl())
@@ -106,8 +106,8 @@ final class PostPagerAdapter extends PagerAdapter {
 //
 //            Glide.with(mParent)
 //                    .load(vh.post.getLargeFileUrl())
-//                    .placeholder(R.drawable.ic_image_placeholder)
-//                    .error(R.drawable.ic_image_broken)
+//                    .placeholder(R.drawable.image_placeholder)
+//                    .error(R.drawable.image_broken)
 //                    .thumbnail(
 //                            Glide.with(mParent)
 //                                    .load(vh.post.getSmallFileUrl())

@@ -34,8 +34,8 @@ final class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
     public void onBindViewHolder(ViewHolder holder, int position) {
         Glide.with(mParent)
                 .load(PostStore.get(position).getSmallFileUrl())
-                .placeholder(R.drawable.ic_image_placeholder)
-                .error(R.drawable.ic_image_broken)
+                .placeholder(R.drawable.image_placeholder)
+                .error(R.drawable.image_broken)
                 .diskCacheStrategy(DiskCacheStrategy.SOURCE)
                 .into(holder.imageView);
     }

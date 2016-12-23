@@ -14,7 +14,7 @@
         android:layout_gravity="start|top"
         android:contentDescription="@string/back"
         android:onClick="onUpButtonClicked"
-        android:src="@drawable/ic_arrow_back" />
+        android:src="@drawable/ic_nav_arrow_back" />
 
     <RelativeLayout
         android:id="@+id/bottomSheet"
@@ -50,7 +50,7 @@
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
             android:contentDescription="@string/information"
-            android:src="@drawable/ic_info" />
+            android:src="@drawable/ic_nav_info" />
 
         <ImageButton
             android:id="@+id/downloadButton"
@@ -59,7 +59,7 @@
             android:layout_alignParentRight="true"
             android:contentDescription="@string/download"
             android:onClick="onDownloadButtonClicked"
-            android:src="@drawable/ic_download" />
+            android:src="@drawable/ic_nav_download" />
 
         <ImageButton
             android:id="@+id/browserButton"
@@ -68,7 +68,7 @@
             android:layout_toStartOf="@id/downloadButton"
             android:contentDescription="@string/open_in_browser"
             android:onClick="onBrowserButtonClicked"
-            android:src="@drawable/ic_open_in_browser" />
+            android:src="@drawable/ic_nav_open_in_browser" />
 
         <ImageButton
             android:id="@+id/shareButton"
@@ -77,7 +77,7 @@
             android:layout_toStartOf="@id/browserButton"
             android:contentDescription="@string/share"
             android:onClick="onShareButtonClicked"
-            android:src="@drawable/ic_share" />
+            android:src="@drawable/ic_nav_share" />
 
     </RelativeLayout>
 

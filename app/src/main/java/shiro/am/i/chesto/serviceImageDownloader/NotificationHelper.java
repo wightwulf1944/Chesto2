@@ -36,7 +36,7 @@ final class NotificationHelper {
     NotificationHelper(Service service) {
         manager = (NotificationManager) service.getSystemService(Context.NOTIFICATION_SERVICE);
 
-        final int color = ContextCompat.getColor(service, R.color.colorPrimary);
+        final int color = ContextCompat.getColor(service, R.color.primary);
         final String title = service.getString(R.string.app_name);
 
         progressBuilder = new NotificationCompat.Builder(service)
