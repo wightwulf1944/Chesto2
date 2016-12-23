@@ -23,7 +23,6 @@ import shiro.am.i.chesto.PostStore;
 import shiro.am.i.chesto.R;
 import shiro.am.i.chesto.U;
 import shiro.am.i.chesto.activitySearch.SearchActivity;
-import timber.log.Timber;
 
 public final class MainActivity extends AppCompatActivity {
 

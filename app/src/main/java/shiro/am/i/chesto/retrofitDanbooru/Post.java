@@ -26,7 +26,7 @@ public class Post extends RealmObject {
     private String tagStringCopyright;
     @SerializedName("tag_string_general")
     private String tagStringGeneral;
-    @SerializedName("file_url")
+    @SerializedName("large_file_url")
     private String largeFileUrl;
     @SerializedName("preview_file_url")
     private String smallFileUrl;
