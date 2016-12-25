@@ -15,7 +15,6 @@ import jp.wasabeef.glide.transformations.BlurTransformation;
 import shiro.am.i.chesto.PostStore;
 import shiro.am.i.chesto.R;
 import shiro.am.i.chesto.retrofitDanbooru.Post;
-import timber.log.Timber;
 import uk.co.senab.photoview.PhotoView;
 
 /**
@@ -24,22 +23,15 @@ import uk.co.senab.photoview.PhotoView;
 final class PostPagerAdapter extends PagerAdapter {
 
     private final AppCompatActivity mParent;
+    private final PhotoViewRecycler photoViewRecycler;
     private final Queue<ViewHolder> recycleQueue;
     private final Queue<ViewHolder> loadNewQueue;
-    //    private final Queue<ViewHolder> setPrimaryQueue;
-    private final Queue<PhotoView> recycledPhotoViews;
-//    private int currentPrimaryPosition;
 
     PostPagerAdapter(AppCompatActivity parent) {
         mParent = parent;
+        photoViewRecycler = new PhotoViewRecycler(parent, 3);
         recycleQueue = new LinkedList<>();
         loadNewQueue = new LinkedList<>();
-//        setPrimaryQueue = new LinkedList<>();
-        recycledPhotoViews = new LinkedList<>();
-        recycledPhotoViews.add(new PhotoView(parent));
-        recycledPhotoViews.add(new PhotoView(parent));
-        recycledPhotoViews.add(new PhotoView(parent));
-//        currentPrimaryPosition = -1;
     }
 
     @Override
@@ -48,15 +40,6 @@ final class PostPagerAdapter extends PagerAdapter {
         loadNewQueue.add(vh);
         return vh;
     }
-
-//    @Override
-//    public void setPrimaryItem(ViewGroup container, int position, Object object) {
-//        if (position != currentPrimaryPosition) {
-//            ViewHolder vh = ((ViewHolder) object);
-//            setPrimaryQueue.add(vh);
-//            currentPrimaryPosition = position;
-//        }
-//    }
 
     @Override
     public void destroyItem(ViewGroup container, int position, Object object) {
@@ -68,8 +51,7 @@ final class PostPagerAdapter extends PagerAdapter {
     public void finishUpdate(ViewGroup container) {
         while (!recycleQueue.isEmpty()) {
             final ViewHolder vh = recycleQueue.remove();
-            Timber.d("%s Recycled", vh.position);
-            recycledPhotoViews.add(vh.photoView);
+            photoViewRecycler.recyclePhotoView(vh.photoView);
             container.removeView(vh.photoView);
 
             Glide.clear(vh.photoView);
@@ -77,48 +59,23 @@ final class PostPagerAdapter extends PagerAdapter {
 
         while (!loadNewQueue.isEmpty()) {
             final ViewHolder vh = loadNewQueue.remove();
-            Timber.d("%s Loaded", vh.position);
-            vh.photoView = recycledPhotoViews.remove();
+            vh.photoView = photoViewRecycler.getPhotoView();
             container.addView(vh.photoView);
 
-//            Glide.with(mParent)
-//                    .load(vh.post.getSmallFileUrl())
-//                    .bitmapTransform(new BlurTransformation(mParent, 1))
-//                    .diskCacheStrategy(DiskCacheStrategy.SOURCE)
-//                    .into(vh.photoView);
+            final Post post = PostStore.get(vh.position);
             Glide.with(mParent)
-                    .load(vh.post.getLargeFileUrl())
+                    .load(post.getLargeFileUrl())
                     .placeholder(R.drawable.image_placeholder)
                     .error(R.drawable.image_broken)
                     .thumbnail(
                             Glide.with(mParent)
-                                    .load(vh.post.getSmallFileUrl())
+                                    .load(post.getSmallFileUrl())
                                     .bitmapTransform(new BlurTransformation(mParent, 1))
                                     .diskCacheStrategy(DiskCacheStrategy.SOURCE)
                     )
                     .diskCacheStrategy(DiskCacheStrategy.SOURCE)
                     .into(vh.photoView);
         }
-
-//        while (!setPrimaryQueue.isEmpty()) {
-//            final ViewHolder vh = setPrimaryQueue.remove();
-//            Timber.d("%s Set primary", vh.position);
-//
-//            Glide.with(mParent)
-//                    .load(vh.post.getLargeFileUrl())
-//                    .placeholder(R.drawable.image_placeholder)
-//                    .error(R.drawable.image_broken)
-//                    .thumbnail(
-//                            Glide.with(mParent)
-//                                    .load(vh.post.getSmallFileUrl())
-//                                    .bitmapTransform(new BlurTransformation(mParent, 1))
-//                                    .diskCacheStrategy(DiskCacheStrategy.SOURCE)
-//                    )
-//                    .diskCacheStrategy(DiskCacheStrategy.SOURCE)
-//                    .into(vh.photoView);
-//        }
-
-        Timber.d("Update finished");
     }
 
     @Override
@@ -133,12 +90,10 @@ final class PostPagerAdapter extends PagerAdapter {
 
     private static final class ViewHolder {
         private final int position;
-        private final Post post;
         private PhotoView photoView;
 
         private ViewHolder(int position) {
             this.position = position;
-            post = PostStore.get(position);
         }
     }
 }
