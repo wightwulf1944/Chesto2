@@ -16,7 +16,8 @@ import shiro.am.i.chesto.activityMain.MainActivity;
 public final class SearchActivity extends AppCompatActivity
         implements SearchView.OnQueryTextListener {
 
-    private SearchAdapter adapter;
+    private SearchAdapter searchAdapter;
+    private String currentQuery;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,10 +36,15 @@ public final class SearchActivity extends AppCompatActivity
         searchView.setSubmitButtonEnabled(true);
         searchView.setIconified(false);
 
-        adapter = new SearchAdapter(searchView);
+        searchAdapter = new SearchAdapter(itemName -> {
+            String text = searchView.getQuery()
+                    .toString()
+                    .replaceFirst(currentQuery, itemName);
+            searchView.setQuery(text, false);
+        });
 
         final RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
-        recyclerView.setAdapter(adapter);
+        recyclerView.setAdapter(searchAdapter);
         recyclerView.setHasFixedSize(true);
 
         searchView.setQuery(PostStore.getCurrentQuery(), false);
@@ -57,7 +63,17 @@ public final class SearchActivity extends AppCompatActivity
 
     @Override
     public boolean onQueryTextChange(String s) {
-        adapter.setQuery(s);
+        currentQuery = getLastWord(s);
+        searchAdapter.setQuery(currentQuery);
         return true;
+    }
+
+    private static String getLastWord(String s) {
+        final int spaceIndex = s.lastIndexOf(" ");
+        if (spaceIndex != -1) {
+            return s.substring(spaceIndex + 1);
+        } else {
+            return s;
+        }
     }
 }
