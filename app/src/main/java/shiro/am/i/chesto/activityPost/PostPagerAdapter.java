@@ -15,6 +15,7 @@ import jp.wasabeef.glide.transformations.BlurTransformation;
 import shiro.am.i.chesto.PostStore;
 import shiro.am.i.chesto.R;
 import shiro.am.i.chesto.retrofitDanbooru.Post;
+import timber.log.Timber;
 import uk.co.senab.photoview.PhotoView;
 
 /**
@@ -23,59 +24,77 @@ import uk.co.senab.photoview.PhotoView;
 final class PostPagerAdapter extends PagerAdapter {
 
     private final AppCompatActivity mParent;
-    private final PhotoViewRecycler photoViewRecycler;
-    private final Queue<ViewHolder> recycleQueue;
-    private final Queue<ViewHolder> loadNewQueue;
+    private final Queue<ViewHolder> createQueue;
+    private final Queue<ViewHolder> destroyQueue;
+    private final Queue<PhotoView> usablePhotoViews;
 
     PostPagerAdapter(AppCompatActivity parent) {
         mParent = parent;
-        photoViewRecycler = new PhotoViewRecycler(parent, 3);
-        recycleQueue = new LinkedList<>();
-        loadNewQueue = new LinkedList<>();
+        createQueue = new LinkedList<>();
+        destroyQueue = new LinkedList<>();
+
+        usablePhotoViews = new LinkedList<>();
+        usablePhotoViews.add(new PhotoView(mParent));
+        usablePhotoViews.add(new PhotoView(mParent));
+        usablePhotoViews.add(new PhotoView(mParent));
     }
+
 
     @Override
     public Object instantiateItem(ViewGroup container, int position) {
         ViewHolder vh = new ViewHolder(position);
-        loadNewQueue.add(vh);
+        createQueue.add(vh);
         return vh;
     }
+
 
     @Override
     public void destroyItem(ViewGroup container, int position, Object object) {
         ViewHolder vh = ((ViewHolder) object);
-        recycleQueue.add(vh);
+        destroyQueue.add(vh);
     }
 
     @Override
     public void finishUpdate(ViewGroup container) {
-        while (!recycleQueue.isEmpty()) {
-            final ViewHolder vh = recycleQueue.remove();
-            photoViewRecycler.recyclePhotoView(vh.photoView);
-            container.removeView(vh.photoView);
+        if (!createQueue.isEmpty() && !destroyQueue.isEmpty()) {
+            final ViewHolder newVH = createQueue.remove();
+            final ViewHolder oldVH = destroyQueue.remove();
+            newVH.photoView = oldVH.photoView;
+            glide(newVH);
+        }
 
+        while (!createQueue.isEmpty()) {
+            final ViewHolder vh = createQueue.remove();
+            vh.photoView = usablePhotoViews.remove();
+
+            if (vh.photoView.getParent() == null) {
+                container.addView(vh.photoView);
+            }
+
+            glide(vh);
+        }
+
+        while (!destroyQueue.isEmpty()) {
+            final ViewHolder vh = destroyQueue.remove();
+            usablePhotoViews.add(vh.photoView);
             Glide.clear(vh.photoView);
         }
+    }
 
-        while (!loadNewQueue.isEmpty()) {
-            final ViewHolder vh = loadNewQueue.remove();
-            vh.photoView = photoViewRecycler.getPhotoView();
-            container.addView(vh.photoView);
-
-            final Post post = PostStore.get(vh.position);
-            Glide.with(mParent)
-                    .load(post.getLargeFileUrl())
-                    .placeholder(R.drawable.image_placeholder)
-                    .error(R.drawable.image_broken)
-                    .thumbnail(
-                            Glide.with(mParent)
-                                    .load(post.getSmallFileUrl())
-                                    .bitmapTransform(new BlurTransformation(mParent, 1))
-                                    .diskCacheStrategy(DiskCacheStrategy.SOURCE)
-                    )
-                    .diskCacheStrategy(DiskCacheStrategy.SOURCE)
-                    .into(vh.photoView);
-        }
+    private void glide(ViewHolder vh) {
+        final Post post = PostStore.get(vh.position);
+        Glide.with(mParent)
+                .load(post.getLargeFileUrl())
+                .placeholder(R.drawable.image_placeholder)
+                .error(R.drawable.image_broken)
+                .thumbnail(
+                        Glide.with(mParent)
+                                .load(post.getSmallFileUrl())
+                                .bitmapTransform(new BlurTransformation(mParent, 1))
+                                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+                )
+                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+                .into(vh.photoView);
     }
 
     @Override
