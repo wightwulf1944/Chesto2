@@ -100,7 +100,8 @@ final class NotificationHelper {
 
         finishBuilder
                 .setContentIntent(viewPendingIntent)
-                .setStyle(bigPictureStyle);
+                .setStyle(bigPictureStyle)
+                .setWhen(System.currentTimeMillis());
 
         manager.notify(id, finishBuilder.build());
     }
@@ -113,10 +114,12 @@ final class NotificationHelper {
                     .setContentInfo(String.format("%s/%s", downloadsCompleted, downloadsQueued));
             manager.notify(PROGRESS_ID, progressBuilder.build());
         } else if (downloadsFailed > 0) {
-            final String text = String.format(
-                    "%s Download(s) Failed",
-                    downloadsFailed
-            );
+            String text;
+            if (downloadsFailed == 1) {
+                text = String.valueOf(downloadsFailed) + "Download Failed";
+            } else {
+                text = String.valueOf(downloadsFailed) + "Downloads Failed";
+            }
             failedBuilder.setContentText(text);
             manager.notify(FAILED_ID, failedBuilder.build());
         }
