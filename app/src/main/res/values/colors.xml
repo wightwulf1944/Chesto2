@@ -4,4 +4,8 @@
     <color name="primaryDark">#866D4E</color>
     <color name="accent">#FFBD8C</color>
     <color name="appBackground">#EFEFEF</color>
+    <color name="tag_text_color_artist">#AA0000</color>
+    <color name="tag_text_color_character">#00AA00</color>
+    <color name="tag_text_color_copyright">#AA00AA</color>
+    <color name="tag_text_color_general">#FFFFFF</color>
 </resources>

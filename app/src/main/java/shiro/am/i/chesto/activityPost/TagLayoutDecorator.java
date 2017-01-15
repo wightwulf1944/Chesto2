@@ -3,6 +3,7 @@ package shiro.am.i.chesto.activityPost;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.widget.TextView;
 
@@ -21,43 +22,51 @@ final class TagLayoutDecorator {
     private final FlowLayout mLayout;
     private final Context mContext;
     private final LayoutInflater inflater;
+    private final int copyrightTextColor;
+    private final int characterTextColor;
+    private final int artistTextColor;
+    private final int generalTextColor;
 
     TagLayoutDecorator(FlowLayout layout) {
         mLayout = layout;
         mContext = mLayout.getContext();
         inflater = LayoutInflater.from(mContext);
+        copyrightTextColor = ContextCompat.getColor(mContext, R.color.tag_text_color_copyright);
+        characterTextColor = ContextCompat.getColor(mContext, R.color.tag_text_color_character);
+        artistTextColor = ContextCompat.getColor(mContext, R.color.tag_text_color_artist);
+        generalTextColor = ContextCompat.getColor(mContext, R.color.tag_text_color_general);
     }
 
     void setPost(Post post) {
         mLayout.removeAllViews();
-        addCategory("Copyrights: ", R.layout.item_tag_copyright, post.getTagStringCopyright());
-        addCategory("Characters: ", R.layout.item_tag_character, post.getTagStringCharacter());
-        addCategory("Artist:", R.layout.item_tag_artist, post.getTagStringArtist());
-        addCategory("Tags:", R.layout.item_tag_general, post.getTagStringGeneral());
+        addCategory("Copyrights: ", copyrightTextColor, post.getTagStringCopyright());
+        addCategory("Characters: ", characterTextColor, post.getTagStringCharacter());
+        addCategory("Artist:", artistTextColor, post.getTagStringArtist());
+        addCategory("Tags:", generalTextColor, post.getTagStringGeneral());
     }
 
-    private void addCategory(String label, int layoutId, String tags) {
+    private void addCategory(String labelString, int textColor, String tags) {
         if (tags.isEmpty()) {
             return;
         }
 
-        addView(label, R.layout.item_tag_label);
-        
-        for (final String tag : tags.split(" ")) {
-            addView(tag, layoutId).setOnClickListener(view ->
-                    mContext.startActivity(
-                            new Intent(
-                                    Intent.ACTION_SEARCH,
-                                    Uri.parse(tag),
-                                    mContext,
-                                    MainActivity.class
-                            )
+        addTextView(labelString, R.layout.item_label);
+
+        for (final String tagString : tags.split(" ")) {
+            TextView tagTextView = addTextView(tagString, R.layout.item_tag);
+            tagTextView.setTextColor(textColor);
+            tagTextView.setOnClickListener(v -> mContext.startActivity(
+                    new Intent(
+                            Intent.ACTION_SEARCH,
+                            Uri.parse(tagString),
+                            mContext,
+                            MainActivity.class
                     )
-            );
+            ));
         }
     }
 
-    private TextView addView(String text, int layoutId) {
+    private TextView addTextView(String text, int layoutId) {
         TextView textView = (TextView) inflater.inflate(layoutId, mLayout, false);
         textView.setText(text);
         mLayout.addView(textView);
