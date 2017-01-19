@@ -7,15 +7,23 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.widget.SearchView;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.widget.EditText;
 
 import shiro.am.i.chesto.PostStore;
 import shiro.am.i.chesto.R;
 import shiro.am.i.chesto.activityMain.MainActivity;
 
-public final class SearchActivity extends AppCompatActivity
-        implements SearchView.OnQueryTextListener {
+//TODO: keyboard search button
+//TODO: cleanup
 
+public final class SearchActivity extends AppCompatActivity {
+
+    private EditText editText;
+    private MenuItem clearButton;
     private SearchAdapter searchAdapter;
     private String currentQuery;
 
@@ -24,48 +32,86 @@ public final class SearchActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
 
-        setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
         final ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
             actionBar.setDisplayShowTitleEnabled(false);
         }
 
-        final SearchView searchView = (SearchView) findViewById(R.id.search_view);
-        searchView.setOnQueryTextListener(this);
-        searchView.setSubmitButtonEnabled(true);
-        searchView.setIconified(false);
+        editText = (EditText) findViewById(R.id.editText);
+        editText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                onTextEdit(s.toString());
+            }
+        });
 
         searchAdapter = new SearchAdapter(itemName -> {
-            String text = searchView.getQuery()
+            String text = editText.getText()
                     .toString()
                     .replaceFirst(currentQuery, itemName);
-            searchView.setQuery(text, false);
+            editText.setText(text);
         });
 
         final RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
         recyclerView.setAdapter(searchAdapter);
         recyclerView.setHasFixedSize(true);
 
-        searchView.setQuery(PostStore.getCurrentQuery(), false);
+        editText.setText(PostStore.getCurrentQuery());
     }
 
     @Override
-    public boolean onQueryTextSubmit(String s) {
-        startActivity(
-                new Intent(Intent.ACTION_SEARCH,
-                        Uri.parse(s),
-                        this,
-                        MainActivity.class)
-        );
+    public boolean onCreateOptionsMenu(Menu menu) {
+        clearButton = menu.add(R.string.action_clear)
+                .setIcon(R.drawable.ic_search_clear)
+                .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS)
+                .setOnMenuItemClickListener(item -> {
+                    onClear();
+                    return true;
+                });
+        menu.add(R.string.action_go)
+                .setIcon(R.drawable.ic_search_go)
+                .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS)
+                .setOnMenuItemClickListener(item -> {
+                    onGo();
+                    return true;
+                });
+
+        clearButton.setVisible(false);
         return true;
     }
 
-    @Override
-    public boolean onQueryTextChange(String s) {
+    private void onTextEdit(String s) {
         currentQuery = getLastWord(s);
         searchAdapter.setQuery(currentQuery);
-        return true;
+        if (clearButton != null) {
+            clearButton.setVisible(!s.isEmpty());
+        }
+    }
+
+    private void onClear() {
+        editText.setText("");
+    }
+
+    private void onGo() {
+        Uri uri = Uri.parse(editText.getText().toString());
+        Intent intent = new Intent(
+                Intent.ACTION_SEARCH,
+                uri,
+                this,
+                MainActivity.class
+        );
+        startActivity(intent);
     }
 
     private static String getLastWord(String s) {

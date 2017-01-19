@@ -16,11 +16,12 @@
         android:theme="@style/AppTheme.AppBarOverlay"
         app:contentInsetStartWithNavigation="0dp">
 
-        <SearchView
-            android:id="@+id/search_view"
+        <EditText
+            android:id="@+id/editText"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:queryHint="Search" />
+            android:layout_height="wrap_content"
+            android:imeOptions="actionSearch"
+            android:inputType="textNoSuggestions" />
 
     </android.support.v7.widget.Toolbar>
 
