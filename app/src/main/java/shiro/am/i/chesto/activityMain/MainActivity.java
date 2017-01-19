@@ -100,17 +100,16 @@ public final class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_main, menu);
+        menu.add(0, 0, 0, R.string.action_search)
+                .setIcon(R.drawable.ic_search)
+                .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_IF_ROOM | MenuItem.SHOW_AS_ACTION_WITH_TEXT)
+                .setOnMenuItemClickListener(
+                        item -> {
+                            startActivity(new Intent(this, SearchActivity.class));
+                            return true;
+                        }
+                );
         return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.action_search) {
-            startActivity(new Intent(this, SearchActivity.class));
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
     }
 
     @Override
