@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/clear"
+        android:icon="@drawable/ic_search_clear"
+        android:title="@string/action_clear"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/go"
+        android:icon="@drawable/ic_search_go"
+        android:title="@string/action_go"
+        app:showAsAction="always" />
+</menu>

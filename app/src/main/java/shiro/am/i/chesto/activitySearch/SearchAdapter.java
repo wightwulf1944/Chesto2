@@ -1,81 +1,42 @@
 package shiro.am.i.chesto.activitySearch;
 
+import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import java.util.concurrent.TimeUnit;
+import java.util.Collections;
+import java.util.List;
 
-import io.realm.Case;
-import io.realm.Realm;
-import io.realm.RealmResults;
-import io.realm.Sort;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
-import rx.subjects.PublishSubject;
-import shiro.am.i.chesto.Chesto;
 import shiro.am.i.chesto.R;
-import shiro.am.i.chesto.retrofitDanbooru.Danbooru;
 import shiro.am.i.chesto.retrofitDanbooru.Tag;
-import timber.log.Timber;
 
 /**
  * Created by Shiro on 7/29/2016.
  */
 final class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder> {
 
+    interface OnItemClickListener {
+        void onItemClick(String itemName);
+    }
+
     private final LayoutInflater inflater;
-    private final OnItemClickListener onPositionClickListener;
-    private final TagRepo tagRepo;
+    private List<Tag> data;
+    private OnItemClickListener onItemClickListener;
 
-
-    SearchAdapter(OnItemClickListener listener) {
-        inflater = LayoutInflater.from(Chesto.getInstance());
-        onPositionClickListener = listener;
-        tagRepo = new TagRepo();
+    SearchAdapter(Context context) {
+        inflater = LayoutInflater.from(context);
+        data = Collections.emptyList();
     }
 
-    private class TagRepo {
-
-        private final PublishSubject<String> publishSubject;
-        private RealmResults<Tag> results;
-
-        private TagRepo() {
-            publishSubject = PublishSubject.create();
-
-            results = Realm.getDefaultInstance()
-                    .where(Tag.class)
-                    .findAllSorted("postCount", Sort.DESCENDING);
-
-            publishSubject.observeOn(AndroidSchedulers.mainThread())
-                    .doOnNext(s -> {
-                        results = Realm.getDefaultInstance()
-                                .where(Tag.class)
-                                .contains("name", s, Case.INSENSITIVE)
-                                .findAllSorted("postCount", Sort.DESCENDING);
-                        notifyDataSetChanged();
-                    })
-                    .debounce(300, TimeUnit.MILLISECONDS)
-                    .observeOn(Schedulers.io())
-                    .flatMap(s -> Danbooru.api.searchTags(s + "*"))
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(
-                            tags -> {
-                                Realm realm = Realm.getDefaultInstance();
-                                realm.beginTransaction();
-                                realm.copyToRealmOrUpdate(tags);
-                                realm.commitTransaction();
-                                notifyDataSetChanged();
-                            },
-                            throwable -> Timber.e(throwable, "Error fetching tag suggestions")
-                    );
-        }
+    void setData(List l) {
+        data = l;
     }
 
-    void setQuery(String query) {
-        tagRepo.publishSubject.onNext(query);
+    void setOnItemClickListener(OnItemClickListener l) {
+        onItemClickListener = l;
     }
 
     @Override
@@ -86,17 +47,17 @@ final class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder>
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        final Tag tag = tagRepo.results.get(position);
+        final Tag tag = data.get(position);
         holder.postCount.setText(tag.getPostCountStr());
         holder.name.setText(tag.getName());
     }
 
     @Override
     public int getItemCount() {
-        return tagRepo.results.size();
+        return data.size();
     }
 
-    class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    class ViewHolder extends RecyclerView.ViewHolder {
         private final TextView postCount;
         private final TextView name;
 
@@ -104,17 +65,13 @@ final class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder>
             super(v);
             postCount = (TextView) v.findViewById(R.id.postCount);
             name = (TextView) v.findViewById(R.id.name);
-            v.setOnClickListener(this);
+            v.setOnClickListener(this::onClick);
         }
 
-        @Override
-        public void onClick(View view) {
-            String itemName = tagRepo.results.get(getAdapterPosition()).getName();
-            onPositionClickListener.onItemClick(itemName);
+        private void onClick(View view) {
+            String itemName = data.get(getAdapterPosition()).getName();
+            onItemClickListener.onItemClick(itemName);
         }
     }
 
-    interface OnItemClickListener {
-        void onItemClick(String itemName);
-    }
 }

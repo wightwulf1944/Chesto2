@@ -7,23 +7,23 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.EditText;
 
+import java.util.List;
+
 import shiro.am.i.chesto.PostStore;
 import shiro.am.i.chesto.R;
 import shiro.am.i.chesto.activityMain.MainActivity;
-
-//TODO: cleanup
+import shiro.am.i.chesto.retrofitDanbooru.Tag;
 
 public final class SearchActivity extends AppCompatActivity {
 
-    private EditText editText;
-    private MenuItem clearButton;
+    private EditTextWrapper editTextWrapper;
+    private TagRepository tagRepository;
     private SearchAdapter searchAdapter;
+    private MenuItem clearButton;
     private String currentQuery;
 
     @Override
@@ -31,85 +31,74 @@ public final class SearchActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
         final ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
             actionBar.setDisplayShowTitleEnabled(false);
         }
 
-        editText = (EditText) findViewById(R.id.editText);
-        editText.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            }
+        editTextWrapper = new EditTextWrapper((EditText) findViewById(R.id.editText));
+        editTextWrapper.setAfterTextChangedListener(this::onTextChanged);
+        editTextWrapper.setOnEditorSearchListener(this::invokeSearch);
 
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-            }
+        tagRepository = new TagRepository();
+        tagRepository.setOnTagRepoUpdateListener(this::onTagRepoUpdated);
 
-            @Override
-            public void afterTextChanged(Editable s) {
-                onTextEdit(s.toString());
-            }
-        });
-        editText.setOnEditorActionListener(new OnEditorSearchListener() {
-            @Override
-            void onEditorSearch() {
-                onGo();
-            }
-        });
-
-        searchAdapter = new SearchAdapter(itemName -> {
-            String text = editText.getText()
-                    .toString()
-                    .replaceFirst(currentQuery, itemName);
-            editText.setText(text);
-        });
+        searchAdapter = new SearchAdapter(this);
+        searchAdapter.setOnItemClickListener(this::onAdapterItemClicked);
 
         final RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
         recyclerView.setAdapter(searchAdapter);
         recyclerView.setHasFixedSize(true);
 
-        editText.setText(PostStore.getCurrentQuery());
+        editTextWrapper.setText(PostStore.getCurrentQuery());
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        clearButton = menu.add(R.string.action_clear)
-                .setIcon(R.drawable.ic_search_clear)
-                .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS)
-                .setOnMenuItemClickListener(item -> {
-                    onClear();
-                    return true;
-                });
-        menu.add(R.string.action_go)
-                .setIcon(R.drawable.ic_search_go)
-                .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS)
-                .setOnMenuItemClickListener(item -> {
-                    onGo();
-                    return true;
-                });
-
-        clearButton.setVisible(false);
+        getMenuInflater().inflate(R.menu.activity_search, menu);
+        clearButton = menu.findItem(R.id.clear);
+        clearButton.setVisible(!editTextWrapper.getText().toString().isEmpty());
         return true;
     }
 
-    private void onTextEdit(String s) {
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.clear:
+                editTextWrapper.setText("");
+                return true;
+            case R.id.go:
+                invokeSearch();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    private void onTextChanged(String s) {
         currentQuery = getLastWord(s);
-        searchAdapter.setQuery(currentQuery);
+        tagRepository.setQuery(currentQuery);
         if (clearButton != null) {
             clearButton.setVisible(!s.isEmpty());
         }
     }
 
-    private void onClear() {
-        editText.setText("");
+    private void onTagRepoUpdated(List<Tag> data) {
+        searchAdapter.setData(data);
+        searchAdapter.notifyDataSetChanged();
     }
 
-    private void onGo() {
-        Uri uri = Uri.parse(editText.getText().toString());
+    private void onAdapterItemClicked(String itemName) {
+        String text = editTextWrapper.getText()
+                .toString()
+                .replaceFirst(currentQuery, itemName);
+        editTextWrapper.setText(text);
+    }
+
+    private void invokeSearch() {
+        Uri uri = Uri.parse(editTextWrapper.getText().toString());
         Intent intent = new Intent(
                 Intent.ACTION_SEARCH,
                 uri,
