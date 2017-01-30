@@ -17,7 +17,6 @@ import shiro.am.i.chesto.PostStore;
 import shiro.am.i.chesto.R;
 import shiro.am.i.chesto.activityMain.MainActivity;
 
-//TODO: keyboard search button
 //TODO: cleanup
 
 public final class SearchActivity extends AppCompatActivity {
@@ -53,6 +52,12 @@ public final class SearchActivity extends AppCompatActivity {
             @Override
             public void afterTextChanged(Editable s) {
                 onTextEdit(s.toString());
+            }
+        });
+        editText.setOnEditorActionListener(new OnEditorSearchListener() {
+            @Override
+            void onEditorSearch() {
+                onGo();
             }
         });
 
