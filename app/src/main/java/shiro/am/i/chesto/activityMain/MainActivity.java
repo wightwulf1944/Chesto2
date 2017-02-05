@@ -1,6 +1,7 @@
 package shiro.am.i.chesto.activityMain;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.Snackbar;
@@ -19,6 +20,7 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import shiro.am.i.chesto.Chesto;
 import shiro.am.i.chesto.PostStore;
 import shiro.am.i.chesto.R;
 import shiro.am.i.chesto.U;
@@ -100,16 +102,30 @@ public final class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        menu.add(0, 0, 0, R.string.action_search)
-                .setIcon(R.drawable.ic_search)
-                .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_IF_ROOM | MenuItem.SHOW_AS_ACTION_WITH_TEXT)
-                .setOnMenuItemClickListener(
-                        item -> {
-                            startActivity(new Intent(this, SearchActivity.class));
-                            return true;
-                        }
-                );
+        getMenuInflater().inflate(R.menu.activity_main, menu);
+
+        boolean hideNsfw = Chesto.getSharedPreferences().getBoolean("hide_nsfw", true);
+        menu.findItem(R.id.action_hide_nsfw).setChecked(hideNsfw);
+
         return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_search:
+                startActivity(new Intent(this, SearchActivity.class));
+                return true;
+            case R.id.action_hide_nsfw:
+                boolean toggled = !item.isChecked();
+                item.setChecked(toggled);
+                SharedPreferences.Editor editor = Chesto.getSharedPreferences().edit();
+                editor.putBoolean("hide_nsfw", toggled);
+                editor.apply();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     @Override

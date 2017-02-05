@@ -10,7 +10,7 @@ import io.realm.Sort;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 import rx.subjects.PublishSubject;
-import shiro.am.i.chesto.retrofitDanbooru.Danbooru;
+import shiro.am.i.chesto.Chesto;
 import shiro.am.i.chesto.retrofitDanbooru.Tag;
 import timber.log.Timber;
 
@@ -40,7 +40,7 @@ final class TagRepository {
                 })
                 .debounce(300, TimeUnit.MILLISECONDS)
                 .observeOn(Schedulers.io())
-                .flatMap(s -> Danbooru.api.searchTags(s + "*"))
+                .flatMap(s -> Chesto.getDanbooru().searchTags(s + "*"))
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         tags -> {

@@ -14,13 +14,6 @@ import rx.Observable;
  */
 public interface Danbooru {
 
-    Danbooru api = new Retrofit.Builder()
-            .baseUrl("http://danbooru.donmai.us/")
-            .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
-            .create(Danbooru.class);
-
     @GET("posts.json?limit=100")
     Observable<List<Post>> getPosts(@Query("tags") String tags, @Query("page") int page);
 
