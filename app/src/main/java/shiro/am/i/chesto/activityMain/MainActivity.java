@@ -104,7 +104,7 @@ public final class MainActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.activity_main, menu);
 
-        boolean hideNsfw = Chesto.getSharedPreferences().getBoolean("hide_nsfw", true);
+        boolean hideNsfw = Chesto.getPreferences().getBoolean("hide_nsfw", true);
         menu.findItem(R.id.action_hide_nsfw).setChecked(hideNsfw);
 
         return true;
@@ -119,7 +119,7 @@ public final class MainActivity extends AppCompatActivity {
             case R.id.action_hide_nsfw:
                 boolean toggled = !item.isChecked();
                 item.setChecked(toggled);
-                SharedPreferences.Editor editor = Chesto.getSharedPreferences().edit();
+                SharedPreferences.Editor editor = Chesto.getPreferences().edit();
                 editor.putBoolean("hide_nsfw", toggled);
                 editor.apply();
                 return true;

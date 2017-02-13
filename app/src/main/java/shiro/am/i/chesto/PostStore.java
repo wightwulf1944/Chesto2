@@ -62,7 +62,7 @@ public final class PostStore {
 
     public static void fetchPosts() {
         Danbooru api;
-        boolean hideNsfw = Chesto.getSharedPreferences().getBoolean("hide_nsfw", true);
+        boolean hideNsfw = Chesto.getPreferences().getBoolean("hide_nsfw", true);
         if (hideNsfw) {
             api = Chesto.getSafebooru();
         } else {

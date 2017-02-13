@@ -9,7 +9,6 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
-import android.widget.Toast;
 
 import org.apmem.tools.layouts.FlowLayout;
 import org.greenrobot.eventbus.EventBus;
@@ -102,16 +101,13 @@ public final class PostActivity extends AppCompatActivity {
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        switch (grantResults[0]) {
-            case PackageManager.PERMISSION_GRANTED:
-                Intent intent = new Intent(this, ImageDownloaderService.class);
-                intent.putExtra("default", viewPager.getCurrentItem());
-                startService(intent);
-                Snackbar.make(viewPager, "Download queued", Snackbar.LENGTH_SHORT).show();
-                break;
-            default:
-                Toast.makeText(this, "Please allow access to save image", Toast.LENGTH_SHORT).show();
-                break;
+        if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            Intent intent = new Intent(this, ImageDownloaderService.class);
+            intent.putExtra("default", viewPager.getCurrentItem());
+            startService(intent);
+            Snackbar.make(viewPager, "Download queued", Snackbar.LENGTH_SHORT).show();
+        } else {
+            Snackbar.make(viewPager, "Please allow access to save image", Snackbar.LENGTH_SHORT).show();
         }
     }
 

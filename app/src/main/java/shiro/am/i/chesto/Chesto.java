@@ -2,6 +2,7 @@ package shiro.am.i.chesto;
 
 import android.app.Application;
 import android.content.SharedPreferences;
+import android.os.StrictMode;
 import android.preference.PreferenceManager;
 
 import io.realm.Realm;
@@ -28,21 +29,34 @@ public final class Chesto extends Application {
 
         instance = this;
 
+        if (BuildConfig.DEBUG) {
+            Timber.plant(new Timber.DebugTree());
+
+            StrictMode.ThreadPolicy threadPolicy = new StrictMode.ThreadPolicy.Builder()
+                    .detectAll()
+                    .penaltyLog()
+                    .build();
+            StrictMode.setThreadPolicy(threadPolicy);
+
+            StrictMode.VmPolicy vmPolicy = new StrictMode.VmPolicy.Builder()
+                    .detectAll()
+                    .penaltyLog()
+                    .build();
+            StrictMode.setVmPolicy(vmPolicy);
+        }
+
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 
         RealmConfiguration defaultConfig = new RealmConfiguration.Builder(this).build();
         Realm.setDefaultConfiguration(defaultConfig);
 
-        if (BuildConfig.DEBUG) {
-            Timber.plant(new Timber.DebugTree());
-        }
     }
 
     public static Chesto getInstance() {
         return instance;
     }
 
-    public static SharedPreferences getSharedPreferences() {
+    public static SharedPreferences getPreferences() {
         return sharedPreferences;
     }
 
