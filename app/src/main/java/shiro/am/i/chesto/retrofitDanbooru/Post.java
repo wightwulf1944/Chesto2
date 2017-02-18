@@ -50,10 +50,7 @@ public class Post extends RealmObject {
     }
 
     public String getWebUrl() {
-        StringBuilder str = new StringBuilder(BASE_URL);
-        str.append("/posts/");
-        str.append(id);
-        return str.toString();
+        return BASE_URL + "/posts/" + id;
     }
 
     public Uri getWebUri() {

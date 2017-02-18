@@ -31,7 +31,7 @@ final class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder>
         data = Collections.emptyList();
     }
 
-    void setData(List l) {
+    void setData(List<Tag> l) {
         data = l;
     }
 
@@ -65,10 +65,10 @@ final class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder>
             super(v);
             postCount = (TextView) v.findViewById(R.id.postCount);
             name = (TextView) v.findViewById(R.id.name);
-            v.setOnClickListener(this::onClick);
+            v.setOnClickListener(v1 -> onClick());
         }
 
-        private void onClick(View view) {
+        private void onClick() {
             String itemName = data.get(getAdapterPosition()).getName();
             onItemClickListener.onItemClick(itemName);
         }

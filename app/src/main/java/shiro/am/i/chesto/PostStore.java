@@ -132,9 +132,9 @@ public final class PostStore {
         void onLoadError();
     }
 
-    private static LinkedList<OnPostsAddedListener> onPostsAddedListeners = new LinkedList<>();
+    private static final LinkedList<OnPostsAddedListener> onPostsAddedListeners = new LinkedList<>();
 
-    private static LinkedList<PostStoreListener> postStoreListeners = new LinkedList<>();
+    private static final LinkedList<PostStoreListener> postStoreListeners = new LinkedList<>();
 
     public static void addOnPostsAddedListener(OnPostsAddedListener listener) {
         onPostsAddedListeners.add(listener);

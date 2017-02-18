@@ -15,7 +15,6 @@ import jp.wasabeef.glide.transformations.BlurTransformation;
 import shiro.am.i.chesto.PostStore;
 import shiro.am.i.chesto.R;
 import shiro.am.i.chesto.retrofitDanbooru.Post;
-import timber.log.Timber;
 import uk.co.senab.photoview.PhotoView;
 
 /**

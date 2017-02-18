@@ -22,7 +22,7 @@ final class EditTextWrapper
         void onEditorSearch();
     }
 
-    private EditText editText;
+    private final EditText editText;
     private AfterTextChangedListener afterTextChangedListener;
     private OnEditorSearchListener onEditorSearchListener;
 
