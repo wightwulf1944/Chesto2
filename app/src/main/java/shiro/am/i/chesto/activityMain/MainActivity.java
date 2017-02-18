@@ -16,17 +16,17 @@ import android.view.MenuItem;
 import com.fivehundredpx.greedolayout.GreedoLayoutManager;
 import com.fivehundredpx.greedolayout.GreedoSpacingItemDecoration;
 
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
-
 import shiro.am.i.chesto.Chesto;
 import shiro.am.i.chesto.PostStore;
 import shiro.am.i.chesto.R;
 import shiro.am.i.chesto.U;
 import shiro.am.i.chesto.activitySearch.SearchActivity;
 
-public final class MainActivity extends AppCompatActivity {
+public final class MainActivity
+        extends AppCompatActivity
+        implements
+        PostStore.OnPostsAddedListener,
+        PostStore.PostStoreListener {
 
     private Toolbar toolbar;
     private AppBarLayout appbar;
@@ -66,7 +66,8 @@ public final class MainActivity extends AppCompatActivity {
         snackbar = Snackbar.make(recyclerView, "Check your connection", Snackbar.LENGTH_INDEFINITE)
                 .setAction("Retry", view -> PostStore.fetchPosts());
 
-        EventBus.getDefault().register(this);
+        PostStore.addPostStoreListener(this);
+        PostStore.addOnPostsAddedListener(this);
 
         PostStore.newSearch("");
         handleIntent(getIntent());
@@ -74,7 +75,8 @@ public final class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
-        EventBus.getDefault().unregister(this);
+        PostStore.removePostStoreListener(this);
+        PostStore.removeOnPostsAddedListener(this);
         super.onDestroy();
     }
 
@@ -151,29 +153,29 @@ public final class MainActivity extends AppCompatActivity {
         appbar.setExpanded(true);
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onEvent(PostStore.Event.LoadStarted event) {
+    @Override
+    public void onLoadStarted() {
         swipeLayout.setRefreshing(true);
         snackbar.dismiss();
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onEvent(PostStore.Event.LoadFinished event) {
+    @Override
+    public void onLoadFinished() {
         swipeLayout.setRefreshing(false);
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onEvent(PostStore.Event.LoadError event) {
+    @Override
+    public void onLoadError() {
         snackbar.show();
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onEvent(PostStore.Event.Cleared event) {
+    @Override
+    public void onPostsCleared() {
         adapter.notifyDataSetChanged();
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onEvent(PostStore.Event.PostAdded event) {
-        adapter.notifyItemInserted(event.index);
+    @Override
+    public void onPostsAdded(int start, int count) {
+        adapter.notifyItemRangeInserted(start, count);
     }
 }

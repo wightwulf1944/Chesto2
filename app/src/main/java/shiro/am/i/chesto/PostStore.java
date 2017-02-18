@@ -2,12 +2,10 @@ package shiro.am.i.chesto;
 
 import com.fivehundredpx.greedolayout.GreedoLayoutSizeCalculator;
 
-import org.greenrobot.eventbus.EventBus;
-
 import java.util.ArrayList;
+import java.util.LinkedList;
 
 import rx.Observable;
-import rx.Observer;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 import shiro.am.i.chesto.retrofitDanbooru.Danbooru;
@@ -19,7 +17,6 @@ import timber.log.Timber;
  */
 public final class PostStore {
 
-    private static final EventBus eventBus = EventBus.getDefault();
     private static final ArrayList<Post> list = new ArrayList<>();
     private static String currentQuery;
     private static int currentPage;
@@ -52,7 +49,7 @@ public final class PostStore {
     public static void newSearch(String tags) {
         if (!list.isEmpty()) {
             list.clear();
-            eventBus.post(new Event.Cleared());
+            notifyPostsCleared();
         }
 
         currentQuery = tags;
@@ -71,37 +68,32 @@ public final class PostStore {
 
         api.getPosts(currentQuery, currentPage)
                 .subscribeOn(Schedulers.io())
-                .doOnNext(posts -> list.ensureCapacity(list.size() + posts.size()))
-                .flatMap(Observable::from)
-                .filter(Post::hasFileUrl)
-                .filter(post -> !list.contains(post))
                 .observeOn(AndroidSchedulers.mainThread())
+                .flatMap(Observable::from)
+                .filter(post -> !list.contains(post))
+                .filter(Post::hasFileUrl)
+                .toList()
                 .doOnSubscribe(() -> {
                     isLoading = true;
-                    eventBus.post(new Event.LoadStarted());
+                    notifyLoadStarted();
                 })
                 .doOnTerminate(() -> {
                     isLoading = false;
-                    eventBus.post(new Event.LoadFinished());
+                    notifyLoadFinished();
                 })
-                .subscribe(new Observer<Post>() {
-                    @Override
-                    public void onCompleted() {
-                        ++currentPage;
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        Timber.e(e, "Error fetching posts");
-                        eventBus.post(new Event.LoadError());
-                    }
-
-                    @Override
-                    public void onNext(Post post) {
-                        list.add(post);
-                        eventBus.post(new Event.PostAdded(list.size()));
-                    }
-                });
+                .subscribe(
+                        posts -> {
+                            ++currentPage;
+                            int start = list.size();
+                            int count = posts.size();
+                            list.addAll(posts);
+                            notifyPostsAdded(start, count);
+                        },
+                        throwable -> {
+                            Timber.e(throwable, "Error fetching posts");
+                            notifyLoadError();
+                        }
+                );
     }
 
     public static class RatioCalculator implements GreedoLayoutSizeCalculator.SizeCalculatorDelegate {
@@ -126,29 +118,67 @@ public final class PostStore {
         }
     }
 
-    public static class Event {
-        private Event() {
-            throw new AssertionError("Tried to create instance");
+    public interface OnPostsAddedListener {
+        void onPostsAdded(int start, int count);
+    }
+
+    public interface PostStoreListener {
+        void onPostsCleared();
+
+        void onLoadStarted();
+
+        void onLoadFinished();
+
+        void onLoadError();
+    }
+
+    private static LinkedList<OnPostsAddedListener> onPostsAddedListeners = new LinkedList<>();
+
+    private static LinkedList<PostStoreListener> postStoreListeners = new LinkedList<>();
+
+    public static void addOnPostsAddedListener(OnPostsAddedListener listener) {
+        onPostsAddedListeners.add(listener);
+    }
+
+    public static void removeOnPostsAddedListener(OnPostsAddedListener listener) {
+        onPostsAddedListeners.remove(listener);
+    }
+
+    private static void notifyPostsAdded(int start, int count) {
+        for (OnPostsAddedListener listener : onPostsAddedListeners) {
+            listener.onPostsAdded(start, count);
         }
+    }
 
-        public static class LoadStarted {
+    public static void addPostStoreListener(PostStoreListener listener) {
+        postStoreListeners.add(listener);
+    }
+
+    public static void removePostStoreListener(PostStoreListener listener) {
+        postStoreListeners.remove(listener);
+    }
+
+    private static void notifyPostsCleared() {
+        for (PostStoreListener listener : postStoreListeners) {
+            listener.onPostsCleared();
         }
+    }
 
-        public static class LoadFinished {
+    private static void notifyLoadStarted() {
+        for (PostStoreListener listener : postStoreListeners) {
+            listener.onLoadStarted();
         }
+    }
 
-        public static class LoadError {
+    private static void notifyLoadFinished() {
+        for (PostStoreListener listener : postStoreListeners) {
+            listener.onLoadFinished();
         }
+    }
 
-        public static class Cleared {
-        }
-
-        public static class PostAdded {
-            public int index;
-
-            private PostAdded(int i) {
-                index = i;
-            }
+    private static void notifyLoadError() {
+        for (PostStoreListener listener : postStoreListeners) {
+            listener.onLoadError();
         }
     }
 }

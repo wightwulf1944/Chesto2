@@ -11,9 +11,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
 import org.apmem.tools.layouts.FlowLayout;
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
 
 import shiro.am.i.chesto.PostStore;
 import shiro.am.i.chesto.R;
@@ -22,7 +19,9 @@ import shiro.am.i.chesto.serviceImageDownloader.ImageDownloaderService;
 /**
  * Created by Shiro on 8/18/2016.
  */
-public final class PostActivity extends AppCompatActivity {
+public final class PostActivity
+        extends AppCompatActivity
+        implements PostStore.OnPostsAddedListener {
 
     private BottomSheetDecorator bottomSheet;
     private PostPagerAdapter adapter;
@@ -52,12 +51,12 @@ public final class PostActivity extends AppCompatActivity {
 
         bottomSheet = new BottomSheetDecorator(findViewById(R.id.bottomSheet));
 
-        EventBus.getDefault().register(this);
+        PostStore.addOnPostsAddedListener(this);
     }
 
     @Override
     protected void onDestroy() {
-        EventBus.getDefault().unregister(this);
+        PostStore.removeOnPostsAddedListener(this);
         super.onDestroy();
     }
 
@@ -111,8 +110,8 @@ public final class PostActivity extends AppCompatActivity {
         }
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onEvent(PostStore.Event.PostAdded event) {
+    @Override
+    public void onPostsAdded(int start, int count) {
         adapter.notifyDataSetChanged();
     }
 }
