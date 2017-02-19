@@ -14,17 +14,12 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="5dp"
-        android:layout_marginRight="5dp"
-        android:alpha="0.38"
-        android:textColor="@android:color/black"
-        android:textSize="13sp" />
+        android:layout_marginRight="5dp" />
 
     <TextView
         android:id="@+id/name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:alpha="0.87"
-        android:textColor="@android:color/black"
-        android:textSize="13sp" />
+        android:textColor="?android:textColorPrimary" />
 
 </LinearLayout>

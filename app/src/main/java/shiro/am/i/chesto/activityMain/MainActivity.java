@@ -60,7 +60,7 @@ public final class MainActivity
         recyclerView.setLayoutManager(layoutManager);
 
         swipeLayout = (SwipeRefreshLayout) findViewById(R.id.swipeLayout);
-        swipeLayout.setColorSchemeColors(ContextCompat.getColor(this, R.color.primaryDark));
+        swipeLayout.setColorSchemeColors(ContextCompat.getColor(this, R.color.primary_dark));
         swipeLayout.setOnRefreshListener(PostStore::refresh);
 
         snackbar = Snackbar.make(recyclerView, "Check your connection", Snackbar.LENGTH_INDEFINITE)
