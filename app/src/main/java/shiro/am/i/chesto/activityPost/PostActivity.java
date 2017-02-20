@@ -21,7 +21,7 @@ import shiro.am.i.chesto.serviceImageDownloader.ImageDownloaderService;
  */
 public final class PostActivity
         extends AppCompatActivity
-        implements PostStore.OnPostsAddedListener {
+        implements PostStore.OnPostAddedListener {
 
     private BottomSheetDecorator bottomSheet;
     private PostPagerAdapter adapter;
@@ -51,12 +51,12 @@ public final class PostActivity
 
         bottomSheet = new BottomSheetDecorator(findViewById(R.id.bottomSheet));
 
-        PostStore.addOnPostsAddedListener(this);
+        PostStore.addOnPostAddedListener(this);
     }
 
     @Override
     protected void onDestroy() {
-        PostStore.removeOnPostsAddedListener(this);
+        PostStore.removeOnPostAddedListener(this);
         super.onDestroy();
     }
 
@@ -111,7 +111,7 @@ public final class PostActivity
     }
 
     @Override
-    public void onPostsAdded(int start, int count) {
+    public void onPostAdded(int position) {
         adapter.notifyDataSetChanged();
     }
 }

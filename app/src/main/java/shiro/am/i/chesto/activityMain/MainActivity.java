@@ -25,7 +25,7 @@ import shiro.am.i.chesto.activitySearch.SearchActivity;
 public final class MainActivity
         extends AppCompatActivity
         implements
-        PostStore.OnPostsAddedListener,
+        PostStore.OnPostAddedListener,
         PostStore.PostStoreListener {
 
     private Toolbar toolbar;
@@ -67,7 +67,7 @@ public final class MainActivity
                 .setAction("Retry", view -> PostStore.fetchPosts());
 
         PostStore.addPostStoreListener(this);
-        PostStore.addOnPostsAddedListener(this);
+        PostStore.addOnPostAddedListener(this);
 
         PostStore.newSearch("");
         handleIntent(getIntent());
@@ -76,7 +76,7 @@ public final class MainActivity
     @Override
     protected void onDestroy() {
         PostStore.removePostStoreListener(this);
-        PostStore.removeOnPostsAddedListener(this);
+        PostStore.removeOnPostAddedListener(this);
         super.onDestroy();
     }
 
@@ -175,7 +175,7 @@ public final class MainActivity
     }
 
     @Override
-    public void onPostsAdded(int start, int count) {
-        adapter.notifyItemRangeInserted(start, count);
+    public void onPostAdded(int position) {
+        adapter.notifyItemInserted(position);
     }
 }
