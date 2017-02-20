@@ -124,6 +124,7 @@ public final class MainActivity
                 SharedPreferences.Editor editor = Chesto.getPreferences().edit();
                 editor.putBoolean("hide_nsfw", toggled);
                 editor.apply();
+                PostStore.refresh();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
