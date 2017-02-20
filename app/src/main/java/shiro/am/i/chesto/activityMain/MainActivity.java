@@ -34,7 +34,7 @@ public final class MainActivity
     private MainAdapter adapter;
     private RecyclerView recyclerView;
     private SwipeRefreshLayout swipeLayout;
-    private Snackbar snackbar;
+    private Snackbar errorSnackbar;
 
     private long mBackPressed;
 
@@ -63,7 +63,7 @@ public final class MainActivity
         swipeLayout.setColorSchemeColors(ContextCompat.getColor(this, R.color.primary_dark));
         swipeLayout.setOnRefreshListener(PostStore::refresh);
 
-        snackbar = Snackbar.make(recyclerView, "Check your connection", Snackbar.LENGTH_INDEFINITE)
+        errorSnackbar = Snackbar.make(recyclerView, "Check your connection", Snackbar.LENGTH_INDEFINITE)
                 .setAction("Retry", view -> PostStore.fetchPosts());
 
         PostStore.addPostStoreListener(this);
@@ -156,7 +156,7 @@ public final class MainActivity
     @Override
     public void onLoadStarted() {
         swipeLayout.setRefreshing(true);
-        snackbar.dismiss();
+        errorSnackbar.dismiss();
     }
 
     @Override
@@ -166,7 +166,7 @@ public final class MainActivity
 
     @Override
     public void onLoadError() {
-        snackbar.show();
+        errorSnackbar.show();
     }
 
     @Override
