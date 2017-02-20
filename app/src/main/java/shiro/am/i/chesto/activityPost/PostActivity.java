@@ -5,10 +5,12 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.ImageButton;
 
 import org.apmem.tools.layouts.FlowLayout;
 
@@ -23,7 +25,7 @@ public final class PostActivity
         extends AppCompatActivity
         implements PostStore.OnPostAddedListener {
 
-    private BottomSheetDecorator bottomSheet;
+    private BottomSheetBehavior bottomSheetBehavior;
     private PostPagerAdapter adapter;
     private HackyViewPager viewPager;
 
@@ -49,7 +51,26 @@ public final class PostActivity
             }
         });
 
-        bottomSheet = new BottomSheetDecorator(findViewById(R.id.bottomSheet));
+        ImageButton infoButton = (ImageButton) findViewById(R.id.infoButton);
+        View bottomBar = findViewById(R.id.bottomBar);
+
+        bottomSheetBehavior = BottomSheetBehavior.from(findViewById(R.id.bottomSheet));
+        bottomSheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
+            @Override
+            public void onStateChanged(@NonNull View bottomSheet, int newState) {
+                if (newState == BottomSheetBehavior.STATE_COLLAPSED) {
+                    infoButton.setImageResource(R.drawable.ic_nav_info);
+                } else {
+                    infoButton.setImageResource(R.drawable.ic_nav_arrow_hide);
+                }
+            }
+
+            @Override
+            public void onSlide(@NonNull View bottomSheet, float slideOffset) {
+                bottomSheet.setAlpha(slideOffset);
+                bottomBar.setAlpha(slideOffset);
+            }
+        });
 
         PostStore.addOnPostAddedListener(this);
     }
@@ -69,8 +90,18 @@ public final class PostActivity
 
     @Override
     public void onBackPressed() {
-        if (bottomSheet.tryIsCollapsed()) {
+        if (bottomSheetBehavior.getState() != BottomSheetBehavior.STATE_COLLAPSED) {
+            bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+        } else {
             finishAndReturnResult();
+        }
+    }
+
+    public void onInfoButtonClicked(View view) {
+        if (bottomSheetBehavior.getState() == BottomSheetBehavior.STATE_COLLAPSED) {
+            bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+        } else {
+            bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
         }
     }
 
