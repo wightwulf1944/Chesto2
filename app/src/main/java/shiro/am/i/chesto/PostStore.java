@@ -58,15 +58,8 @@ public final class PostStore {
     }
 
     public static void fetchPosts() {
-        Danbooru api;
-        boolean hideNsfw = Chesto.getPreferences().getBoolean("hide_nsfw", true);
-        if (hideNsfw) {
-            api = Chesto.getSafebooru();
-        } else {
-            api = Chesto.getDanbooru();
-        }
-
-        api.getPosts(currentQuery, currentPage)
+        Chesto.getDanbooru()
+                .getPosts(currentQuery, currentPage)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .flatMap(Observable::from)

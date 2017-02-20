@@ -27,8 +27,6 @@ public final class Chesto extends Application {
     public void onCreate() {
         super.onCreate();
 
-        instance = this;
-
         if (BuildConfig.DEBUG) {
             Timber.plant(new Timber.DebugTree());
 
@@ -45,7 +43,23 @@ public final class Chesto extends Application {
             StrictMode.setVmPolicy(vmPolicy);
         }
 
+        instance = this;
+
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+
+        danbooru = new Retrofit.Builder()
+                .baseUrl("http://danbooru.donmai.us/")
+                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+                .addConverterFactory(GsonConverterFactory.create())
+                .build()
+                .create(Danbooru.class);
+
+        safebooru = new Retrofit.Builder()
+                .baseUrl("http://safebooru.donmai.us/")
+                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+                .addConverterFactory(GsonConverterFactory.create())
+                .build()
+                .create(Danbooru.class);
 
         RealmConfiguration defaultConfig = new RealmConfiguration.Builder(this).build();
         Realm.setDefaultConfiguration(defaultConfig);
@@ -61,26 +75,11 @@ public final class Chesto extends Application {
     }
 
     public static Danbooru getDanbooru() {
-        if (danbooru == null) {
-            danbooru = new Retrofit.Builder()
-                    .baseUrl("http://danbooru.donmai.us/")
-                    .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
-                    .addConverterFactory(GsonConverterFactory.create())
-                    .build()
-                    .create(Danbooru.class);
+        boolean hideNsfw = sharedPreferences.getBoolean("hide_nsfw", true);
+        if (hideNsfw) {
+            return safebooru;
+        } else {
+            return danbooru;
         }
-        return danbooru;
-    }
-
-    public static Danbooru getSafebooru() {
-        if (safebooru == null) {
-            safebooru = new Retrofit.Builder()
-                    .baseUrl("http://safebooru.donmai.us/")
-                    .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
-                    .addConverterFactory(GsonConverterFactory.create())
-                    .build()
-                    .create(Danbooru.class);
-        }
-        return safebooru;
     }
 }
