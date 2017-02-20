@@ -10,6 +10,7 @@ import io.realm.RealmConfiguration;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
+import rx.schedulers.Schedulers;
 import shiro.am.i.chesto.retrofitDanbooru.Danbooru;
 import timber.log.Timber;
 
@@ -47,17 +48,20 @@ public final class Chesto extends Application {
 
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 
+        RxJavaCallAdapterFactory callAdapterFactory = RxJavaCallAdapterFactory.createWithScheduler(Schedulers.io());
+        GsonConverterFactory converterFactory = GsonConverterFactory.create();
+
         danbooru = new Retrofit.Builder()
                 .baseUrl("http://danbooru.donmai.us/")
-                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
-                .addConverterFactory(GsonConverterFactory.create())
+                .addCallAdapterFactory(callAdapterFactory)
+                .addConverterFactory(converterFactory)
                 .build()
                 .create(Danbooru.class);
 
         safebooru = new Retrofit.Builder()
                 .baseUrl("http://safebooru.donmai.us/")
-                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
-                .addConverterFactory(GsonConverterFactory.create())
+                .addCallAdapterFactory(callAdapterFactory)
+                .addConverterFactory(converterFactory)
                 .build()
                 .create(Danbooru.class);
 

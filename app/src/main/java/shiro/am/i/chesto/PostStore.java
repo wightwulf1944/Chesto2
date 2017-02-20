@@ -7,7 +7,6 @@ import java.util.LinkedList;
 
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
 import rx.subjects.PublishSubject;
 import shiro.am.i.chesto.retrofitDanbooru.Post;
 import timber.log.Timber;
@@ -70,7 +69,6 @@ public final class PostStore {
     public static void fetchPosts() {
         Chesto.getDanbooru()
                 .getPosts(currentQuery, currentPage)
-                .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .flatMap(Observable::from)
                 .doOnSubscribe(() -> {

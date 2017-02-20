@@ -8,7 +8,6 @@ import io.realm.Realm;
 import io.realm.RealmResults;
 import io.realm.Sort;
 import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
 import rx.subjects.PublishSubject;
 import shiro.am.i.chesto.Chesto;
 import shiro.am.i.chesto.retrofitDanbooru.Tag;
@@ -39,7 +38,6 @@ final class TagRepository {
                     onTagRepoUpdateListener.onTagRepoUpdate(results);
                 })
                 .debounce(300, TimeUnit.MILLISECONDS)
-                .observeOn(Schedulers.io())
                 .flatMap(s -> Chesto.getDanbooru().searchTags(s + "*"))
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
