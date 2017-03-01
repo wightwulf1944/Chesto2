@@ -12,7 +12,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.ImageButton;
 
-import org.apmem.tools.layouts.FlowLayout;
+import com.google.android.flexbox.FlexboxLayout;
 
 import shiro.am.i.chesto.PostStore;
 import shiro.am.i.chesto.R;
@@ -36,7 +36,7 @@ public final class PostActivity
 
         final int postIndex = getIntent().getIntExtra("default", -1);
 
-        final TagLayoutDecorator tagLayoutDecorator = new TagLayoutDecorator((FlowLayout) findViewById(R.id.flowLayout));
+        final TagLayoutDecorator tagLayoutDecorator = new TagLayoutDecorator((FlexboxLayout) findViewById(R.id.flexboxLayout));
         tagLayoutDecorator.setPost(PostStore.get(postIndex));
 
         adapter = new PostPagerAdapter(this);

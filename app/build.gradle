@@ -36,8 +36,8 @@ dependencies {
     //    https://github.com/500px/greedo-layout-for-android
     compile 'com.fivehundredpx:greedo-layout:1.0.0'
 
-    //    https://github.com/ApmeM/android-flowlayout
-    compile 'org.apmem.tools:layouts:1.10@aar'
+    //    https://github.com/google/flexbox-layout
+    compile 'com.google.android:flexbox:0.2.5'
 
     //    https://github.com/JakeWharton/timber
     compile 'com.jakewharton.timber:timber:4.5.1'

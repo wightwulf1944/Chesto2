@@ -7,7 +7,7 @@ import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.widget.TextView;
 
-import org.apmem.tools.layouts.FlowLayout;
+import com.google.android.flexbox.FlexboxLayout;
 
 import shiro.am.i.chesto.R;
 import shiro.am.i.chesto.activityMain.MainActivity;
@@ -19,7 +19,7 @@ import shiro.am.i.chesto.retrofitDanbooru.Post;
 
 final class TagLayoutDecorator {
 
-    private final FlowLayout mLayout;
+    private final FlexboxLayout mLayout;
     private final Context mContext;
     private final LayoutInflater inflater;
     private final int copyrightTextColor;
@@ -27,7 +27,7 @@ final class TagLayoutDecorator {
     private final int artistTextColor;
     private final int generalTextColor;
 
-    TagLayoutDecorator(FlowLayout layout) {
+    TagLayoutDecorator(FlexboxLayout layout) {
         mLayout = layout;
         mContext = mLayout.getContext();
         inflater = LayoutInflater.from(mContext);
@@ -46,13 +46,11 @@ final class TagLayoutDecorator {
     }
 
     private void addCategory(String labelString, int textColor, String tags) {
-        if (tags.isEmpty()) {
-            return;
+        if (!tags.isEmpty()) {
+            addTextView(labelString, R.layout.item_label);
         }
 
-        addTextView(labelString, R.layout.item_label);
-
-        for (final String tagString : tags.split(" ")) {
+        for (String tagString : tags.split(" ")) {
             TextView tagTextView = addTextView(tagString, R.layout.item_tag);
             tagTextView.setTextColor(textColor);
             tagTextView.setOnClickListener(v -> mContext.startActivity(
