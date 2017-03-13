@@ -3,12 +3,17 @@ package shiro.am.i.chesto.activityPost;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
 
@@ -34,9 +39,17 @@ public final class PostActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_post);
 
+        setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setDisplayShowTitleEnabled(false);
+        }
+
         final int postIndex = getIntent().getIntExtra("default", -1);
 
-        final TagLayoutDecorator tagLayoutDecorator = new TagLayoutDecorator((FlexboxLayout) findViewById(R.id.flexboxLayout));
+        FlexboxLayout flexboxLayout = (FlexboxLayout) findViewById(R.id.flexboxLayout);
+        TagLayoutDecorator tagLayoutDecorator = new TagLayoutDecorator(flexboxLayout);
         tagLayoutDecorator.setPost(PostStore.get(postIndex));
 
         adapter = new PostPagerAdapter(this);
@@ -67,7 +80,7 @@ public final class PostActivity
 
             @Override
             public void onSlide(@NonNull View bottomSheet, float slideOffset) {
-                bottomSheet.setAlpha(slideOffset);
+                flexboxLayout.setAlpha(slideOffset);
                 bottomBar.setAlpha(slideOffset);
             }
         });
@@ -79,6 +92,46 @@ public final class PostActivity
     protected void onDestroy() {
         PostStore.removeOnPostAddedListener(this);
         super.onDestroy();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.activity_post, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        Uri uri;
+        Intent intent;
+        switch (item.getItemId()) {
+
+            case android.R.id.home:
+                finishAndReturnResult();
+                return true;
+
+            case R.id.action_download:
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 0);
+                return true;
+
+            case R.id.action_open_browser:
+                uri = PostStore.get(viewPager.getCurrentItem()).getWebUri();
+                intent = new Intent(Intent.ACTION_VIEW, uri);
+                startActivity(intent);
+                return true;
+
+            case R.id.action_share:
+                String url = PostStore.get(viewPager.getCurrentItem()).getWebUrl();
+                uri = PostStore.get(viewPager.getCurrentItem()).getWebUri();
+                intent = new Intent(Intent.ACTION_SEND, uri);
+                intent.putExtra(Intent.EXTRA_TEXT, url);
+                intent.setType("text/plain");
+                startActivity(Intent.createChooser(intent, "Share link - " + url));
+                return true;
+
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     private void finishAndReturnResult() {
@@ -103,30 +156,6 @@ public final class PostActivity
         } else {
             bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
         }
-    }
-
-    public void onUpButtonClicked(View view) {
-        finishAndReturnResult();
-    }
-
-    public void onBrowserButtonClicked(View view) {
-        Intent intent = new Intent(
-                Intent.ACTION_VIEW,
-                PostStore.get(viewPager.getCurrentItem()).getWebUri()
-        );
-        startActivity(intent);
-    }
-
-    public void onShareButtonClicked(View view) {
-        String url = PostStore.get(viewPager.getCurrentItem()).getWebUrl();
-        Intent intent = new Intent(Intent.ACTION_SEND, PostStore.get(viewPager.getCurrentItem()).getWebUri());
-        intent.putExtra(Intent.EXTRA_TEXT, url);
-        intent.setType("text/plain");
-        startActivity(Intent.createChooser(intent, "Share link - " + url));
-    }
-
-    public void onDownloadButtonClicked(View view) {
-        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 0);
     }
 
     @Override
