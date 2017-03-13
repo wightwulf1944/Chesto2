@@ -14,14 +14,6 @@ import android.widget.TextView;
 final class EditTextWrapper
         implements TextWatcher, TextView.OnEditorActionListener {
 
-    interface AfterTextChangedListener {
-        void afterTextChanged(String s);
-    }
-
-    interface OnEditorSearchListener {
-        void onEditorSearch();
-    }
-
     private final EditText editText;
     private AfterTextChangedListener afterTextChangedListener;
     private OnEditorSearchListener onEditorSearchListener;
@@ -71,5 +63,13 @@ final class EditTextWrapper
         } else {
             return false;
         }
+    }
+    
+    interface AfterTextChangedListener {
+        void afterTextChanged(String s);
+    }
+
+    interface OnEditorSearchListener {
+        void onEditorSearch();
     }
 }

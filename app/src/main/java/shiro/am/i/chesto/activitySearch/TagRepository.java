@@ -19,10 +19,6 @@ import timber.log.Timber;
 
 final class TagRepository {
 
-    interface OnTagRepoUpdateListener {
-        void onTagRepoUpdate(List<Tag> results);
-    }
-
     private final PublishSubject<String> publishSubject;
     private RealmResults<Tag> results;
     private OnTagRepoUpdateListener onTagRepoUpdateListener;
@@ -58,5 +54,9 @@ final class TagRepository {
 
     void setQuery(String s) {
         publishSubject.onNext(s);
+    }
+
+    interface OnTagRepoUpdateListener {
+        void onTagRepoUpdate(List<Tag> results);
     }
 }

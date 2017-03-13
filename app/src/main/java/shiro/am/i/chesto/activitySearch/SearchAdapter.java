@@ -18,10 +18,6 @@ import shiro.am.i.chesto.retrofitDanbooru.Tag;
  */
 final class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder> {
 
-    interface OnItemClickListener {
-        void onItemClick(String itemName);
-    }
-
     private final LayoutInflater inflater;
     private List<Tag> data;
     private OnItemClickListener onItemClickListener;
@@ -74,4 +70,7 @@ final class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder>
         }
     }
 
+    interface OnItemClickListener {
+        void onItemClick(String itemName);
+    }
 }

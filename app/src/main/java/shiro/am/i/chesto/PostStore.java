@@ -22,6 +22,9 @@ public final class PostStore {
     private static PublishSubject<Post> currentSubject;
     private static boolean isLoading;
 
+    private static final LinkedList<OnPostAddedListener> onPostAddedListeners = new LinkedList<>();
+    private static final LinkedList<PostStoreListener> postStoreListeners = new LinkedList<>();
+
     private PostStore() {
         throw new AssertionError("Tried to create instance");
     }
@@ -124,10 +127,6 @@ public final class PostStore {
 
         void onLoadError();
     }
-
-    private static final LinkedList<OnPostAddedListener> onPostAddedListeners = new LinkedList<>();
-
-    private static final LinkedList<PostStoreListener> postStoreListeners = new LinkedList<>();
 
     public static void addOnPostAddedListener(OnPostAddedListener listener) {
         onPostAddedListeners.add(listener);
