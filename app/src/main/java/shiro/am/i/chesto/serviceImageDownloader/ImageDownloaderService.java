@@ -63,7 +63,7 @@ public final class ImageDownloaderService extends IntentService {
     private File getSourceFile(Post post) throws Exception {
         return Glide.with(this)
                 .load(post.getLargeFileUrl())
-                .downloadOnly(post.getImageWidth(), post.getImageHeight())
+                .downloadOnly(post.getWidth(), post.getHeight())
                 .get();
     }
 

@@ -11,13 +11,18 @@ import io.realm.annotations.PrimaryKey;
  * Created by Shiro on 7/29/2016.
  */
 public class Post extends RealmObject {
+
     @PrimaryKey
     @SerializedName("id")
     private int id;
+
     @SerializedName("image_width")
-    private int imageWidth;
+    private int width;
     @SerializedName("image_height")
-    private int imageHeight;
+    private int height;
+    @SerializedName("file_ext")
+    private String fileExt;
+
     @SerializedName("tag_string_artist")
     private String tagStringArtist;
     @SerializedName("tag_string_character")
@@ -26,12 +31,15 @@ public class Post extends RealmObject {
     private String tagStringCopyright;
     @SerializedName("tag_string_general")
     private String tagStringGeneral;
-    @SerializedName("large_file_url")
-    private String largeFileUrl;
+
+    @SerializedName("has_large")
+    private boolean hasLarge;
     @SerializedName("preview_file_url")
     private String smallFileUrl;
-    @SerializedName("file_ext")
-    private String fileExt;
+    @SerializedName("large_file_url")
+    private String largeFileUrl;
+    @SerializedName("file_url")
+    private String originalFileUrl;
 
     private static final String BASE_URL = "http://danbooru.donmai.us";
 
@@ -65,12 +73,12 @@ public class Post extends RealmObject {
         return id;
     }
 
-    public int getImageWidth() {
-        return imageWidth;
+    public int getWidth() {
+        return width;
     }
 
-    public int getImageHeight() {
-        return imageHeight;
+    public int getHeight() {
+        return height;
     }
 
     public String getTagStringArtist() {
@@ -89,11 +97,19 @@ public class Post extends RealmObject {
         return tagStringGeneral;
     }
 
-    public String getLargeFileUrl() {
-        return BASE_URL + largeFileUrl;
+    public boolean hasLargeFileUrl() {
+        return hasLarge;
     }
 
     public String getSmallFileUrl() {
         return BASE_URL + smallFileUrl;
+    }
+
+    public String getLargeFileUrl() {
+        return BASE_URL + largeFileUrl;
+    }
+
+    public String getOriginalFileUrl() {
+        return BASE_URL + originalFileUrl;
     }
 }

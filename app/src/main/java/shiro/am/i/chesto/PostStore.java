@@ -98,7 +98,7 @@ public final class PostStore {
                 final double minRatio = 0.5;
                 final double maxRatio = 5;
                 final Post post = list.get(i);
-                final double ratio = (double) post.getImageWidth() / post.getImageHeight();
+                final double ratio = (double) post.getWidth() / post.getHeight();
 
                 if (ratio < minRatio) {
                     return minRatio;
