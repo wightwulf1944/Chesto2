@@ -46,9 +46,11 @@ final class TagLayoutDecorator {
     }
 
     private void addCategory(String labelString, int textColor, String tags) {
-        if (!tags.isEmpty()) {
-            addTextView(labelString, R.layout.item_label);
+        if (tags.isEmpty()) {
+            return;
         }
+
+        addTextView(labelString, R.layout.item_label);
 
         for (String tagString : tags.split(" ")) {
             TextView tagTextView = addTextView(tagString, R.layout.item_tag);
