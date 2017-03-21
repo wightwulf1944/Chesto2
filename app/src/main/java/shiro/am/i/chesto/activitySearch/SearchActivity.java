@@ -78,7 +78,9 @@ public final class SearchActivity extends AppCompatActivity {
     }
 
     private void onTextChanged(String s) {
-        currentQuery = getLastWord(s);
+        int spaceIndex = s.lastIndexOf(" ");
+        currentQuery = s.substring(spaceIndex + 1);
+
         tagRepository.setQuery(currentQuery);
         if (clearButton != null) {
             clearButton.setVisible(!s.isEmpty());
@@ -106,14 +108,5 @@ public final class SearchActivity extends AppCompatActivity {
                 MainActivity.class
         );
         startActivity(intent);
-    }
-
-    private static String getLastWord(String s) {
-        final int spaceIndex = s.lastIndexOf(" ");
-        if (spaceIndex != -1) {
-            return s.substring(spaceIndex + 1);
-        } else {
-            return s;
-        }
     }
 }
