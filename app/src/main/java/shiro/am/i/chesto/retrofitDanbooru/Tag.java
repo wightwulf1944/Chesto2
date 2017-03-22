@@ -25,6 +25,10 @@ public class Tag extends RealmObject {
         return name;
     }
 
+    public int getPostCount() {
+        return postCount;
+    }
+
     public String getPostCountStr() {
         if (postCount < 1000) {
             return "(" + postCount + ")";

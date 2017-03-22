@@ -11,17 +11,14 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.EditText;
 
-import java.util.List;
-
 import shiro.am.i.chesto.PostStore;
 import shiro.am.i.chesto.R;
 import shiro.am.i.chesto.activityMain.MainActivity;
-import shiro.am.i.chesto.retrofitDanbooru.Tag;
 
 public final class SearchActivity extends AppCompatActivity {
 
     private EditTextWrapper editTextWrapper;
-    private TagRepository tagRepository;
+    private TagStore tagStore;
     private SearchAdapter searchAdapter;
     private MenuItem clearButton;
     private String currentQuery;
@@ -38,20 +35,18 @@ public final class SearchActivity extends AppCompatActivity {
             actionBar.setDisplayShowTitleEnabled(false);
         }
 
-        editTextWrapper = new EditTextWrapper((EditText) findViewById(R.id.editText));
-        editTextWrapper.setAfterTextChangedListener(this::onTextChanged);
-        editTextWrapper.setOnEditorSearchListener(this::invokeSearch);
-
-        tagRepository = new TagRepository();
-        tagRepository.setOnTagRepoUpdateListener(this::onTagRepoUpdated);
-
         searchAdapter = new SearchAdapter(this);
         searchAdapter.setOnItemClickListener(this::onAdapterItemClicked);
+
+        tagStore = new TagStore(searchAdapter);
 
         final RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
         recyclerView.setAdapter(searchAdapter);
         recyclerView.setHasFixedSize(true);
 
+        editTextWrapper = new EditTextWrapper((EditText) findViewById(R.id.editText));
+        editTextWrapper.setAfterTextChangedListener(this::onTextChanged);
+        editTextWrapper.setOnEditorSearchListener(this::invokeSearch);
         editTextWrapper.setText(PostStore.getCurrentQuery());
     }
 
@@ -80,16 +75,11 @@ public final class SearchActivity extends AppCompatActivity {
     private void onTextChanged(String s) {
         int spaceIndex = s.lastIndexOf(" ");
         currentQuery = s.substring(spaceIndex + 1);
+        tagStore.getTags(currentQuery);
 
-        tagRepository.setQuery(currentQuery);
         if (clearButton != null) {
             clearButton.setVisible(!s.isEmpty());
         }
-    }
-
-    private void onTagRepoUpdated(List<Tag> data) {
-        searchAdapter.setData(data);
-        searchAdapter.notifyDataSetChanged();
     }
 
     private void onAdapterItemClicked(String itemName) {
