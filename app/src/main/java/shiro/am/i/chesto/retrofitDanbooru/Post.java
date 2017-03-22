@@ -1,4 +1,4 @@
-package shiro.am.i.chesto.retrofitDanbooru;
+package shiro.am.i.chesto.retrofitdanbooru;
 
 import android.net.Uri;
 
@@ -45,11 +45,11 @@ public class Post extends RealmObject {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj != null) {
+        if (obj == null) {
+            return false;
+        } else {
             Post x = (Post) obj;
             return id == x.getId();
-        } else {
-            return false;
         }
     }
 

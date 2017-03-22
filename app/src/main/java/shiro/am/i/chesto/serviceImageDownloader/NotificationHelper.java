@@ -1,4 +1,4 @@
-package shiro.am.i.chesto.serviceImageDownloader;
+package shiro.am.i.chesto.serviceimagedownloader;
 
 import android.app.NotificationManager;
 import android.app.PendingIntent;

@@ -1,4 +1,4 @@
-package shiro.am.i.chesto.activitySearch;
+package shiro.am.i.chesto.activitysearch;
 
 import android.content.Intent;
 import android.net.Uri;
@@ -13,7 +13,7 @@ import android.widget.EditText;
 
 import shiro.am.i.chesto.PostStore;
 import shiro.am.i.chesto.R;
-import shiro.am.i.chesto.activityMain.MainActivity;
+import shiro.am.i.chesto.activitymain.MainActivity;
 
 public final class SearchActivity extends AppCompatActivity {
 

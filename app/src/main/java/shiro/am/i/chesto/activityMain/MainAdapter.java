@@ -1,4 +1,4 @@
-package shiro.am.i.chesto.activityMain;
+package shiro.am.i.chesto.activitymain;
 
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
@@ -12,7 +12,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
 import shiro.am.i.chesto.PostStore;
 import shiro.am.i.chesto.R;
-import shiro.am.i.chesto.activityPost.PostActivity;
+import shiro.am.i.chesto.activitypost.PostActivity;
 
 /**
  * Created by Shiro on 8/4/2016.

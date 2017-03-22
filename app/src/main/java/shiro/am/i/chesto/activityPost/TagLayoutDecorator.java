@@ -1,4 +1,4 @@
-package shiro.am.i.chesto.activityPost;
+package shiro.am.i.chesto.activitypost;
 
 import android.content.Context;
 import android.content.Intent;
@@ -10,8 +10,8 @@ import android.widget.TextView;
 import com.google.android.flexbox.FlexboxLayout;
 
 import shiro.am.i.chesto.R;
-import shiro.am.i.chesto.activityMain.MainActivity;
-import shiro.am.i.chesto.retrofitDanbooru.Post;
+import shiro.am.i.chesto.activitymain.MainActivity;
+import shiro.am.i.chesto.retrofitdanbooru.Post;
 
 /**
  * Created by Shiro on 16/12/2016.

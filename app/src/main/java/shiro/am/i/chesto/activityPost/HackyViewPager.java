@@ -1,4 +1,4 @@
-package shiro.am.i.chesto.activityPost;
+package shiro.am.i.chesto.activitypost;
 
 import android.content.Context;
 import android.support.v4.view.ViewPager;
@@ -33,7 +33,6 @@ public final class HackyViewPager extends ViewPager {
         try {
             return super.onInterceptTouchEvent(ev);
         } catch (IllegalArgumentException e) {
-            e.printStackTrace();
             return false;
         }
     }

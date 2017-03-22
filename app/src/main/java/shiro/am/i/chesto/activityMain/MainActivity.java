@@ -1,4 +1,4 @@
-package shiro.am.i.chesto.activityMain;
+package shiro.am.i.chesto.activitymain;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -20,7 +20,7 @@ import shiro.am.i.chesto.Chesto;
 import shiro.am.i.chesto.PostStore;
 import shiro.am.i.chesto.R;
 import shiro.am.i.chesto.U;
-import shiro.am.i.chesto.activitySearch.SearchActivity;
+import shiro.am.i.chesto.activitysearch.SearchActivity;
 
 public final class MainActivity
         extends AppCompatActivity
@@ -138,11 +138,11 @@ public final class MainActivity
         } else {
             final boolean appbarIsExpanded = appbar.getHeight() - appbar.getBottom() == 0;
             final boolean recyclerViewIsAtTop = layoutManager.findFirstVisibleItemPosition() == 0;
-            if (!appbarIsExpanded || !recyclerViewIsAtTop) {
+            if (appbarIsExpanded && recyclerViewIsAtTop) {
+                Snackbar.make(recyclerView, getString(R.string.snackbar_mainActivity), Snackbar.LENGTH_SHORT).show();
+            } else {
                 scrollToTop();
                 Snackbar.make(recyclerView, getString(R.string.snackbar_mainActivity_scrollToTop), Snackbar.LENGTH_SHORT).show();
-            } else {
-                Snackbar.make(recyclerView, getString(R.string.snackbar_mainActivity), Snackbar.LENGTH_SHORT).show();
             }
         }
         mBackPressed = System.currentTimeMillis();

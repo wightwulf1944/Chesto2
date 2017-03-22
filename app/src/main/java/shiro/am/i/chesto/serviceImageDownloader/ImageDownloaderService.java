@@ -1,4 +1,4 @@
-package shiro.am.i.chesto.serviceImageDownloader;
+package shiro.am.i.chesto.serviceimagedownloader;
 
 import android.app.IntentService;
 import android.content.Intent;
@@ -14,7 +14,7 @@ import java.io.IOException;
 import java.nio.channels.FileChannel;
 
 import shiro.am.i.chesto.PostStore;
-import shiro.am.i.chesto.retrofitDanbooru.Post;
+import shiro.am.i.chesto.retrofitdanbooru.Post;
 import timber.log.Timber;
 
 /**

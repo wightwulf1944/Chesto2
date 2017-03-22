@@ -1,4 +1,4 @@
-package shiro.am.i.chesto.activityPost;
+package shiro.am.i.chesto.activitypost;
 
 import android.support.v4.view.PagerAdapter;
 import android.support.v7.app.AppCompatActivity;
@@ -14,7 +14,7 @@ import java.util.Queue;
 import jp.wasabeef.glide.transformations.BlurTransformation;
 import shiro.am.i.chesto.PostStore;
 import shiro.am.i.chesto.R;
-import shiro.am.i.chesto.retrofitDanbooru.Post;
+import shiro.am.i.chesto.retrofitdanbooru.Post;
 import uk.co.senab.photoview.PhotoView;
 
 /**

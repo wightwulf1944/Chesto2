@@ -1,4 +1,4 @@
-package shiro.am.i.chesto.activitySearch;
+package shiro.am.i.chesto.activitysearch;
 
 import android.support.v7.util.SortedList;
 import android.support.v7.widget.RecyclerView.Adapter;
@@ -9,7 +9,7 @@ import io.realm.Realm;
 import io.realm.RealmResults;
 import io.realm.Sort;
 import shiro.am.i.chesto.Chesto;
-import shiro.am.i.chesto.retrofitDanbooru.Tag;
+import shiro.am.i.chesto.retrofitdanbooru.Tag;
 
 /**
  * Created by Shiro on 3/21/2017.

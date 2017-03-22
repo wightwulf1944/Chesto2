@@ -1,4 +1,4 @@
-package shiro.am.i.chesto.retrofitDanbooru;
+package shiro.am.i.chesto.retrofitdanbooru;
 
 import com.google.gson.annotations.SerializedName;
 

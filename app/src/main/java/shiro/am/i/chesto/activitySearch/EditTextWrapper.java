@@ -1,4 +1,4 @@
-package shiro.am.i.chesto.activitySearch;
+package shiro.am.i.chesto.activitysearch;
 
 import android.text.Editable;
 import android.text.TextWatcher;

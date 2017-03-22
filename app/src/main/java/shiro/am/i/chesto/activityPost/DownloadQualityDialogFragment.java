@@ -1,4 +1,4 @@
-package shiro.am.i.chesto.activityPost;
+package shiro.am.i.chesto.activitypost;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -7,16 +7,17 @@ import android.os.Bundle;
 
 import java.util.Locale;
 
-import shiro.am.i.chesto.retrofitDanbooru.Post;
+import shiro.am.i.chesto.retrofitdanbooru.Post;
 import timber.log.Timber;
 
 /**
  * Created by Shiro on 18/01/2017.
+ * TODO
  */
 
 final public class DownloadQualityDialogFragment extends DialogFragment {
 
-    final Post mPost;
+    private final Post mPost;
 
     DownloadQualityDialogFragment(Post post) {
         mPost = post;

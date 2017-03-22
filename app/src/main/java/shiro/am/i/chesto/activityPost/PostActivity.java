@@ -1,4 +1,4 @@
-package shiro.am.i.chesto.activityPost;
+package shiro.am.i.chesto.activitypost;
 
 import android.Manifest;
 import android.content.Intent;
@@ -21,7 +21,7 @@ import com.google.android.flexbox.FlexboxLayout;
 
 import shiro.am.i.chesto.PostStore;
 import shiro.am.i.chesto.R;
-import shiro.am.i.chesto.serviceImageDownloader.ImageDownloaderService;
+import shiro.am.i.chesto.serviceimagedownloader.ImageDownloaderService;
 
 /**
  * Created by Shiro on 8/18/2016.

@@ -1,4 +1,4 @@
-package shiro.am.i.chesto.activitySearch;
+package shiro.am.i.chesto.activitysearch;
 
 import android.content.Context;
 import android.support.v7.util.SortedList;
@@ -10,7 +10,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import shiro.am.i.chesto.R;
-import shiro.am.i.chesto.retrofitDanbooru.Tag;
+import shiro.am.i.chesto.retrofitdanbooru.Tag;
 
 /**
  * Created by Shiro on 3/20/2017.

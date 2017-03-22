@@ -8,7 +8,7 @@ import java.util.LinkedList;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.subjects.PublishSubject;
-import shiro.am.i.chesto.retrofitDanbooru.Post;
+import shiro.am.i.chesto.retrofitdanbooru.Post;
 import timber.log.Timber;
 
 /**
