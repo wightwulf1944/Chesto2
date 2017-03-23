@@ -128,7 +128,8 @@ public final class MainActivity
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_search:
-                startActivity(new Intent(this, SearchActivity.class));
+                Intent intent = new Intent(this, SearchActivity.class);
+                startActivity(intent);
                 return true;
             case R.id.action_hide_nsfw:
                 boolean toggled = !item.isChecked();
@@ -151,10 +152,10 @@ public final class MainActivity
             final boolean appbarIsExpanded = appbar.getHeight() - appbar.getBottom() == 0;
             final boolean recyclerViewIsAtTop = layoutManager.findFirstVisibleItemPosition() == 0;
             if (appbarIsExpanded && recyclerViewIsAtTop) {
-                Snackbar.make(recyclerView, getString(R.string.snackbar_mainActivity), Snackbar.LENGTH_SHORT).show();
+                Snackbar.make(recyclerView, R.string.snackbar_mainActivity, Snackbar.LENGTH_SHORT).show();
             } else {
                 scrollToTop();
-                Snackbar.make(recyclerView, getString(R.string.snackbar_mainActivity_scrollToTop), Snackbar.LENGTH_SHORT).show();
+                Snackbar.make(recyclerView, R.string.snackbar_mainActivity_scrollToTop, Snackbar.LENGTH_SHORT).show();
             }
         }
         mBackPressed = System.currentTimeMillis();
