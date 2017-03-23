@@ -19,7 +19,6 @@ public final class SearchActivity extends AppCompatActivity {
 
     private EditTextWrapper editTextWrapper;
     private TagStore tagStore;
-    private SearchAdapter searchAdapter;
     private MenuItem clearButton;
     private String currentQuery;
 
@@ -35,7 +34,7 @@ public final class SearchActivity extends AppCompatActivity {
             actionBar.setDisplayShowTitleEnabled(false);
         }
 
-        searchAdapter = new SearchAdapter(this);
+        SearchAdapter searchAdapter = new SearchAdapter(this);
         searchAdapter.setOnItemClickListener(this::onAdapterItemClicked);
 
         tagStore = new TagStore(searchAdapter);
