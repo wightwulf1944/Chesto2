@@ -95,6 +95,18 @@ public final class MainActivity
     }
 
     @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putCharSequence("CURRENT_QUERY", toolbar.getSubtitle());
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        toolbar.setSubtitle(savedInstanceState.getCharSequence("CURRENT_QUERY"));
+    }
+
+    @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == 0 && resultCode == RESULT_OK) {
             final int result = data.getIntExtra("default", -1);
