@@ -145,7 +145,7 @@ public final class MainActivity
 
     @Override
     public void onBackPressed() {
-        if (mBackPressed + 1000 > System.currentTimeMillis()) {
+        if (mBackPressed + 1500 > System.currentTimeMillis()) {
             super.onBackPressed();
         } else {
             final boolean appbarIsExpanded = appbar.getHeight() - appbar.getBottom() == 0;
