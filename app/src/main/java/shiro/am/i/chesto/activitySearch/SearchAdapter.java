@@ -10,7 +10,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import shiro.am.i.chesto.R;
-import shiro.am.i.chesto.retrofitdanbooru.Tag;
+import shiro.am.i.chesto.models.Tag;
 
 /**
  * Created by Shiro on 3/20/2017.

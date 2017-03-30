@@ -18,21 +18,24 @@ import android.view.View;
 import android.widget.ImageButton;
 
 import com.google.android.flexbox.FlexboxLayout;
+import com.squareup.otto.Subscribe;
 
-import shiro.am.i.chesto.PostStore;
+import shiro.am.i.chesto.Chesto;
 import shiro.am.i.chesto.R;
+import shiro.am.i.chesto.models.AlbumStack;
+import shiro.am.i.chesto.models.PostAlbum;
 import shiro.am.i.chesto.serviceimagedownloader.ImageDownloaderService;
 
 /**
  * Created by Shiro on 8/18/2016.
  */
 public final class PostActivity
-        extends AppCompatActivity
-        implements PostStore.OnPostAddedListener {
+        extends AppCompatActivity {
 
     private BottomSheetBehavior bottomSheetBehavior;
     private PostPagerAdapter adapter;
     private HackyViewPager viewPager;
+    private PostAlbum album;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,11 +51,13 @@ public final class PostActivity
 
         final int postIndex = getIntent().getIntExtra("default", -1);
 
+        album = AlbumStack.getTop();
+
         FlexboxLayout flexboxLayout = (FlexboxLayout) findViewById(R.id.flexboxLayout);
         TagLayoutDecorator tagLayoutDecorator = new TagLayoutDecorator(flexboxLayout);
-        tagLayoutDecorator.setPost(PostStore.get(postIndex));
+        tagLayoutDecorator.setPost(album.get(postIndex));
 
-        adapter = new PostPagerAdapter(this);
+        adapter = new PostPagerAdapter(this, album);
 
         viewPager = (HackyViewPager) findViewById(R.id.viewPager);
         viewPager.setAdapter(adapter);
@@ -60,7 +65,7 @@ public final class PostActivity
         viewPager.addOnPageChangeListener(new HackyViewPager.SimpleOnPageChangeListener() {
             @Override
             public void onPageSelected(int position) {
-                tagLayoutDecorator.setPost(PostStore.get(position));
+                tagLayoutDecorator.setPost(album.get(position));
             }
         });
 
@@ -85,12 +90,12 @@ public final class PostActivity
             }
         });
 
-        PostStore.addOnPostAddedListener(this);
+        Chesto.getEventBus().register(this);
     }
 
     @Override
     protected void onDestroy() {
-        PostStore.removeOnPostAddedListener(this);
+        Chesto.getEventBus().unregister(this);
         super.onDestroy();
     }
 
@@ -115,14 +120,14 @@ public final class PostActivity
                 return true;
 
             case R.id.action_open_browser:
-                uri = PostStore.get(viewPager.getCurrentItem()).getWebUri();
+                uri = album.get(viewPager.getCurrentItem()).getWebUri();
                 intent = new Intent(Intent.ACTION_VIEW, uri);
                 startActivity(intent);
                 return true;
 
             case R.id.action_share:
-                String url = PostStore.get(viewPager.getCurrentItem()).getWebUrl();
-                uri = PostStore.get(viewPager.getCurrentItem()).getWebUri();
+                String url = album.get(viewPager.getCurrentItem()).getWebUrl();
+                uri = album.get(viewPager.getCurrentItem()).getWebUri();
                 intent = new Intent(Intent.ACTION_SEND, uri);
                 intent.putExtra(Intent.EXTRA_TEXT, url);
                 intent.setType("text/plain");
@@ -170,8 +175,8 @@ public final class PostActivity
         }
     }
 
-    @Override
-    public void onPostAdded(int position) {
+    @Subscribe
+    public void onPostAdded(PostAlbum.OnPostAddedEvent event) {
         adapter.notifyDataSetChanged();
     }
 }

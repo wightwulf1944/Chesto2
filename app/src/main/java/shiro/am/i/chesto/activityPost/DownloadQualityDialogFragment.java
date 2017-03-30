@@ -7,7 +7,7 @@ import android.os.Bundle;
 
 import java.util.Locale;
 
-import shiro.am.i.chesto.retrofitdanbooru.Post;
+import shiro.am.i.chesto.models.Post;
 import timber.log.Timber;
 
 /**

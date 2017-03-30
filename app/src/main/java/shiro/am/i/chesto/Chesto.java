@@ -5,13 +5,15 @@ import android.content.SharedPreferences;
 import android.os.StrictMode;
 import android.preference.PreferenceManager;
 
+import com.squareup.otto.Bus;
+
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 import rx.schedulers.Schedulers;
-import shiro.am.i.chesto.retrofitdanbooru.Danbooru;
+import shiro.am.i.chesto.models.Danbooru;
 import timber.log.Timber;
 
 /**
@@ -23,6 +25,7 @@ public final class Chesto extends Application {
     private static SharedPreferences sharedPreferences;
     private static Danbooru danbooru;
     private static Danbooru safebooru;
+    private static Bus eventBus;
 
     @Override
     public void onCreate() {
@@ -68,12 +71,14 @@ public final class Chesto extends Application {
         RealmConfiguration defaultConfig = new RealmConfiguration.Builder(this).build();
         Realm.setDefaultConfiguration(defaultConfig);
 
+        eventBus = new Bus();
     }
 
     public static Chesto getInstance() {
         return instance;
     }
 
+    //TODO: make dedicated preference class
     public static SharedPreferences getPreferences() {
         return sharedPreferences;
     }
@@ -85,5 +90,9 @@ public final class Chesto extends Application {
         } else {
             return danbooru;
         }
+    }
+
+    public static Bus getEventBus() {
+        return eventBus;
     }
 }
