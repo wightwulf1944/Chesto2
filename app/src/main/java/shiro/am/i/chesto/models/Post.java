@@ -1,4 +1,4 @@
-package shiro.am.i.chesto.retrofitdanbooru;
+package shiro.am.i.chesto.models;
 
 import android.net.Uri;
 

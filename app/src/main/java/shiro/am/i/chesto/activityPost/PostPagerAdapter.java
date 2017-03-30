@@ -5,6 +5,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.bumptech.glide.DrawableRequestBuilder;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
@@ -12,9 +13,9 @@ import java.util.LinkedList;
 import java.util.Queue;
 
 import jp.wasabeef.glide.transformations.BlurTransformation;
-import shiro.am.i.chesto.PostStore;
 import shiro.am.i.chesto.R;
-import shiro.am.i.chesto.retrofitdanbooru.Post;
+import shiro.am.i.chesto.models.Post;
+import shiro.am.i.chesto.models.PostAlbum;
 import uk.co.senab.photoview.PhotoView;
 
 /**
@@ -23,12 +24,14 @@ import uk.co.senab.photoview.PhotoView;
 final class PostPagerAdapter extends PagerAdapter {
 
     private final AppCompatActivity mParent;
+    private final PostAlbum mAlbum;
     private final Queue<ViewHolder> createQueue;
     private final Queue<ViewHolder> destroyQueue;
     private final Queue<PhotoView> usablePhotoViews;
 
-    PostPagerAdapter(AppCompatActivity parent) {
+    PostPagerAdapter(AppCompatActivity parent, PostAlbum album) {
         mParent = parent;
+        mAlbum = album;
         createQueue = new LinkedList<>();
         destroyQueue = new LinkedList<>();
 
@@ -81,24 +84,25 @@ final class PostPagerAdapter extends PagerAdapter {
     }
 
     private void glide(ViewHolder vh) {
-        final Post post = PostStore.get(vh.position);
+        final Post post = mAlbum.get(vh.position);
+
+        DrawableRequestBuilder thumb = Glide.with(mParent)
+                .load(post.getSmallFileUrl())
+                .bitmapTransform(new BlurTransformation(mParent, 1))
+                .diskCacheStrategy(DiskCacheStrategy.SOURCE);
+
         Glide.with(mParent)
                 .load(post.getLargeFileUrl())
                 .placeholder(R.drawable.image_placeholder)
                 .error(R.drawable.image_broken)
-                .thumbnail(
-                        Glide.with(mParent)
-                                .load(post.getSmallFileUrl())
-                                .bitmapTransform(new BlurTransformation(mParent, 1))
-                                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
-                )
+                .thumbnail(thumb)
                 .diskCacheStrategy(DiskCacheStrategy.SOURCE)
                 .into(vh.photoView);
     }
 
     @Override
     public int getCount() {
-        return PostStore.size();
+        return mAlbum.size();
     }
 
     @Override

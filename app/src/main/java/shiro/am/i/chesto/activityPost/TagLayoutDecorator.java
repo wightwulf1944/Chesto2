@@ -11,7 +11,7 @@ import com.google.android.flexbox.FlexboxLayout;
 
 import shiro.am.i.chesto.R;
 import shiro.am.i.chesto.activitymain.MainActivity;
-import shiro.am.i.chesto.retrofitdanbooru.Post;
+import shiro.am.i.chesto.models.Post;
 
 /**
  * Created by Shiro on 16/12/2016.

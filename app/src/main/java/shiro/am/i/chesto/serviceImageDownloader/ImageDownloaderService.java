@@ -13,8 +13,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.channels.FileChannel;
 
-import shiro.am.i.chesto.PostStore;
-import shiro.am.i.chesto.retrofitdanbooru.Post;
+import shiro.am.i.chesto.models.Post;
 import timber.log.Timber;
 
 /**
@@ -43,7 +42,9 @@ public final class ImageDownloaderService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
-        final Post post = PostStore.get(intent.getIntExtra("default", -1));
+        //TODO: this doesnt work
+//        final Post post = PostStore.get(intent.getIntExtra("default", -1));
+        Post post = null;
 
         try {
             File sourceFile = getSourceFile(post);

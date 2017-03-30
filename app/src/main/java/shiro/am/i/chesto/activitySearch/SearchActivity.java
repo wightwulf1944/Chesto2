@@ -11,9 +11,10 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.EditText;
 
-import shiro.am.i.chesto.PostStore;
 import shiro.am.i.chesto.R;
 import shiro.am.i.chesto.activitymain.MainActivity;
+import shiro.am.i.chesto.models.AlbumStack;
+import shiro.am.i.chesto.models.PostAlbum;
 
 public final class SearchActivity extends AppCompatActivity {
 
@@ -43,10 +44,12 @@ public final class SearchActivity extends AppCompatActivity {
         recyclerView.setAdapter(searchAdapter);
         recyclerView.setHasFixedSize(true);
 
+        PostAlbum album = AlbumStack.getTop();
+
         editTextWrapper = new EditTextWrapper((EditText) findViewById(R.id.editText));
         editTextWrapper.setAfterTextChangedListener(this::onTextChanged);
         editTextWrapper.setOnEditorSearchListener(this::invokeSearch);
-        editTextWrapper.setText(PostStore.getCurrentQuery());
+        editTextWrapper.setText(album.getQuery());
     }
 
     @Override
@@ -60,6 +63,8 @@ public final class SearchActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
             case R.id.clear:
                 editTextWrapper.setText("");
                 return true;
@@ -97,5 +102,6 @@ public final class SearchActivity extends AppCompatActivity {
                 MainActivity.class
         );
         startActivity(intent);
+        finish();
     }
 }

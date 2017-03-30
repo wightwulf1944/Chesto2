@@ -10,9 +10,10 @@ import android.widget.ImageView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
-import shiro.am.i.chesto.PostStore;
 import shiro.am.i.chesto.R;
 import shiro.am.i.chesto.activitypost.PostActivity;
+import shiro.am.i.chesto.models.Post;
+import shiro.am.i.chesto.models.PostAlbum;
 
 /**
  * Created by Shiro on 8/4/2016.
@@ -20,9 +21,11 @@ import shiro.am.i.chesto.activitypost.PostActivity;
 final class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
 
     private final AppCompatActivity mParent;
+    private final PostAlbum mAlbum;
 
-    MainAdapter(AppCompatActivity parent) {
+    MainAdapter(AppCompatActivity parent, PostAlbum album) {
         mParent = parent;
+        mAlbum = album;
     }
 
     @Override
@@ -32,8 +35,9 @@ final class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
+        Post post = mAlbum.get(position);
         Glide.with(mParent)
-                .load(PostStore.get(position).getSmallFileUrl())
+                .load(post.getSmallFileUrl())
                 .placeholder(R.drawable.image_placeholder)
                 .error(R.drawable.image_broken)
                 .diskCacheStrategy(DiskCacheStrategy.SOURCE)
@@ -42,7 +46,7 @@ final class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
 
     @Override
     public int getItemCount() {
-        return PostStore.size();
+        return mAlbum.size();
     }
 
     class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {

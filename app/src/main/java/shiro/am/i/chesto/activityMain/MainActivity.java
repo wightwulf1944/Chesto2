@@ -15,19 +15,21 @@ import android.view.MenuItem;
 
 import com.fivehundredpx.greedolayout.GreedoLayoutManager;
 import com.fivehundredpx.greedolayout.GreedoSpacingItemDecoration;
+import com.squareup.otto.Subscribe;
 
 import shiro.am.i.chesto.Chesto;
-import shiro.am.i.chesto.PostStore;
 import shiro.am.i.chesto.R;
 import shiro.am.i.chesto.U;
 import shiro.am.i.chesto.activitysearch.SearchActivity;
+import shiro.am.i.chesto.models.AlbumStack;
+import shiro.am.i.chesto.models.PostAlbum;
 
-public final class MainActivity
-        extends AppCompatActivity
-        implements
-        PostStore.OnPostAddedListener,
-        PostStore.PostStoreListener {
+public final class MainActivity extends AppCompatActivity {
 
+    private static int mainActivityCount = 0;
+
+    //TODO: try butterknife again to reduce code
+    private PostAlbum postAlbum;
     private Toolbar toolbar;
     private AppBarLayout appbar;
     private GreedoLayoutManager layoutManager;
@@ -43,15 +45,31 @@ public final class MainActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        String currentQuery;
+        Intent intent = getIntent();
+        String intentAction = intent.getAction();
+        if (intentAction.equals(Intent.ACTION_MAIN)) {
+            currentQuery = "";
+        } else if (intentAction.equals(Intent.ACTION_SEARCH)) {
+            currentQuery = intent.getDataString();
+        } else if (savedInstanceState != null) {
+            currentQuery = savedInstanceState.getString("CURRENT_QUERY");
+        } else {
+            throw new RuntimeException("Unhandled launch");
+        }
+
         appbar = (AppBarLayout) findViewById(R.id.appbar);
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar.setSubtitle(currentQuery);
         setSupportActionBar(toolbar);
 
-        layoutManager = new GreedoLayoutManager(new PostStore.RatioCalculator());
+        postAlbum = new PostAlbum(currentQuery);
+
+        layoutManager = new GreedoLayoutManager(postAlbum);
         layoutManager.setMaxRowHeight(300);
 
-        adapter = new MainAdapter(this);
+        adapter = new MainAdapter(this, postAlbum);
 
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
         recyclerView.setHasFixedSize(true);
@@ -61,49 +79,31 @@ public final class MainActivity
 
         swipeLayout = (SwipeRefreshLayout) findViewById(R.id.swipeLayout);
         swipeLayout.setColorSchemeColors(ContextCompat.getColor(this, R.color.primary_dark));
-        swipeLayout.setOnRefreshListener(PostStore::refresh);
+        swipeLayout.setOnRefreshListener(postAlbum::refresh);
+
 
         errorSnackbar = Snackbar.make(recyclerView, "Check your connection", Snackbar.LENGTH_INDEFINITE)
-                .setAction("Retry", view -> PostStore.fetchPosts());
+                .setAction("Retry", view -> postAlbum.fetchPosts());
 
-        PostStore.addPostStoreListener(this);
-        PostStore.addOnPostAddedListener(this);
+        Chesto.getEventBus().register(this);
+        postAlbum.fetchPosts();
 
-        PostStore.newSearch("");
-        handleIntent(getIntent());
+        AlbumStack.push(postAlbum);
+        ++mainActivityCount;
     }
 
     @Override
     protected void onDestroy() {
-        PostStore.removePostStoreListener(this);
-        PostStore.removeOnPostAddedListener(this);
+        --mainActivityCount;
+        AlbumStack.pop();
+        Chesto.getEventBus().unregister(this);
         super.onDestroy();
-    }
-
-    @Override
-    protected void onNewIntent(Intent intent) {
-        scrollToTop();
-        handleIntent(intent);
-    }
-
-    private void handleIntent(Intent intent) {
-        if (intent.getAction().equals(Intent.ACTION_SEARCH)) {
-            final String query = intent.getDataString();
-            PostStore.newSearch(query);
-            toolbar.setSubtitle(query);
-        }
     }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putCharSequence("CURRENT_QUERY", toolbar.getSubtitle());
-    }
-
-    @Override
-    protected void onRestoreInstanceState(Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
-        toolbar.setSubtitle(savedInstanceState.getCharSequence("CURRENT_QUERY"));
+        outState.putString("CURRENT_QUERY", toolbar.getSubtitle().toString());
     }
 
     @Override
@@ -137,7 +137,7 @@ public final class MainActivity
                 SharedPreferences.Editor editor = Chesto.getPreferences().edit();
                 editor.putBoolean("hide_nsfw", toggled);
                 editor.apply();
-                PostStore.refresh();
+                postAlbum.refresh();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -146,50 +146,49 @@ public final class MainActivity
 
     @Override
     public void onBackPressed() {
-        if (mBackPressed + 1500 > System.currentTimeMillis()) {
+        // TODO: consider priorities here
+        if (mainActivityCount > 1) {
+            super.onBackPressed();
+        } else if (mBackPressed + 1500 > System.currentTimeMillis()) {
             super.onBackPressed();
         } else {
-            final boolean appbarIsExpanded = appbar.getHeight() - appbar.getBottom() == 0;
-            final boolean recyclerViewIsAtTop = layoutManager.findFirstVisibleItemPosition() == 0;
+            boolean appbarIsExpanded = appbar.getHeight() - appbar.getBottom() == 0;
+            boolean recyclerViewIsAtTop = layoutManager.findFirstVisibleItemPosition() == 0;
             if (appbarIsExpanded && recyclerViewIsAtTop) {
                 Snackbar.make(recyclerView, R.string.snackbar_mainActivity, Snackbar.LENGTH_SHORT).show();
             } else {
-                scrollToTop();
+                recyclerView.stopScroll();
+                layoutManager.scrollToPosition(0);
+                appbar.setExpanded(true);
                 Snackbar.make(recyclerView, R.string.snackbar_mainActivity_scrollToTop, Snackbar.LENGTH_SHORT).show();
             }
         }
         mBackPressed = System.currentTimeMillis();
     }
 
-    private void scrollToTop() {
-        recyclerView.stopScroll();
-        layoutManager.scrollToPosition(0);
-        appbar.setExpanded(true);
-    }
-
-    @Override
-    public void onLoadStarted() {
+    @Subscribe
+    public void onLoadStarted(PostAlbum.OnLoadStartedEvent event) {
         swipeLayout.setRefreshing(true);
         errorSnackbar.dismiss();
     }
 
-    @Override
-    public void onLoadFinished() {
+    @Subscribe
+    public void onLoadFinished(PostAlbum.OnLoadFinishedEvent event) {
         swipeLayout.setRefreshing(false);
     }
 
-    @Override
-    public void onLoadError() {
+    @Subscribe
+    public void onLoadError(PostAlbum.OnLoadErrorEvent event) {
         errorSnackbar.show();
     }
 
-    @Override
-    public void onPostsCleared() {
+    @Subscribe
+    public void onPostCleared(PostAlbum.OnPostsClearedEvent event) {
         adapter.notifyDataSetChanged();
     }
 
-    @Override
-    public void onPostAdded(int position) {
-        adapter.notifyItemInserted(position);
+    @Subscribe
+    public void onPostAdded(PostAlbum.OnPostAddedEvent event) {
+        adapter.notifyItemInserted(event.position);
     }
 }
