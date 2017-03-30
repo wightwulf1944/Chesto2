@@ -45,26 +45,15 @@ public final class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        String currentQuery;
-        Intent intent = getIntent();
-        String intentAction = intent.getAction();
-        if (intentAction.equals(Intent.ACTION_MAIN)) {
-            currentQuery = "";
-        } else if (intentAction.equals(Intent.ACTION_SEARCH)) {
-            currentQuery = intent.getDataString();
-        } else if (savedInstanceState != null) {
-            currentQuery = savedInstanceState.getString("CURRENT_QUERY");
-        } else {
-            throw new RuntimeException("Unhandled launch");
-        }
+        String query = getQueryString(savedInstanceState);
 
         appbar = (AppBarLayout) findViewById(R.id.appbar);
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
-        toolbar.setSubtitle(currentQuery);
+        toolbar.setSubtitle(query);
         setSupportActionBar(toolbar);
 
-        postAlbum = new PostAlbum(currentQuery);
+        postAlbum = new PostAlbum(query);
 
         layoutManager = new GreedoLayoutManager(postAlbum);
         layoutManager.setMaxRowHeight(300);
@@ -81,7 +70,6 @@ public final class MainActivity extends AppCompatActivity {
         swipeLayout.setColorSchemeColors(ContextCompat.getColor(this, R.color.primary_dark));
         swipeLayout.setOnRefreshListener(postAlbum::refresh);
 
-
         errorSnackbar = Snackbar.make(recyclerView, "Check your connection", Snackbar.LENGTH_INDEFINITE)
                 .setAction("Retry", view -> postAlbum.fetchPosts());
 
@@ -90,6 +78,20 @@ public final class MainActivity extends AppCompatActivity {
 
         AlbumStack.push(postAlbum);
         ++mainActivityCount;
+    }
+
+    private String getQueryString(Bundle savedInstanceState) {
+        Intent intent = getIntent();
+        String intentAction = intent.getAction();
+        if (intentAction.equals(Intent.ACTION_MAIN)) {
+            return "";
+        } else if (intentAction.equals(Intent.ACTION_SEARCH)) {
+            return intent.getDataString();
+        } else if (savedInstanceState != null) {
+            return savedInstanceState.getString("CURRENT_QUERY");
+        } else {
+            throw new RuntimeException("Unhandled launch");
+        }
     }
 
     @Override
