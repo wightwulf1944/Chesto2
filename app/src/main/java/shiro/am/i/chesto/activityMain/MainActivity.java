@@ -17,6 +17,8 @@ import com.fivehundredpx.greedolayout.GreedoLayoutManager;
 import com.fivehundredpx.greedolayout.GreedoSpacingItemDecoration;
 import com.squareup.otto.Subscribe;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import shiro.am.i.chesto.Chesto;
 import shiro.am.i.chesto.R;
 import shiro.am.i.chesto.U;
@@ -28,14 +30,13 @@ public final class MainActivity extends AppCompatActivity {
 
     private static int mainActivityCount = 0;
 
-    //TODO: try butterknife again to reduce code
+    @BindView(R.id.toolbar) Toolbar toolbar;
+    @BindView(R.id.appbar) AppBarLayout appbar;
+    @BindView(R.id.recyclerView) RecyclerView recyclerView;
+    @BindView(R.id.swipeLayout) SwipeRefreshLayout swipeLayout;
     private PostAlbum postAlbum;
-    private Toolbar toolbar;
-    private AppBarLayout appbar;
     private GreedoLayoutManager layoutManager;
     private MainAdapter adapter;
-    private RecyclerView recyclerView;
-    private SwipeRefreshLayout swipeLayout;
     private Snackbar errorSnackbar;
 
     private long mBackPressed;
@@ -44,12 +45,10 @@ public final class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        ButterKnife.bind(this);
 
         String query = getQueryString(savedInstanceState);
 
-        appbar = (AppBarLayout) findViewById(R.id.appbar);
-
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setSubtitle(query);
         setSupportActionBar(toolbar);
 
@@ -60,13 +59,11 @@ public final class MainActivity extends AppCompatActivity {
 
         adapter = new MainAdapter(this, postAlbum);
 
-        recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
         recyclerView.setHasFixedSize(true);
         recyclerView.addItemDecoration(new GreedoSpacingItemDecoration(U.dpToPx(8)));
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(layoutManager);
 
-        swipeLayout = (SwipeRefreshLayout) findViewById(R.id.swipeLayout);
         swipeLayout.setColorSchemeColors(ContextCompat.getColor(this, R.color.primary_dark));
         swipeLayout.setOnRefreshListener(postAlbum::refresh);
 
