@@ -11,7 +11,6 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -20,11 +19,16 @@ import android.widget.ImageButton;
 import com.google.android.flexbox.FlexboxLayout;
 import com.squareup.otto.Subscribe;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import shiro.am.i.chesto.Chesto;
 import shiro.am.i.chesto.R;
 import shiro.am.i.chesto.models.AlbumStack;
 import shiro.am.i.chesto.models.PostAlbum;
 import shiro.am.i.chesto.serviceimagedownloader.ImageDownloaderService;
+
+import static butterknife.ButterKnife.findById;
+
 
 /**
  * Created by Shiro on 8/18/2016.
@@ -32,17 +36,18 @@ import shiro.am.i.chesto.serviceimagedownloader.ImageDownloaderService;
 public final class PostActivity
         extends AppCompatActivity {
 
+    @BindView(R.id.viewPager) HackyViewPager viewPager;
     private BottomSheetBehavior bottomSheetBehavior;
     private PostPagerAdapter adapter;
-    private HackyViewPager viewPager;
     private PostAlbum album;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_post);
+        ButterKnife.bind(this);
 
-        setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
+        setSupportActionBar(findById(this, R.id.toolbar));
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
@@ -53,13 +58,12 @@ public final class PostActivity
 
         album = AlbumStack.getTop();
 
-        FlexboxLayout flexboxLayout = (FlexboxLayout) findViewById(R.id.flexboxLayout);
+        FlexboxLayout flexboxLayout = findById(this, R.id.flexboxLayout);
         TagLayoutDecorator tagLayoutDecorator = new TagLayoutDecorator(flexboxLayout);
         tagLayoutDecorator.setPost(album.get(postIndex));
 
         adapter = new PostPagerAdapter(this, album);
 
-        viewPager = (HackyViewPager) findViewById(R.id.viewPager);
         viewPager.setAdapter(adapter);
         viewPager.setCurrentItem(postIndex);
         viewPager.addOnPageChangeListener(new HackyViewPager.SimpleOnPageChangeListener() {
@@ -69,10 +73,10 @@ public final class PostActivity
             }
         });
 
-        ImageButton infoButton = (ImageButton) findViewById(R.id.infoButton);
-        View bottomBar = findViewById(R.id.bottomBar);
+        ImageButton infoButton = findById(this, R.id.infoButton);
+        View bottomBar = findById(this, R.id.bottomBar);
 
-        bottomSheetBehavior = BottomSheetBehavior.from(findViewById(R.id.bottomSheet));
+        bottomSheetBehavior = BottomSheetBehavior.from(findById(this, R.id.bottomSheet));
         bottomSheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
             @Override
             public void onStateChanged(@NonNull View bottomSheet, int newState) {
