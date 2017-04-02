@@ -65,6 +65,7 @@ public final class SearchActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case android.R.id.home:
                 finish();
+                return true;
             case R.id.clear:
                 editTextWrapper.setText("");
                 return true;
