@@ -47,12 +47,10 @@ public final class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
-        String query = getQueryString(savedInstanceState);
+        postAlbum = getPostAlbum(savedInstanceState);
 
-        toolbar.setSubtitle(query);
+        toolbar.setSubtitle(postAlbum.getQuery());
         setSupportActionBar(toolbar);
-
-        postAlbum = new PostAlbum(query);
 
         layoutManager = new GreedoLayoutManager(postAlbum);
         layoutManager.setMaxRowHeight(300);
@@ -77,15 +75,15 @@ public final class MainActivity extends AppCompatActivity {
         ++mainActivityCount;
     }
 
-    private String getQueryString(Bundle savedInstanceState) {
+    private PostAlbum getPostAlbum(Bundle savedInstanceState) {
         Intent intent = getIntent();
         String intentAction = intent.getAction();
         if (intentAction.equals(Intent.ACTION_MAIN)) {
-            return "";
+            return new PostAlbum("");
         } else if (intentAction.equals(Intent.ACTION_SEARCH)) {
-            return intent.getDataString();
+            return new PostAlbum(intent.getDataString());
         } else if (savedInstanceState != null) {
-            return savedInstanceState.getString("CURRENT_QUERY");
+            return AlbumStack.getTop();
         } else {
             throw new RuntimeException("Unhandled launch");
         }
@@ -94,15 +92,11 @@ public final class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         --mainActivityCount;
-        AlbumStack.pop();
+        if (isFinishing()) {
+            AlbumStack.pop();
+        }
         Chesto.getEventBus().unregister(this);
         super.onDestroy();
-    }
-
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putString("CURRENT_QUERY", toolbar.getSubtitle().toString());
     }
 
     @Override
