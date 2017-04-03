@@ -1,7 +1,6 @@
 package shiro.am.i.chesto.activitymain;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.Snackbar;
@@ -21,6 +20,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import shiro.am.i.chesto.Chesto;
 import shiro.am.i.chesto.R;
+import shiro.am.i.chesto.Settings;
 import shiro.am.i.chesto.U;
 import shiro.am.i.chesto.activitysearch.SearchActivity;
 import shiro.am.i.chesto.models.AlbumStack;
@@ -111,8 +111,8 @@ public final class MainActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.activity_main, menu);
 
-        boolean hideNsfw = Chesto.getPreferences().getBoolean("hide_nsfw", true);
-        menu.findItem(R.id.action_hide_nsfw).setChecked(hideNsfw);
+        menu.findItem(R.id.action_hide_nsfw)
+                .setChecked(Settings.hideNsfw());
 
         return true;
     }
@@ -127,9 +127,7 @@ public final class MainActivity extends AppCompatActivity {
             case R.id.action_hide_nsfw:
                 boolean toggled = !item.isChecked();
                 item.setChecked(toggled);
-                SharedPreferences.Editor editor = Chesto.getPreferences().edit();
-                editor.putBoolean("hide_nsfw", toggled);
-                editor.apply();
+                Settings.setHideNsfw(toggled);
                 postAlbum.refresh();
                 return true;
             default:

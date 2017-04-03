@@ -1,9 +1,7 @@
 package shiro.am.i.chesto;
 
 import android.app.Application;
-import android.content.SharedPreferences;
 import android.os.StrictMode;
-import android.preference.PreferenceManager;
 
 import com.squareup.otto.Bus;
 
@@ -21,7 +19,6 @@ import timber.log.Timber;
 public final class Chesto extends Application {
 
     private static Chesto instance;
-    private static SharedPreferences sharedPreferences;
     private static Danbooru danbooru;
     private static Danbooru safebooru;
     private static Bus eventBus;
@@ -48,7 +45,7 @@ public final class Chesto extends Application {
 
         instance = this;
 
-        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        Settings.init(this);
 
         RxJavaCallAdapterFactory callAdapterFactory = RxJavaCallAdapterFactory.createWithScheduler(Schedulers.io());
         GsonConverterFactory converterFactory = GsonConverterFactory.create();
@@ -76,14 +73,8 @@ public final class Chesto extends Application {
         return instance;
     }
 
-    //TODO: make dedicated preference class
-    public static SharedPreferences getPreferences() {
-        return sharedPreferences;
-    }
-
     public static Danbooru getDanbooru() {
-        boolean hideNsfw = sharedPreferences.getBoolean("hide_nsfw", true);
-        if (hideNsfw) {
+        if (Settings.hideNsfw()) {
             return safebooru;
         } else {
             return danbooru;
