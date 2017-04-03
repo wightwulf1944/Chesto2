@@ -27,7 +27,7 @@ final class TagStore {
 
     void getTags(String tagName) {
         if (results != null) {
-            results.removeChangeListeners();
+            results.removeAllChangeListeners();
         }
 
         results = Realm.getDefaultInstance()

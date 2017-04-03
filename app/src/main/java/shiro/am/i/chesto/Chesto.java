@@ -8,7 +8,6 @@ import android.preference.PreferenceManager;
 import com.squareup.otto.Bus;
 
 import io.realm.Realm;
-import io.realm.RealmConfiguration;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -68,10 +67,9 @@ public final class Chesto extends Application {
                 .build()
                 .create(Danbooru.class);
 
-        RealmConfiguration defaultConfig = new RealmConfiguration.Builder(this).build();
-        Realm.setDefaultConfiguration(defaultConfig);
 
         eventBus = new Bus();
+        Realm.init(this);
     }
 
     public static Chesto getInstance() {
