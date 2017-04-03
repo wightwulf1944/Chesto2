@@ -45,6 +45,8 @@ public final class Chesto extends Application {
 
         instance = this;
 
+        eventBus = new Bus();
+
         Settings.init(this);
 
         RxJavaCallAdapterFactory callAdapterFactory = RxJavaCallAdapterFactory.createWithScheduler(Schedulers.io());
@@ -64,8 +66,6 @@ public final class Chesto extends Application {
                 .build()
                 .create(Danbooru.class);
 
-
-        eventBus = new Bus();
         Realm.init(this);
     }
 

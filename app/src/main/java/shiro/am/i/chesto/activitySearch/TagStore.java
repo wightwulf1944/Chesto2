@@ -35,9 +35,9 @@ final class TagStore {
                 .contains("name", tagName, Case.INSENSITIVE)
                 .findAllSorted("postCount", Sort.DESCENDING);
 
-        results.addChangeListener(store::addAll);
+        results.addChangeListener(tags -> store.addAll(tags));
 
-        Chesto.getDanbooru().searchTags(tagName + "*")
+        Chesto.getDanbooru().searchTags('*' + tagName + '*')
                 .subscribe(tags -> {
                     Realm realm = Realm.getDefaultInstance();
                     realm.beginTransaction();
