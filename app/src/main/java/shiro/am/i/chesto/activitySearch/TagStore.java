@@ -37,6 +37,7 @@ final class TagStore {
 
         results.addChangeListener(tags -> store.addAll(tags));
 
+        //TODO: requires onError method
         Chesto.getDanbooru().searchTags('*' + tagName + '*')
                 .subscribe(tags -> {
                     Realm realm = Realm.getDefaultInstance();
