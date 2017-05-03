@@ -1,9 +1,8 @@
 package shiro.am.i.chesto.activitymain;
 
-import android.content.Intent;
+import android.content.Context;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
-import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
@@ -11,7 +10,6 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
 import shiro.am.i.chesto.R;
-import shiro.am.i.chesto.activitypost.PostActivity;
 import shiro.am.i.chesto.models.Post;
 import shiro.am.i.chesto.models.PostAlbum;
 
@@ -20,50 +18,57 @@ import shiro.am.i.chesto.models.PostAlbum;
  */
 final class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
 
-    private final AppCompatActivity mParent;
-    private final PostAlbum mAlbum;
+    private final PostAlbum postAlbum;
+    private OnItemClickedListener itemClickedListener;
 
-    MainAdapter(AppCompatActivity parent, PostAlbum album) {
-        mParent = parent;
-        mAlbum = album;
+    MainAdapter(PostAlbum album) {
+        postAlbum = album;
+    }
+
+    void setOnItemClickedListener(OnItemClickedListener listener) {
+        itemClickedListener = listener;
     }
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        return new ViewHolder(new ImageView(mParent));
+        Context context = parent.getContext();
+        ImageView imageView = new ImageView(context);
+        return new ViewHolder(imageView);
     }
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        Post post = mAlbum.get(position);
-        Glide.with(mParent)
+        Post post = postAlbum.get(position);
+        ImageView imageView = holder.imageView;
+        AppCompatActivity parentActivity = (AppCompatActivity) imageView.getContext();
+
+        Glide.with(parentActivity)
                 .load(post.getSmallFileUrl())
                 .placeholder(R.drawable.image_placeholder)
                 .error(R.drawable.image_broken)
                 .diskCacheStrategy(DiskCacheStrategy.SOURCE)
-                .into(holder.imageView);
+                .into(imageView);
     }
 
     @Override
     public int getItemCount() {
-        return mAlbum.size();
+        return postAlbum.size();
     }
 
-    class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    class ViewHolder extends RecyclerView.ViewHolder {
 
         private final ImageView imageView;
 
         ViewHolder(ImageView v) {
             super(v);
             imageView = v;
-            imageView.setOnClickListener(this);
+            imageView.setOnClickListener(view ->
+                    itemClickedListener.onItemClicked(getAdapterPosition())
+            );
         }
+    }
 
-        @Override
-        public void onClick(View view) {
-            Intent intent = new Intent(mParent, PostActivity.class);
-            intent.putExtra("default", getAdapterPosition());
-            mParent.startActivityForResult(intent, 0);
-        }
+    interface OnItemClickedListener {
+        void onItemClicked(int position);
     }
 }

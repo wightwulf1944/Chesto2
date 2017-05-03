@@ -20,6 +20,7 @@ import butterknife.ButterKnife;
 import shiro.am.i.chesto.Chesto;
 import shiro.am.i.chesto.R;
 import shiro.am.i.chesto.Settings;
+import shiro.am.i.chesto.activitypost.PostActivity;
 import shiro.am.i.chesto.activitysearch.SearchActivity;
 import shiro.am.i.chesto.models.AlbumStack;
 import shiro.am.i.chesto.models.PostAlbum;
@@ -56,7 +57,12 @@ public final class MainActivity extends AppCompatActivity {
         int spacingPx = (int) (8 * getResources().getDisplayMetrics().density);
         GreedoSpacingItemDecoration spacer = new GreedoSpacingItemDecoration(spacingPx);
 
-        adapter = new MainAdapter(this, postAlbum);
+        adapter = new MainAdapter(postAlbum);
+        adapter.setOnItemClickedListener(position -> {
+            Intent intent = new Intent(this, PostActivity.class);
+            intent.putExtra("default", position);
+            startActivityForResult(intent, 0);
+        });
 
         recyclerView.setHasFixedSize(true);
         recyclerView.addItemDecoration(spacer);
