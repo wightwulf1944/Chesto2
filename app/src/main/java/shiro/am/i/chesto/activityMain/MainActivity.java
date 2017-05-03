@@ -51,7 +51,8 @@ public final class MainActivity extends AppCompatActivity {
         toolbar.setSubtitle(postAlbum.getQuery());
         setSupportActionBar(toolbar);
 
-        layoutManager = new GreedoLayoutManager(postAlbum);
+        RatioDelegate ratioDelegate = new RatioDelegate(postAlbum);
+        layoutManager = new GreedoLayoutManager(ratioDelegate);
         layoutManager.setMaxRowHeight(300);
 
         int spacingPx = (int) (8 * getResources().getDisplayMetrics().density);
