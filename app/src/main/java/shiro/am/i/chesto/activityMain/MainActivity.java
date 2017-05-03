@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.Snackbar;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
@@ -21,7 +20,6 @@ import butterknife.ButterKnife;
 import shiro.am.i.chesto.Chesto;
 import shiro.am.i.chesto.R;
 import shiro.am.i.chesto.Settings;
-import shiro.am.i.chesto.U;
 import shiro.am.i.chesto.activitysearch.SearchActivity;
 import shiro.am.i.chesto.models.AlbumStack;
 import shiro.am.i.chesto.models.PostAlbum;
@@ -55,14 +53,17 @@ public final class MainActivity extends AppCompatActivity {
         layoutManager = new GreedoLayoutManager(postAlbum);
         layoutManager.setMaxRowHeight(300);
 
+        int spacingPx = (int) (8 * getResources().getDisplayMetrics().density);
+        GreedoSpacingItemDecoration spacer = new GreedoSpacingItemDecoration(spacingPx);
+
         adapter = new MainAdapter(this, postAlbum);
 
         recyclerView.setHasFixedSize(true);
-        recyclerView.addItemDecoration(new GreedoSpacingItemDecoration(U.dpToPx(8)));
+        recyclerView.addItemDecoration(spacer);
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(layoutManager);
 
-        swipeLayout.setColorSchemeColors(ContextCompat.getColor(this, R.color.primary_dark));
+        swipeLayout.setColorSchemeResources(R.color.primary_dark);
         swipeLayout.setOnRefreshListener(postAlbum::refresh);
 
         errorSnackbar = Snackbar.make(recyclerView, "Check your connection", Snackbar.LENGTH_INDEFINITE)
@@ -137,7 +138,6 @@ public final class MainActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        // TODO: consider priorities here
         if (mainActivityCount > 1) {
             super.onBackPressed();
         } else if (mBackPressed + 1500 > System.currentTimeMillis()) {
@@ -153,8 +153,8 @@ public final class MainActivity extends AppCompatActivity {
                 appbar.setExpanded(true);
                 Snackbar.make(recyclerView, R.string.snackbar_mainActivity_scrollToTop, Snackbar.LENGTH_SHORT).show();
             }
+            mBackPressed = System.currentTimeMillis();
         }
-        mBackPressed = System.currentTimeMillis();
     }
 
     @Subscribe
