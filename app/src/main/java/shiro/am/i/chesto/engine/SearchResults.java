@@ -3,7 +3,7 @@ package shiro.am.i.chesto.engine;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import shiro.am.i.chesto.models.Post;
+import shiro.am.i.chesto.model.Post;
 
 /**
  * Created by Subaru Tashiro on 6/13/2017.

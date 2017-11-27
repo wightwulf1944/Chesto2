@@ -5,7 +5,7 @@ import java.util.List;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import shiro.am.i.chesto.Chesto;
-import shiro.am.i.chesto.models.Post;
+import shiro.am.i.chesto.model.Post;
 import timber.log.Timber;
 
 /**

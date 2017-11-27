@@ -21,8 +21,8 @@ import com.squareup.otto.Subscribe;
 
 import shiro.am.i.chesto.Chesto;
 import shiro.am.i.chesto.R;
-import shiro.am.i.chesto.models.AlbumStack;
-import shiro.am.i.chesto.models.PostAlbum;
+import shiro.am.i.chesto.model.AlbumStack;
+import shiro.am.i.chesto.model.PostAlbum;
 import shiro.am.i.chesto.serviceimagedownloader.ImageDownloaderService;
 
 /**

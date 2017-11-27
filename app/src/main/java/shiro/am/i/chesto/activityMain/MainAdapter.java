@@ -10,8 +10,8 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
 import shiro.am.i.chesto.R;
-import shiro.am.i.chesto.models.Post;
-import shiro.am.i.chesto.models.PostAlbum;
+import shiro.am.i.chesto.model.Post;
+import shiro.am.i.chesto.model.PostAlbum;
 
 /**
  * Created by Shiro on 8/4/2016.

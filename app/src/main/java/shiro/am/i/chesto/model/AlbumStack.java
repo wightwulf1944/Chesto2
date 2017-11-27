@@ -1,4 +1,4 @@
-package shiro.am.i.chesto.models;
+package shiro.am.i.chesto.model;
 
 import java.util.Deque;
 import java.util.LinkedList;

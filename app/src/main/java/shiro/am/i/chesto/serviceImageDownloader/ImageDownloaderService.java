@@ -13,7 +13,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.channels.FileChannel;
 
-import shiro.am.i.chesto.models.Post;
+import shiro.am.i.chesto.model.Post;
 import timber.log.Timber;
 
 /**

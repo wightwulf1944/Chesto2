@@ -9,7 +9,7 @@ import io.realm.Realm;
 import io.realm.RealmResults;
 import io.realm.Sort;
 import shiro.am.i.chesto.Chesto;
-import shiro.am.i.chesto.models.Tag;
+import shiro.am.i.chesto.model.Tag;
 
 /**
  * Created by Shiro on 3/21/2017.

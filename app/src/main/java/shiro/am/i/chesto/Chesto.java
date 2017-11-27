@@ -10,7 +10,7 @@ import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 import rx.schedulers.Schedulers;
-import shiro.am.i.chesto.models.Danbooru;
+import shiro.am.i.chesto.model.Danbooru;
 import timber.log.Timber;
 
 /**

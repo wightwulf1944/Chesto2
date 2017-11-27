@@ -11,8 +11,8 @@ import android.view.MenuItem;
 
 import shiro.am.i.chesto.R;
 import shiro.am.i.chesto.activitymain.MainActivity;
-import shiro.am.i.chesto.models.AlbumStack;
-import shiro.am.i.chesto.models.PostAlbum;
+import shiro.am.i.chesto.model.AlbumStack;
+import shiro.am.i.chesto.model.PostAlbum;
 
 public final class SearchActivity extends AppCompatActivity {
 
