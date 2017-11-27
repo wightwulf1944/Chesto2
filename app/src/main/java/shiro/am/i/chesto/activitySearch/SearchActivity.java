@@ -14,8 +14,6 @@ import shiro.am.i.chesto.activitymain.MainActivity;
 import shiro.am.i.chesto.models.AlbumStack;
 import shiro.am.i.chesto.models.PostAlbum;
 
-import static butterknife.ButterKnife.findById;
-
 public final class SearchActivity extends AppCompatActivity {
 
     private EditTextWrapper editTextWrapper;
@@ -28,7 +26,7 @@ public final class SearchActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
 
-        setSupportActionBar(findById(this, R.id.toolbar));
+        setSupportActionBar(findViewById(R.id.toolbar));
         final ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
@@ -40,13 +38,13 @@ public final class SearchActivity extends AppCompatActivity {
 
         tagStore = new TagStore(searchAdapter);
 
-        final RecyclerView recyclerView = findById(this, R.id.recyclerView);
+        final RecyclerView recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setAdapter(searchAdapter);
         recyclerView.setHasFixedSize(true);
 
         PostAlbum album = AlbumStack.getTop();
 
-        editTextWrapper = new EditTextWrapper(findById(this, R.id.editText));
+        editTextWrapper = new EditTextWrapper(findViewById(R.id.editText));
         editTextWrapper.setAfterTextChangedListener(this::onTextChanged);
         editTextWrapper.setOnEditorSearchListener(this::invokeSearch);
         editTextWrapper.setText(album.getQuery());

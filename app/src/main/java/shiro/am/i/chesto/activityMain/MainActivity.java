@@ -15,8 +15,6 @@ import com.fivehundredpx.greedolayout.GreedoLayoutManager;
 import com.fivehundredpx.greedolayout.GreedoSpacingItemDecoration;
 import com.squareup.otto.Subscribe;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
 import shiro.am.i.chesto.Chesto;
 import shiro.am.i.chesto.R;
 import shiro.am.i.chesto.Settings;
@@ -27,12 +25,9 @@ import shiro.am.i.chesto.models.PostAlbum;
 
 public final class MainActivity extends AppCompatActivity {
 
-    private static int mainActivityCount = 0;
-
-    @BindView(R.id.toolbar) Toolbar toolbar;
-    @BindView(R.id.appbar) AppBarLayout appbar;
-    @BindView(R.id.recyclerView) RecyclerView recyclerView;
-    @BindView(R.id.swipeLayout) SwipeRefreshLayout swipeLayout;
+    private AppBarLayout appbar;
+    private RecyclerView recyclerView;
+    private SwipeRefreshLayout swipeLayout;
     private PostAlbum postAlbum;
     private GreedoLayoutManager layoutManager;
     private MainAdapter adapter;
@@ -44,10 +39,12 @@ public final class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        ButterKnife.bind(this);
 
         postAlbum = getPostAlbum(savedInstanceState);
 
+        appbar = findViewById(R.id.appbar);
+
+        Toolbar toolbar = findViewById(R.id.toolbar);
         toolbar.setSubtitle(postAlbum.getQuery());
         setSupportActionBar(toolbar);
 
@@ -65,11 +62,13 @@ public final class MainActivity extends AppCompatActivity {
             startActivityForResult(intent, 0);
         });
 
+        recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setHasFixedSize(true);
         recyclerView.addItemDecoration(spacer);
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(layoutManager);
 
+        swipeLayout = findViewById(R.id.swipeLayout);
         swipeLayout.setColorSchemeResources(R.color.primary_dark);
         swipeLayout.setOnRefreshListener(postAlbum::refresh);
 
@@ -80,7 +79,6 @@ public final class MainActivity extends AppCompatActivity {
         postAlbum.fetchPosts();
 
         AlbumStack.push(postAlbum);
-        ++mainActivityCount;
     }
 
     private PostAlbum getPostAlbum(Bundle savedInstanceState) {
@@ -99,7 +97,6 @@ public final class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
-        --mainActivityCount;
         if (isFinishing()) {
             AlbumStack.pop();
         }
@@ -145,9 +142,7 @@ public final class MainActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        if (mainActivityCount > 1) {
-            super.onBackPressed();
-        } else if (mBackPressed + 1500 > System.currentTimeMillis()) {
+        if (!isTaskRoot() || mBackPressed + 1500 > System.currentTimeMillis()) {
             super.onBackPressed();
         } else {
             boolean appbarIsExpanded = appbar.getHeight() - appbar.getBottom() == 0;

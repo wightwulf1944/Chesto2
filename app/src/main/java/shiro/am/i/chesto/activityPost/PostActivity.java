@@ -19,16 +19,11 @@ import android.widget.ImageButton;
 import com.google.android.flexbox.FlexboxLayout;
 import com.squareup.otto.Subscribe;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
 import shiro.am.i.chesto.Chesto;
 import shiro.am.i.chesto.R;
 import shiro.am.i.chesto.models.AlbumStack;
 import shiro.am.i.chesto.models.PostAlbum;
 import shiro.am.i.chesto.serviceimagedownloader.ImageDownloaderService;
-
-import static butterknife.ButterKnife.findById;
-
 
 /**
  * Created by Shiro on 8/18/2016.
@@ -36,7 +31,7 @@ import static butterknife.ButterKnife.findById;
 public final class PostActivity
         extends AppCompatActivity {
 
-    @BindView(R.id.viewPager) HackyViewPager viewPager;
+    private HackyViewPager viewPager;
     private BottomSheetBehavior bottomSheetBehavior;
     private PostPagerAdapter adapter;
     private PostAlbum album;
@@ -45,9 +40,8 @@ public final class PostActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_post);
-        ButterKnife.bind(this);
 
-        setSupportActionBar(findById(this, R.id.toolbar));
+        setSupportActionBar(findViewById(R.id.toolbar));
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
@@ -58,12 +52,13 @@ public final class PostActivity
 
         album = AlbumStack.getTop();
 
-        FlexboxLayout flexboxLayout = findById(this, R.id.flexboxLayout);
+        FlexboxLayout flexboxLayout = findViewById(R.id.flexboxLayout);
         TagLayoutDecorator tagLayoutDecorator = new TagLayoutDecorator(flexboxLayout);
         tagLayoutDecorator.setPost(album.get(postIndex));
 
         adapter = new PostPagerAdapter(this, album);
 
+        viewPager = findViewById(R.id.viewPager);
         viewPager.setAdapter(adapter);
         viewPager.setCurrentItem(postIndex);
         viewPager.addOnPageChangeListener(new HackyViewPager.SimpleOnPageChangeListener() {
@@ -73,10 +68,10 @@ public final class PostActivity
             }
         });
 
-        ImageButton infoButton = findById(this, R.id.infoButton);
-        View bottomBar = findById(this, R.id.bottomBar);
+        ImageButton infoButton = findViewById(R.id.infoButton);
+        View bottomBar = findViewById(R.id.bottomBar);
 
-        bottomSheetBehavior = BottomSheetBehavior.from(findById(this, R.id.bottomSheet));
+        bottomSheetBehavior = BottomSheetBehavior.from(findViewById(R.id.bottomSheet));
         bottomSheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
             @Override
             public void onStateChanged(@NonNull View bottomSheet, int newState) {
