@@ -1,6 +1,6 @@
-package i.am.shiro.chesto.notifier;
+package shiro.am.i.chesto.notifier;
 
-import i.am.shiro.chesto.listener.Listener0;
+import shiro.am.i.chesto.listener.Listener0;
 
 /**
  * Created by Shiro on 11/5/2017.

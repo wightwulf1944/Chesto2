@@ -1,10 +1,11 @@
-package i.am.shiro.chesto.notifier;
+package shiro.am.i.chesto.notifier;
 
 import java.util.LinkedList;
 import java.util.List;
 
-import i.am.shiro.chesto.listener.Listener;
-import i.am.shiro.chesto.subscription.Subscription;
+import shiro.am.i.chesto.listener.Listener;
+import shiro.am.i.chesto.subscription.Subscription;
+
 
 /**
  * Created by Shiro on 11/5/2017.

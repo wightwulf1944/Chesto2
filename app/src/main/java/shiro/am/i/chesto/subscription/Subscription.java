@@ -1,4 +1,4 @@
-package i.am.shiro.chesto.subscription;
+package shiro.am.i.chesto.subscription;
 
 /**
  * Created by Shiro on 11/11/2017.

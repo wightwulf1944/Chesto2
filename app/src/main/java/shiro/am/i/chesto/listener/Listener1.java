@@ -1,4 +1,4 @@
-package i.am.shiro.chesto.listener;
+package shiro.am.i.chesto.listener;
 
 /**
  * Created by Subaru Tashiro on 5/18/2017.
