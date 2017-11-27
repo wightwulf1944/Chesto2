@@ -17,13 +17,12 @@ import android.view.View;
 import android.widget.ImageButton;
 
 import com.google.android.flexbox.FlexboxLayout;
-import com.squareup.otto.Subscribe;
 
-import shiro.am.i.chesto.Chesto;
 import shiro.am.i.chesto.R;
 import shiro.am.i.chesto.model.AlbumStack;
 import shiro.am.i.chesto.model.PostAlbum;
 import shiro.am.i.chesto.serviceimagedownloader.ImageDownloaderService;
+import shiro.am.i.chesto.subscription.Subscription;
 
 /**
  * Created by Shiro on 8/18/2016.
@@ -35,6 +34,7 @@ public final class PostActivity
     private BottomSheetBehavior bottomSheetBehavior;
     private PostPagerAdapter adapter;
     private PostAlbum album;
+    private Subscription subscription;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,13 +89,13 @@ public final class PostActivity
             }
         });
 
-        Chesto.getEventBus().register(this);
+        subscription = album.addOnPostAddedListener(integer -> adapter.notifyDataSetChanged());
     }
 
     @Override
     protected void onDestroy() {
-        Chesto.getEventBus().unregister(this);
         super.onDestroy();
+        subscription.unsubscribe();
     }
 
     @Override
@@ -172,10 +172,5 @@ public final class PostActivity
         } else {
             Snackbar.make(viewPager, "Please allow access to save image", Snackbar.LENGTH_SHORT).show();
         }
-    }
-
-    @Subscribe
-    public void onPostAdded(PostAlbum.OnPostAddedEvent event) {
-        adapter.notifyDataSetChanged();
     }
 }

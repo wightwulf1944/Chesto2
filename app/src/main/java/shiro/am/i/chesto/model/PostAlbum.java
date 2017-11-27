@@ -1,13 +1,15 @@
 package shiro.am.i.chesto.model;
 
-import com.squareup.otto.Bus;
-
 import java.util.ArrayList;
 
 import rx.Observable;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import shiro.am.i.chesto.Chesto;
+import shiro.am.i.chesto.listener.Listener0;
+import shiro.am.i.chesto.listener.Listener1;
+import shiro.am.i.chesto.notifier.Notifier0;
+import shiro.am.i.chesto.notifier.Notifier1;
 import timber.log.Timber;
 
 /**
@@ -19,19 +21,26 @@ import timber.log.Timber;
 
 public final class PostAlbum {
 
-    private final Bus eventBus;
-    private final ArrayList<Post> list;
+    private final Notifier1<Integer> onPostAddedNotifier = new Notifier1<>();
+
+    private final Notifier0 onPostsClearedNotifier = new Notifier0();
+
+    private final Notifier1<Boolean> onLoadingNotifier = new Notifier1<>();
+
+    private final Notifier0 onErrorNotifier = new Notifier0();
+
+    private final ArrayList<Post> list = new ArrayList<>();
+
     private final String mQuery;
 
     private int currentPage;
-    private Subscription currentSubscription;
+
     private boolean isLoading;
 
-    public PostAlbum(String query) {
-        eventBus = Chesto.getEventBus();
-        list = new ArrayList<>();
-        mQuery = query;
+    private Subscription currentSubscription;
 
+    public PostAlbum(String query) {
+        mQuery = query;
         currentPage = 1;
         isLoading = false;
     }
@@ -54,7 +63,7 @@ public final class PostAlbum {
 
     public void refresh() {
         list.clear();
-        eventBus.post(new OnPostsClearedEvent());
+        onPostsClearedNotifier.fireEvent();
 
         currentPage = 1;
         currentSubscription.unsubscribe();
@@ -79,41 +88,37 @@ public final class PostAlbum {
 
     private void setIsLoading() {
         isLoading = true;
-        eventBus.post(new OnLoadStartedEvent());
+        onLoadingNotifier.fireEvent(true);
     }
 
     private void setIsNotLoading() {
         isLoading = false;
-        eventBus.post(new OnLoadFinishedEvent());
+        onLoadingNotifier.fireEvent(false);
     }
 
     private void add(Post post) {
         list.add(post);
-        eventBus.post(new OnPostAddedEvent(list.size()));
+        onPostAddedNotifier.fireEvent(list.size());
     }
 
     private void onLoadError(Throwable throwable) {
         Timber.e(throwable, "Error fetching posts");
-        eventBus.post(new OnLoadErrorEvent());
+        onErrorNotifier.fireEvent();
     }
 
-    public static class OnPostAddedEvent {
-        public int position;
-
-        private OnPostAddedEvent(int position) {
-            this.position = position;
-        }
+    public shiro.am.i.chesto.subscription.Subscription addOnPostAddedListener(Listener1<Integer> listener) {
+        return onPostAddedNotifier.addListener(listener);
     }
 
-    public static class OnPostsClearedEvent {
+    public shiro.am.i.chesto.subscription.Subscription addOnPostsClearedListener(Listener0 listener) {
+        return onPostsClearedNotifier.addListener(listener);
     }
 
-    public static class OnLoadStartedEvent {
+    public shiro.am.i.chesto.subscription.Subscription addOnLoadingListener(Listener1<Boolean> listener) {
+        return onLoadingNotifier.addListener(listener);
     }
 
-    public static class OnLoadFinishedEvent {
-    }
-
-    public static class OnLoadErrorEvent {
+    public shiro.am.i.chesto.subscription.Subscription addOnErrorListener(Listener0 listener) {
+        return onErrorNotifier.addListener(listener);
     }
 }

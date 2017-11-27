@@ -13,15 +13,14 @@ import android.view.MenuItem;
 
 import com.fivehundredpx.greedolayout.GreedoLayoutManager;
 import com.fivehundredpx.greedolayout.GreedoSpacingItemDecoration;
-import com.squareup.otto.Subscribe;
 
-import shiro.am.i.chesto.Chesto;
 import shiro.am.i.chesto.R;
 import shiro.am.i.chesto.Settings;
 import shiro.am.i.chesto.activitypost.PostActivity;
 import shiro.am.i.chesto.activitysearch.SearchActivity;
 import shiro.am.i.chesto.model.AlbumStack;
 import shiro.am.i.chesto.model.PostAlbum;
+import shiro.am.i.chesto.subscription.Subscription;
 
 public final class MainActivity extends AppCompatActivity {
 
@@ -32,6 +31,7 @@ public final class MainActivity extends AppCompatActivity {
     private GreedoLayoutManager layoutManager;
     private MainAdapter adapter;
     private Snackbar errorSnackbar;
+    private Subscription subscription;
 
     private long mBackPressed;
 
@@ -75,7 +75,13 @@ public final class MainActivity extends AppCompatActivity {
         errorSnackbar = Snackbar.make(recyclerView, "Check your connection", Snackbar.LENGTH_INDEFINITE)
                 .setAction("Retry", view -> postAlbum.fetchPosts());
 
-        Chesto.getEventBus().register(this);
+        subscription = Subscription.from(
+                postAlbum.addOnPostAddedListener(adapter::notifyItemInserted),
+                postAlbum.addOnPostsClearedListener(adapter::notifyDataSetChanged),
+                postAlbum.addOnLoadingListener(swipeLayout::setRefreshing),
+                postAlbum.addOnLoadingListener(b -> errorSnackbar.dismiss()),
+                postAlbum.addOnErrorListener(errorSnackbar::show)
+        );
         postAlbum.fetchPosts();
 
         AlbumStack.push(postAlbum);
@@ -100,7 +106,7 @@ public final class MainActivity extends AppCompatActivity {
         if (isFinishing()) {
             AlbumStack.pop();
         }
-        Chesto.getEventBus().unregister(this);
+        subscription.unsubscribe();
         super.onDestroy();
     }
 
@@ -157,31 +163,5 @@ public final class MainActivity extends AppCompatActivity {
             }
             mBackPressed = System.currentTimeMillis();
         }
-    }
-
-    @Subscribe
-    public void onLoadStarted(PostAlbum.OnLoadStartedEvent event) {
-        swipeLayout.setRefreshing(true);
-        errorSnackbar.dismiss();
-    }
-
-    @Subscribe
-    public void onLoadFinished(PostAlbum.OnLoadFinishedEvent event) {
-        swipeLayout.setRefreshing(false);
-    }
-
-    @Subscribe
-    public void onLoadError(PostAlbum.OnLoadErrorEvent event) {
-        errorSnackbar.show();
-    }
-
-    @Subscribe
-    public void onPostCleared(PostAlbum.OnPostsClearedEvent event) {
-        adapter.notifyDataSetChanged();
-    }
-
-    @Subscribe
-    public void onPostAdded(PostAlbum.OnPostAddedEvent event) {
-        adapter.notifyItemInserted(event.position);
     }
 }

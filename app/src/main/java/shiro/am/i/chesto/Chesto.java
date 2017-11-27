@@ -3,8 +3,6 @@ package shiro.am.i.chesto;
 import android.app.Application;
 import android.os.StrictMode;
 
-import com.squareup.otto.Bus;
-
 import io.realm.Realm;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
@@ -21,7 +19,18 @@ public final class Chesto extends Application {
     private static Chesto instance;
     private static Danbooru danbooru;
     private static Danbooru safebooru;
-    private static Bus eventBus;
+
+    public static Chesto getInstance() {
+        return instance;
+    }
+
+    public static Danbooru getDanbooru() {
+        if (Settings.hideNsfw()) {
+            return safebooru;
+        } else {
+            return danbooru;
+        }
+    }
 
     @Override
     public void onCreate() {
@@ -45,8 +54,6 @@ public final class Chesto extends Application {
 
         instance = this;
 
-        eventBus = new Bus();
-
         Settings.init(this);
 
         RxJavaCallAdapterFactory callAdapterFactory = RxJavaCallAdapterFactory.createWithScheduler(Schedulers.io());
@@ -67,21 +74,5 @@ public final class Chesto extends Application {
                 .create(Danbooru.class);
 
         Realm.init(this);
-    }
-
-    public static Chesto getInstance() {
-        return instance;
-    }
-
-    public static Danbooru getDanbooru() {
-        if (Settings.hideNsfw()) {
-            return safebooru;
-        } else {
-            return danbooru;
-        }
-    }
-
-    public static Bus getEventBus() {
-        return eventBus;
     }
 }
