@@ -20,7 +20,7 @@ import com.google.android.flexbox.FlexboxLayout;
 
 import shiro.am.i.chesto.R;
 import shiro.am.i.chesto.model.AlbumStack;
-import shiro.am.i.chesto.model.PostAlbum;
+import shiro.am.i.chesto.viewmodel.PostAlbum;
 import shiro.am.i.chesto.serviceimagedownloader.ImageDownloaderService;
 import shiro.am.i.chesto.subscription.Subscription;
 

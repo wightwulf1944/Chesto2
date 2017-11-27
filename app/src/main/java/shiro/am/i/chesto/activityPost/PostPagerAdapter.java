@@ -15,7 +15,7 @@ import java.util.Queue;
 import jp.wasabeef.glide.transformations.BlurTransformation;
 import shiro.am.i.chesto.R;
 import shiro.am.i.chesto.model.Post;
-import shiro.am.i.chesto.model.PostAlbum;
+import shiro.am.i.chesto.viewmodel.PostAlbum;
 import uk.co.senab.photoview.PhotoView;
 
 /**

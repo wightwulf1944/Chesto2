@@ -3,7 +3,7 @@ package shiro.am.i.chesto.activitymain;
 import com.fivehundredpx.greedolayout.GreedoLayoutSizeCalculator;
 
 import shiro.am.i.chesto.model.Post;
-import shiro.am.i.chesto.model.PostAlbum;
+import shiro.am.i.chesto.viewmodel.PostAlbum;
 
 /**
  * Created by Shiro on 5/4/2017.

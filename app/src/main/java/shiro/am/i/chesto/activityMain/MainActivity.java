@@ -19,7 +19,7 @@ import shiro.am.i.chesto.Settings;
 import shiro.am.i.chesto.activitypost.PostActivity;
 import shiro.am.i.chesto.activitysearch.SearchActivity;
 import shiro.am.i.chesto.model.AlbumStack;
-import shiro.am.i.chesto.model.PostAlbum;
+import shiro.am.i.chesto.viewmodel.PostAlbum;
 import shiro.am.i.chesto.subscription.Subscription;
 
 public final class MainActivity extends AppCompatActivity {

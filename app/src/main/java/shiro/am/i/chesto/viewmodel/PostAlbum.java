@@ -1,4 +1,4 @@
-package shiro.am.i.chesto.model;
+package shiro.am.i.chesto.viewmodel;
 
 import java.util.ArrayList;
 
@@ -8,6 +8,7 @@ import rx.android.schedulers.AndroidSchedulers;
 import shiro.am.i.chesto.Chesto;
 import shiro.am.i.chesto.listener.Listener0;
 import shiro.am.i.chesto.listener.Listener1;
+import shiro.am.i.chesto.model.Post;
 import shiro.am.i.chesto.notifier.Notifier0;
 import shiro.am.i.chesto.notifier.Notifier1;
 import timber.log.Timber;
@@ -74,8 +75,8 @@ public final class PostAlbum {
         currentSubscription = Chesto.getDanbooru()
                 .getPosts(mQuery, currentPage)
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnSubscribe(this::setIsLoading)
-                .doOnTerminate(this::setIsNotLoading)
+                .doOnSubscribe(() -> setIsLoading(true))
+                .doOnTerminate(() -> setIsLoading(false))
                 .flatMap(Observable::from)
                 .filter(Post::hasFileUrl)
                 .filter(post -> !list.contains(post))
@@ -86,14 +87,9 @@ public final class PostAlbum {
                 );
     }
 
-    private void setIsLoading() {
-        isLoading = true;
-        onLoadingNotifier.fireEvent(true);
-    }
-
-    private void setIsNotLoading() {
-        isLoading = false;
-        onLoadingNotifier.fireEvent(false);
+    private void setIsLoading(boolean isLoading) {
+        this.isLoading = isLoading;
+        onLoadingNotifier.fireEvent(isLoading);
     }
 
     private void add(Post post) {

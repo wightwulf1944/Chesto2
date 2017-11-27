@@ -3,6 +3,8 @@ package shiro.am.i.chesto.model;
 import java.util.Deque;
 import java.util.LinkedList;
 
+import shiro.am.i.chesto.viewmodel.PostAlbum;
+
 /**
  * Created by Shiro on 3/31/2017.
  * maintains an instance of the global album stack
