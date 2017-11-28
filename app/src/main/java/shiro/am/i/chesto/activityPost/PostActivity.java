@@ -11,6 +11,8 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.PagerSnapHelper;
+import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -20,21 +22,20 @@ import com.google.android.flexbox.FlexboxLayout;
 
 import shiro.am.i.chesto.R;
 import shiro.am.i.chesto.model.AlbumStack;
-import shiro.am.i.chesto.viewmodel.PostAlbum;
 import shiro.am.i.chesto.serviceimagedownloader.ImageDownloaderService;
 import shiro.am.i.chesto.subscription.Subscription;
+import shiro.am.i.chesto.viewmodel.PostAlbum;
 
 /**
  * Created by Shiro on 8/18/2016.
  */
-public final class PostActivity
-        extends AppCompatActivity {
+public final class PostActivity extends AppCompatActivity {
 
-    private HackyViewPager viewPager;
+    private RecyclerView recyclerView;
     private BottomSheetBehavior bottomSheetBehavior;
-    private PostPagerAdapter adapter;
     private PostAlbum album;
     private Subscription subscription;
+    private int currentIndex;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,25 +49,31 @@ public final class PostActivity
             actionBar.setDisplayShowTitleEnabled(false);
         }
 
-        final int postIndex = getIntent().getIntExtra("default", -1);
+        currentIndex = getIntent().getIntExtra("default", -1);
 
         album = AlbumStack.getTop();
 
         FlexboxLayout flexboxLayout = findViewById(R.id.flexboxLayout);
         TagLayoutDecorator tagLayoutDecorator = new TagLayoutDecorator(flexboxLayout);
-        tagLayoutDecorator.setPost(album.get(postIndex));
+        tagLayoutDecorator.setPost(album.get(currentIndex));
 
-        adapter = new PostPagerAdapter(this, album);
+        ScrollToPageListener indexListener = new ScrollToPageListener();
+        indexListener.setOnScrollToPageListener(i -> currentIndex = i);
 
-        viewPager = findViewById(R.id.viewPager);
-        viewPager.setAdapter(adapter);
-        viewPager.setCurrentItem(postIndex);
-        viewPager.addOnPageChangeListener(new HackyViewPager.SimpleOnPageChangeListener() {
-            @Override
-            public void onPageSelected(int position) {
-                tagLayoutDecorator.setPost(album.get(position));
-            }
-        });
+        ScrollToPageListener postListener = new ScrollToPageListener();
+        postListener.setOnScrollToPageListener(i -> tagLayoutDecorator.setPost(album.get(i)));
+
+        PostImageAdapter imageAdapter = new PostImageAdapter(this, album);
+
+        recyclerView = findViewById(R.id.recyclerView);
+        recyclerView.setAdapter(imageAdapter);
+        recyclerView.scrollToPosition(currentIndex);
+        recyclerView.addOnScrollListener(indexListener);
+        recyclerView.addOnScrollListener(postListener);
+        recyclerView.setHasFixedSize(true);
+
+        PagerSnapHelper pagerSnapHelper = new PagerSnapHelper();
+        pagerSnapHelper.attachToRecyclerView(recyclerView);
 
         ImageButton infoButton = findViewById(R.id.infoButton);
         View bottomBar = findViewById(R.id.bottomBar);
@@ -89,7 +96,10 @@ public final class PostActivity
             }
         });
 
-        subscription = album.addOnPostAddedListener(integer -> adapter.notifyDataSetChanged());
+        subscription = Subscription.from(
+                album.addOnPostAddedListener(imageAdapter::notifyItemInserted),
+                album.addOnPostsClearedListener(imageAdapter::notifyDataSetChanged)
+        );
     }
 
     @Override
@@ -119,14 +129,14 @@ public final class PostActivity
                 return true;
 
             case R.id.action_open_browser:
-                uri = album.get(viewPager.getCurrentItem()).getWebUri();
+                uri = album.get(currentIndex).getWebUri();
                 intent = new Intent(Intent.ACTION_VIEW, uri);
                 startActivity(intent);
                 return true;
 
             case R.id.action_share:
-                String url = album.get(viewPager.getCurrentItem()).getWebUrl();
-                uri = album.get(viewPager.getCurrentItem()).getWebUri();
+                String url = album.get(currentIndex).getWebUrl();
+                uri = album.get(currentIndex).getWebUri();
                 intent = new Intent(Intent.ACTION_SEND, uri);
                 intent.putExtra(Intent.EXTRA_TEXT, url);
                 intent.setType("text/plain");
@@ -140,7 +150,7 @@ public final class PostActivity
 
     private void finishAndReturnResult() {
         Intent resultIntent = new Intent();
-        resultIntent.putExtra("default", viewPager.getCurrentItem());
+        resultIntent.putExtra("default", currentIndex);
         setResult(RESULT_OK, resultIntent);
         finish();
     }
@@ -166,11 +176,11 @@ public final class PostActivity
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             Intent intent = new Intent(this, ImageDownloaderService.class);
-            intent.putExtra("default", viewPager.getCurrentItem());
+            intent.putExtra("default", currentIndex);
             startService(intent);
-            Snackbar.make(viewPager, "Download queued", Snackbar.LENGTH_SHORT).show();
+            Snackbar.make(recyclerView, "Download queued", Snackbar.LENGTH_SHORT).show();
         } else {
-            Snackbar.make(viewPager, "Please allow access to save image", Snackbar.LENGTH_SHORT).show();
+            Snackbar.make(recyclerView, "Please allow access to save image", Snackbar.LENGTH_SHORT).show();
         }
     }
 }
