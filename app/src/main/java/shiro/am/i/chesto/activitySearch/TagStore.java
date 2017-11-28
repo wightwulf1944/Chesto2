@@ -1,15 +1,17 @@
 package shiro.am.i.chesto.activitysearch;
 
-import android.support.v7.util.SortedList;
-import android.support.v7.widget.RecyclerView.Adapter;
-import android.support.v7.widget.util.SortedListAdapterCallback;
+import java.util.List;
 
 import io.realm.Case;
 import io.realm.Realm;
 import io.realm.RealmResults;
-import io.realm.Sort;
 import shiro.am.i.chesto.Chesto;
+import shiro.am.i.chesto.listener.Listener1;
 import shiro.am.i.chesto.model.Tag;
+import shiro.am.i.chesto.notifier.Notifier1;
+import shiro.am.i.chesto.subscription.Subscription;
+
+import static io.realm.Sort.DESCENDING;
 
 /**
  * Created by Shiro on 3/21/2017.
@@ -17,62 +19,47 @@ import shiro.am.i.chesto.model.Tag;
 
 final class TagStore {
 
-    private final SortedList<Tag> store;
+    private final Notifier1<List<Tag>> onDatasetChangedNotifier = new Notifier1<>();
+
+    private final Realm realm;
+
     private RealmResults<Tag> results;
 
-    TagStore(SearchAdapter adapter) {
-        store = new SortedList<>(Tag.class, new Callback(adapter));
-        adapter.setData(store);
+    TagStore(Realm realm) {
+        this.realm = realm;
+        this.results = realm.where(Tag.class)
+                .findAllSorted("postCount", DESCENDING);
     }
 
-    void getTags(String tagName) {
-        if (results != null) {
-            results.removeAllChangeListeners();
-        }
+    List<Tag> getResults() {
+        return results;
+    }
 
-        results = Realm.getDefaultInstance()
-                .where(Tag.class)
+    void searchTags(String tagName) {
+        results.removeAllChangeListeners();
+
+        results = realm.where(Tag.class)
                 .contains("name", tagName, Case.INSENSITIVE)
-                .findAllSorted("postCount", Sort.DESCENDING);
+                .findAllSorted("postCount", DESCENDING);
+        onDatasetChangedNotifier.fireEvent(results);
 
-        results.addChangeListener(tags -> store.addAll(tags));
+        results.addChangeListener(onDatasetChangedNotifier::fireEvent);
 
-        //TODO: requires onError method
-        Chesto.getDanbooru().searchTags('*' + tagName + '*')
-                .subscribe(tags -> {
-                    Realm realm = Realm.getDefaultInstance();
-                    realm.beginTransaction();
-                    realm.copyToRealmOrUpdate(tags);
-                    realm.commitTransaction();
-                });
-
-        store.beginBatchedUpdates();
-        store.clear();
-        store.addAll(results);
-        store.endBatchedUpdates();
+        Chesto.getDanbooru()
+                .searchTags('*' + tagName + '*')
+                .subscribe(
+                        tags -> {
+                            Realm realm = Realm.getDefaultInstance();
+                            realm.beginTransaction();
+                            realm.insertOrUpdate(tags);
+                            realm.commitTransaction();
+                            realm.close();
+                        },
+                        Throwable::printStackTrace
+                );
     }
 
-    private static class Callback extends SortedListAdapterCallback<Tag> {
-
-        private Callback(Adapter adapter) {
-            super(adapter);
-        }
-
-        @Override
-        public int compare(Tag o1, Tag o2) {
-            return o2.getPostCount() - o1.getPostCount();
-        }
-
-        @Override
-        public boolean areContentsTheSame(Tag oldItem, Tag newItem) {
-            boolean isNameTheSame = oldItem.getName().equals(newItem.getName());
-            boolean isPostCountTheSame = oldItem.getPostCount() == newItem.getPostCount();
-            return isNameTheSame && isPostCountTheSame;
-        }
-
-        @Override
-        public boolean areItemsTheSame(Tag item1, Tag item2) {
-            return item1.getId() == item2.getId();
-        }
+    Subscription addOnDatasetChangedListener(Listener1<List<Tag>> listener) {
+        return onDatasetChangedNotifier.addListener(listener);
     }
 }

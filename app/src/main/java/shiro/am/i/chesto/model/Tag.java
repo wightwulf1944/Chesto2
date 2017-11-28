@@ -30,12 +30,16 @@ public class Tag extends RealmObject {
     }
 
     public String getPostCountStr() {
-        if (postCount < 1000) {
-            return "(" + postCount + ")";
+        String postCountStr = String.valueOf(postCount);
+        if (postCount >= 1_000) {
+            postCountStr = postCountStr.charAt(0) + "." + postCountStr.charAt(1);
+            if (postCount < 1_000_000) {
+                return postCountStr + "k";
+            } else {
+                return postCountStr + "m";
+            }
         } else {
-            String postCountStr = String.valueOf(postCount);
-            postCountStr = postCountStr.substring(0, postCountStr.length() - 3);
-            return "(" + postCountStr + "k)";
+            return postCountStr;
         }
     }
 }

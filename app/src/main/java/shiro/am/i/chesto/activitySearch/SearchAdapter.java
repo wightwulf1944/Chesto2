@@ -1,7 +1,5 @@
 package shiro.am.i.chesto.activitysearch;
 
-import android.content.Context;
-import android.support.v7.util.SortedList;
 import android.support.v7.widget.RecyclerView.Adapter;
 import android.support.v7.widget.RecyclerView.ViewHolder;
 import android.view.LayoutInflater;
@@ -9,7 +7,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import java.util.List;
+
 import shiro.am.i.chesto.R;
+import shiro.am.i.chesto.listener.Listener1;
 import shiro.am.i.chesto.model.Tag;
 
 /**
@@ -20,20 +21,17 @@ final class SearchAdapter extends Adapter<ViewHolder> {
     private final int HEADER = 0;
     private final int TAG = 1;
 
-    private final LayoutInflater inflater;
-    private OnItemClickListener onItemClickListener;
-    private SortedList<Tag> items;
+    private Listener1<String> onItemClickListener;
 
-    SearchAdapter(Context c) {
-        inflater = LayoutInflater.from(c);
-    }
+    private List<Tag> items;
 
-    void setData(SortedList<Tag> data) {
+    void setData(List<Tag> data) {
         items = data;
+        notifyDataSetChanged();
     }
 
-    void setOnItemClickListener(OnItemClickListener l) {
-        onItemClickListener = l;
+    void setOnItemClickListener(Listener1<String> listener) {
+        onItemClickListener = listener;
     }
 
     @Override
@@ -56,6 +54,7 @@ final class SearchAdapter extends Adapter<ViewHolder> {
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        LayoutInflater inflater = LayoutInflater.from(parent.getContext());
 
         if (viewType == HEADER) {
             View view = inflater.inflate(R.layout.search_item_header, parent, false);
@@ -88,10 +87,6 @@ final class SearchAdapter extends Adapter<ViewHolder> {
         }
     }
 
-    interface OnItemClickListener {
-        void onItemClick(String itemName);
-    }
-
     private static final class HeaderViewHolder extends ViewHolder {
 
         private final TextView label;
@@ -109,14 +104,12 @@ final class SearchAdapter extends Adapter<ViewHolder> {
 
         TagViewHolder(View v) {
             super(v);
-            postCount = (TextView) v.findViewById(R.id.postCount);
-            name = (TextView) v.findViewById(R.id.name);
-            v.setOnClickListener(v1 -> onClick());
-        }
-
-        private void onClick() {
-            String itemName = name.getText().toString();
-            onItemClickListener.onItemClick(itemName);
+            postCount = v.findViewById(R.id.postCount);
+            name = v.findViewById(R.id.name);
+            v.setOnClickListener(v1 -> {
+                String itemName = name.getText().toString();
+                onItemClickListener.onEvent(itemName);
+            });
         }
     }
 }

@@ -9,17 +9,24 @@ import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.google.android.flexbox.FlexWrap;
+import com.google.android.flexbox.FlexboxLayoutManager;
+
+import io.realm.Realm;
 import shiro.am.i.chesto.R;
 import shiro.am.i.chesto.activitymain.MainActivity;
 import shiro.am.i.chesto.model.AlbumStack;
+import shiro.am.i.chesto.subscription.Subscription;
 import shiro.am.i.chesto.viewmodel.PostAlbum;
 
 public final class SearchActivity extends AppCompatActivity {
 
+    private final Realm realm = Realm.getDefaultInstance();
+    private final TagStore tagStore = new TagStore(realm);
     private EditTextWrapper editTextWrapper;
-    private TagStore tagStore;
     private MenuItem clearButton;
     private String currentQuery;
+    private Subscription subscription;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,20 +34,23 @@ public final class SearchActivity extends AppCompatActivity {
         setContentView(R.layout.activity_search);
 
         setSupportActionBar(findViewById(R.id.toolbar));
-        final ActionBar actionBar = getSupportActionBar();
+        ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
             actionBar.setDisplayShowTitleEnabled(false);
         }
 
-        SearchAdapter searchAdapter = new SearchAdapter(this);
+        SearchAdapter searchAdapter = new SearchAdapter();
+        searchAdapter.setData(tagStore.getResults());
         searchAdapter.setOnItemClickListener(this::onAdapterItemClicked);
 
-        tagStore = new TagStore(searchAdapter);
+        FlexboxLayoutManager layoutManager = new FlexboxLayoutManager(this);
+        layoutManager.setFlexWrap(FlexWrap.WRAP);
 
-        final RecyclerView recyclerView = findViewById(R.id.recyclerView);
+        RecyclerView recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setAdapter(searchAdapter);
         recyclerView.setHasFixedSize(true);
+        recyclerView.setLayoutManager(layoutManager);
 
         PostAlbum album = AlbumStack.getTop();
 
@@ -48,6 +58,15 @@ public final class SearchActivity extends AppCompatActivity {
         editTextWrapper.setAfterTextChangedListener(this::onTextChanged);
         editTextWrapper.setOnEditorSearchListener(this::invokeSearch);
         editTextWrapper.setText(album.getQuery());
+
+        subscription = tagStore.addOnDatasetChangedListener(searchAdapter::setData);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        realm.close();
+        subscription.unsubscribe();
     }
 
     @Override
@@ -78,7 +97,7 @@ public final class SearchActivity extends AppCompatActivity {
     private void onTextChanged(String s) {
         int spaceIndex = s.lastIndexOf(" ");
         currentQuery = s.substring(spaceIndex + 1);
-        tagStore.getTags(currentQuery);
+        tagStore.searchTags(currentQuery);
 
         if (clearButton != null) {
             clearButton.setVisible(!s.isEmpty());
