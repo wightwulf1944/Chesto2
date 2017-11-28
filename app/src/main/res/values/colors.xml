@@ -8,4 +8,5 @@
     <color name="tag_text_color_character">#00AA00</color>
     <color name="tag_text_color_copyright">#AA00AA</color>
     <color name="tag_text_color_general">#FFFFFF</color>
+    <color name="tag_text_color_meta">#FF8800</color>
 </resources>

@@ -4,6 +4,7 @@ import android.app.Application;
 import android.os.StrictMode;
 
 import io.realm.Realm;
+import io.realm.RealmConfiguration;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.moshi.MoshiConverterFactory;
@@ -67,5 +68,10 @@ public final class Chesto extends Application {
                 .create(Danbooru.class);
 
         Realm.init(this);
+        RealmConfiguration config = new RealmConfiguration.Builder()
+                .deleteRealmIfMigrationNeeded()
+                .compactOnLaunch()
+                .build();
+        Realm.setDefaultConfiguration(config);
     }
 }

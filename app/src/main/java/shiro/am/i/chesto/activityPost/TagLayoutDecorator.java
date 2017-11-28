@@ -26,6 +26,7 @@ final class TagLayoutDecorator {
     private final int characterTextColor;
     private final int artistTextColor;
     private final int generalTextColor;
+    private final int metaTextColor;
 
     TagLayoutDecorator(FlexboxLayout layout) {
         mLayout = layout;
@@ -35,6 +36,7 @@ final class TagLayoutDecorator {
         characterTextColor = ContextCompat.getColor(mContext, R.color.tag_text_color_character);
         artistTextColor = ContextCompat.getColor(mContext, R.color.tag_text_color_artist);
         generalTextColor = ContextCompat.getColor(mContext, R.color.tag_text_color_general);
+        metaTextColor = ContextCompat.getColor(mContext, R.color.tag_text_color_meta);
     }
 
     void setPost(Post post) {
@@ -43,6 +45,7 @@ final class TagLayoutDecorator {
         addCategory("Characters: ", characterTextColor, post.getTagStringCharacter());
         addCategory("Artist:", artistTextColor, post.getTagStringArtist());
         addCategory("Tags:", generalTextColor, post.getTagStringGeneral());
+        addCategory("Meta:", metaTextColor, post.getTagStringMeta());
     }
 
     private void addCategory(String labelString, int textColor, String tags) {
