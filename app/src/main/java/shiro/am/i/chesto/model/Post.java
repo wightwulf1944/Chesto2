@@ -2,8 +2,6 @@ package shiro.am.i.chesto.model;
 
 import android.net.Uri;
 
-import com.google.gson.annotations.SerializedName;
-
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 
@@ -12,53 +10,47 @@ import io.realm.annotations.PrimaryKey;
  */
 public class Post extends RealmObject {
 
-    @PrimaryKey
-    @SerializedName("id")
-    private int id;
-
-    @SerializedName("image_width")
-    private int width;
-    @SerializedName("image_height")
-    private int height;
-    @SerializedName("file_ext")
-    private String fileExt;
-
-    @SerializedName("tag_string_artist")
-    private String tagStringArtist;
-    @SerializedName("tag_string_character")
-    private String tagStringCharacter;
-    @SerializedName("tag_string_copyright")
-    private String tagStringCopyright;
-    @SerializedName("tag_string_general")
-    private String tagStringGeneral;
-
-    @SerializedName("has_large")
-    private boolean hasLarge;
-    @SerializedName("preview_file_url")
-    private String smallFileUrl;
-    @SerializedName("large_file_url")
-    private String largeFileUrl;
-    @SerializedName("file_url")
-    private String originalFileUrl;
-
     private static final String BASE_URL = "http://danbooru.donmai.us";
 
-    @Override
-    public boolean equals(Object obj) {
-        if (obj == null) {
-            return false;
-        } else {
-            Post x = (Post) obj;
-            return id == x.getId();
-        }
+    @PrimaryKey
+    private int id;
+    private int width;
+    private int height;
+    private String fileName;
+    private String tagStringArtist;
+    private String tagStringCharacter;
+    private String tagStringCopyright;
+    private String tagStringGeneral;
+    private String tagStringMeta;
+    private boolean hasLarge;
+    private String webUrl;
+    private String smallFileUrl;
+    private String largeFileUrl;
+    private String originalFileUrl;
+
+    public Post() {
+        // no arg constructor required by Realm
     }
 
-    public boolean hasFileUrl() {
-        return smallFileUrl != null && largeFileUrl != null;
+    public Post(PostJson postJson) {
+        id = postJson.id;
+        width = postJson.width;
+        height = postJson.height;
+        fileName = postJson.id + "." + postJson.fileExt;
+        tagStringArtist = postJson.tagStringArtist;
+        tagStringCharacter = postJson.tagStringCharacter;
+        tagStringCopyright = postJson.tagStringCopyright;
+        tagStringGeneral = postJson.tagStringGeneral;
+        tagStringMeta = postJson.tagStringMeta;
+        hasLarge = postJson.hasLarge;
+        webUrl = BASE_URL + "/posts/" + postJson.id;
+        smallFileUrl = BASE_URL + postJson.previewFileUrl;
+        largeFileUrl = BASE_URL + postJson.largeFileUrl;
+        originalFileUrl = BASE_URL + postJson.fileUrl;
     }
 
     public String getWebUrl() {
-        return BASE_URL + "/posts/" + id;
+        return webUrl;
     }
 
     public Uri getWebUri() {
@@ -66,7 +58,7 @@ public class Post extends RealmObject {
     }
 
     public String getFileName() {
-        return String.format("%s.%s", id, fileExt);
+        return fileName;
     }
 
     public int getId() {
@@ -97,19 +89,33 @@ public class Post extends RealmObject {
         return tagStringGeneral;
     }
 
+    public String getTagStringMeta() {
+        return tagStringMeta;
+    }
+
     public boolean hasLargeFileUrl() {
         return hasLarge;
     }
 
     public String getSmallFileUrl() {
-        return BASE_URL + smallFileUrl;
+        return smallFileUrl;
     }
 
     public String getLargeFileUrl() {
-        return BASE_URL + largeFileUrl;
+        return largeFileUrl;
     }
 
     public String getOriginalFileUrl() {
-        return BASE_URL + originalFileUrl;
+        return originalFileUrl;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        } else {
+            Post x = (Post) obj;
+            return id == x.getId();
+        }
     }
 }

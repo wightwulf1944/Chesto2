@@ -28,7 +28,7 @@ dependencies {
 
     //    http://square.github.io/retrofit/
     implementation 'com.squareup.retrofit2:retrofit:2.3.0'
-    implementation 'com.squareup.retrofit2:converter-gson:2.2.0'
+    implementation 'com.squareup.retrofit2:converter-moshi:2.3.0'
     implementation 'com.squareup.retrofit2:adapter-rxjava:2.2.0'
 
     //    https://github.com/500px/greedo-layout-for-android

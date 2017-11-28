@@ -9,6 +9,7 @@ import shiro.am.i.chesto.Chesto;
 import shiro.am.i.chesto.listener.Listener0;
 import shiro.am.i.chesto.listener.Listener1;
 import shiro.am.i.chesto.model.Post;
+import shiro.am.i.chesto.model.PostJson;
 import shiro.am.i.chesto.notifier.Notifier0;
 import shiro.am.i.chesto.notifier.Notifier1;
 import timber.log.Timber;
@@ -78,7 +79,8 @@ public final class PostAlbum {
                 .doOnSubscribe(() -> setIsLoading(true))
                 .doOnTerminate(() -> setIsLoading(false))
                 .flatMap(Observable::from)
-                .filter(Post::hasFileUrl)
+                .filter(PostJson::hasImageUrls)
+                .map(Post::new)
                 .filter(post -> !list.contains(post))
                 .subscribe(
                         this::add,

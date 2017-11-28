@@ -5,6 +5,7 @@ import java.util.List;
 import io.realm.Case;
 import io.realm.Realm;
 import io.realm.RealmResults;
+import rx.Observable;
 import shiro.am.i.chesto.Chesto;
 import shiro.am.i.chesto.listener.Listener1;
 import shiro.am.i.chesto.model.Tag;
@@ -47,6 +48,9 @@ final class TagStore {
 
         Chesto.getDanbooru()
                 .searchTags('*' + tagName + '*')
+                .flatMap(Observable::from)
+                .map(Tag::new)
+                .toList()
                 .subscribe(
                         tags -> {
                             Realm realm = Realm.getDefaultInstance();

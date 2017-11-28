@@ -6,7 +6,7 @@ import android.os.StrictMode;
 import io.realm.Realm;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
-import retrofit2.converter.gson.GsonConverterFactory;
+import retrofit2.converter.moshi.MoshiConverterFactory;
 import rx.schedulers.Schedulers;
 import shiro.am.i.chesto.model.Danbooru;
 import timber.log.Timber;
@@ -57,7 +57,7 @@ public final class Chesto extends Application {
         Settings.init(this);
 
         RxJavaCallAdapterFactory callAdapterFactory = RxJavaCallAdapterFactory.createWithScheduler(Schedulers.io());
-        GsonConverterFactory converterFactory = GsonConverterFactory.create();
+        MoshiConverterFactory converterFactory = MoshiConverterFactory.create();
 
         danbooru = new Retrofit.Builder()
                 .baseUrl("http://danbooru.donmai.us/")
