@@ -94,7 +94,7 @@ public final class MainActivity extends AppCompatActivity {
         if (intentAction.equals(Intent.ACTION_MAIN)) {
             return new PostAlbum("");
         } else if (intentAction.equals(Intent.ACTION_SEARCH)) {
-            return new PostAlbum(intent.getDataString());
+            return new PostAlbum(intent.getStringExtra("default"));
         } else if (savedInstanceState != null) {
             return AlbumStack.getTop();
         } else {

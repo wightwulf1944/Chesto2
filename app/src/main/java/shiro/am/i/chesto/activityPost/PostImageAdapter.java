@@ -17,9 +17,11 @@ import shiro.am.i.chesto.R;
 import shiro.am.i.chesto.model.Post;
 import shiro.am.i.chesto.viewmodel.PostAlbum;
 
+import static com.bumptech.glide.load.DecodeFormat.PREFER_RGB_565;
 import static com.bumptech.glide.request.RequestOptions.bitmapTransform;
 import static com.bumptech.glide.request.RequestOptions.diskCacheStrategyOf;
 import static com.bumptech.glide.request.RequestOptions.errorOf;
+import static com.bumptech.glide.request.RequestOptions.formatOf;
 import static com.bumptech.glide.request.RequestOptions.placeholderOf;
 
 /**
@@ -52,6 +54,7 @@ public class PostImageAdapter extends RecyclerView.Adapter<PostImageAdapter.View
         RequestBuilder<Drawable> thumb = Glide.with(parentActivity)
                 .load(post.getSmallFileUrl())
                 .apply(bitmapTransform(new BlurTransformation(1)))
+                .apply(formatOf(PREFER_RGB_565))
                 .apply(diskCacheStrategyOf(DiskCacheStrategy.DATA));
 
         Glide.with(parentActivity)

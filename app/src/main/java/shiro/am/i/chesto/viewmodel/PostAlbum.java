@@ -1,6 +1,8 @@
 package shiro.am.i.chesto.viewmodel;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
 
 import rx.Observable;
 import rx.Subscription;
@@ -73,17 +75,19 @@ public final class PostAlbum {
     }
 
     public void fetchPosts() {
+        if (isLoading) return;
+        setIsLoading(true);
+
         currentSubscription = Chesto.getDanbooru()
                 .getPosts(mQuery, currentPage)
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnSubscribe(() -> setIsLoading(true))
-                .doOnTerminate(() -> setIsLoading(false))
+                .doAfterTerminate(() -> setIsLoading(false))
                 .flatMap(Observable::from)
                 .filter(PostJson::hasImageUrls)
                 .map(Post::new)
-                .filter(post -> !list.contains(post))
+                .toList()
                 .subscribe(
-                        this::add,
+                        this::onLoadSuccess,
                         this::onLoadError,
                         () -> ++currentPage
                 );
@@ -94,9 +98,18 @@ public final class PostAlbum {
         onLoadingNotifier.fireEvent(isLoading);
     }
 
-    private void add(Post post) {
-        list.add(post);
-        onPostAddedNotifier.fireEvent(list.size());
+    private void onLoadSuccess(List<Post> newPosts) {
+        HashSet<Post> postSet = new HashSet<>(list);
+
+        for (Post newPost : newPosts) {
+            if (postSet.contains(newPost)) {
+                int index = list.lastIndexOf(newPost);
+                list.set(index, newPost);
+            } else {
+                list.add(newPost);
+                onPostAddedNotifier.fireEvent(list.size());
+            }
+        }
     }
 
     private void onLoadError(Throwable throwable) {

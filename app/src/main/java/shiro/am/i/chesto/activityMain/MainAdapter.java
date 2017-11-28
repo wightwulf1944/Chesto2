@@ -9,12 +9,14 @@ import android.widget.ImageView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
+import jp.wasabeef.glide.transformations.RoundedCornersTransformation;
 import shiro.am.i.chesto.R;
 import shiro.am.i.chesto.listener.Listener1;
 import shiro.am.i.chesto.model.Post;
 import shiro.am.i.chesto.viewmodel.PostAlbum;
 
 import static com.bumptech.glide.load.DecodeFormat.PREFER_RGB_565;
+import static com.bumptech.glide.request.RequestOptions.bitmapTransform;
 import static com.bumptech.glide.request.RequestOptions.diskCacheStrategyOf;
 import static com.bumptech.glide.request.RequestOptions.errorOf;
 import static com.bumptech.glide.request.RequestOptions.formatOf;
@@ -53,6 +55,7 @@ final class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
 
         Glide.with(parentActivity)
                 .load(post.getSmallFileUrl())
+                .apply(bitmapTransform(new RoundedCornersTransformation(5, 0)))
                 .apply(placeholderOf(R.drawable.image_placeholder))
                 .apply(errorOf(R.drawable.image_broken))
                 .apply(diskCacheStrategyOf(DiskCacheStrategy.ALL))
