@@ -19,17 +19,18 @@ import shiro.am.i.chesto.Settings;
 import shiro.am.i.chesto.activitypost.PostActivity;
 import shiro.am.i.chesto.activitysearch.SearchActivity;
 import shiro.am.i.chesto.model.AlbumStack;
-import shiro.am.i.chesto.viewmodel.PostAlbum;
 import shiro.am.i.chesto.subscription.Subscription;
+import shiro.am.i.chesto.viewmodel.PostAlbum;
+
+import static android.support.design.widget.Snackbar.LENGTH_INDEFINITE;
+import static android.support.design.widget.Snackbar.LENGTH_SHORT;
 
 public final class MainActivity extends AppCompatActivity {
 
     private AppBarLayout appbar;
     private RecyclerView recyclerView;
-    private SwipeRefreshLayout swipeLayout;
     private PostAlbum postAlbum;
     private GreedoLayoutManager layoutManager;
-    private MainAdapter adapter;
     private Snackbar errorSnackbar;
     private Subscription subscription;
 
@@ -55,7 +56,7 @@ public final class MainActivity extends AppCompatActivity {
         int spacingPx = (int) (8 * getResources().getDisplayMetrics().density);
         GreedoSpacingItemDecoration spacer = new GreedoSpacingItemDecoration(spacingPx);
 
-        adapter = new MainAdapter(postAlbum);
+        MainAdapter adapter = new MainAdapter(this, postAlbum);
         adapter.setOnItemClickedListener(position -> {
             Intent intent = new Intent(this, PostActivity.class);
             intent.putExtra("default", position);
@@ -68,11 +69,11 @@ public final class MainActivity extends AppCompatActivity {
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(layoutManager);
 
-        swipeLayout = findViewById(R.id.swipeLayout);
+        SwipeRefreshLayout swipeLayout = findViewById(R.id.swipeLayout);
         swipeLayout.setColorSchemeResources(R.color.primary_dark);
         swipeLayout.setOnRefreshListener(postAlbum::refresh);
 
-        errorSnackbar = Snackbar.make(recyclerView, "Check your connection", Snackbar.LENGTH_INDEFINITE)
+        errorSnackbar = Snackbar.make(recyclerView, "Check your connection", LENGTH_INDEFINITE)
                 .setAction("Retry", view -> postAlbum.fetchPosts());
 
         subscription = Subscription.from(
@@ -154,12 +155,12 @@ public final class MainActivity extends AppCompatActivity {
             boolean appbarIsExpanded = appbar.getHeight() - appbar.getBottom() == 0;
             boolean recyclerViewIsAtTop = layoutManager.findFirstVisibleItemPosition() == 0;
             if (appbarIsExpanded && recyclerViewIsAtTop) {
-                Snackbar.make(recyclerView, R.string.snackbar_mainActivity, Snackbar.LENGTH_SHORT).show();
+                Snackbar.make(recyclerView, R.string.snackbar_mainActivity, LENGTH_SHORT).show();
             } else {
                 recyclerView.stopScroll();
                 layoutManager.scrollToPosition(0);
                 appbar.setExpanded(true);
-                Snackbar.make(recyclerView, R.string.snackbar_mainActivity_scrollToTop, Snackbar.LENGTH_SHORT).show();
+                Snackbar.make(recyclerView, R.string.snackbar_mainActivity_scrollToTop, LENGTH_SHORT).show();
             }
             mBackPressed = System.currentTimeMillis();
         }

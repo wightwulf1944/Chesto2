@@ -10,11 +10,14 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
 import shiro.am.i.chesto.R;
+import shiro.am.i.chesto.listener.Listener1;
 import shiro.am.i.chesto.model.Post;
 import shiro.am.i.chesto.viewmodel.PostAlbum;
 
+import static com.bumptech.glide.load.DecodeFormat.PREFER_RGB_565;
 import static com.bumptech.glide.request.RequestOptions.diskCacheStrategyOf;
 import static com.bumptech.glide.request.RequestOptions.errorOf;
+import static com.bumptech.glide.request.RequestOptions.formatOf;
 import static com.bumptech.glide.request.RequestOptions.placeholderOf;
 
 /**
@@ -22,14 +25,18 @@ import static com.bumptech.glide.request.RequestOptions.placeholderOf;
  */
 final class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
 
-    private final PostAlbum postAlbum;
-    private OnItemClickedListener itemClickedListener;
+    private final AppCompatActivity parentActivity;
 
-    MainAdapter(PostAlbum album) {
+    private final PostAlbum postAlbum;
+
+    private Listener1<Integer> itemClickedListener;
+
+    MainAdapter(AppCompatActivity parentActivity, PostAlbum album) {
+        this.parentActivity = parentActivity;
         postAlbum = album;
     }
 
-    void setOnItemClickedListener(OnItemClickedListener listener) {
+    void setOnItemClickedListener(Listener1<Integer> listener) {
         itemClickedListener = listener;
     }
 
@@ -43,15 +50,14 @@ final class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         Post post = postAlbum.get(position);
-        ImageView imageView = holder.imageView;
-        AppCompatActivity parentActivity = (AppCompatActivity) imageView.getContext();
 
         Glide.with(parentActivity)
                 .load(post.getSmallFileUrl())
                 .apply(placeholderOf(R.drawable.image_placeholder))
                 .apply(errorOf(R.drawable.image_broken))
                 .apply(diskCacheStrategyOf(DiskCacheStrategy.ALL))
-                .into(imageView);
+                .apply(formatOf(PREFER_RGB_565))
+                .into(holder.imageView);
     }
 
     @Override
@@ -67,12 +73,8 @@ final class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
             super(v);
             imageView = v;
             imageView.setOnClickListener(view ->
-                    itemClickedListener.onItemClicked(getAdapterPosition())
+                    itemClickedListener.onEvent(getAdapterPosition())
             );
         }
-    }
-
-    interface OnItemClickedListener {
-        void onItemClicked(int position);
     }
 }

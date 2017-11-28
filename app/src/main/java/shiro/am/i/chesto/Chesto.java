@@ -16,13 +16,8 @@ import timber.log.Timber;
  */
 public final class Chesto extends Application {
 
-    private static Chesto instance;
     private static Danbooru danbooru;
     private static Danbooru safebooru;
-
-    public static Chesto getInstance() {
-        return instance;
-    }
 
     public static Danbooru getDanbooru() {
         if (Settings.hideNsfw()) {
@@ -51,8 +46,6 @@ public final class Chesto extends Application {
                     .build();
             StrictMode.setVmPolicy(vmPolicy);
         }
-
-        instance = this;
 
         Settings.init(this);
 

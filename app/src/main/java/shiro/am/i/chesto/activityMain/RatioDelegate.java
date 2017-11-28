@@ -15,7 +15,7 @@ final class RatioDelegate implements GreedoLayoutSizeCalculator.SizeCalculatorDe
     private static final double RATIO_MAX = 5;
     private static final double RATIO_DEFAULT = 1.0;
 
-    private PostAlbum postAlbum;
+    private final PostAlbum postAlbum;
 
     RatioDelegate(PostAlbum postAlbum) {
         this.postAlbum = postAlbum;
