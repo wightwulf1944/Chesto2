@@ -22,7 +22,8 @@ import com.google.android.flexbox.FlexboxLayout;
 
 import shiro.am.i.chesto.R;
 import shiro.am.i.chesto.model.AlbumStack;
-import shiro.am.i.chesto.serviceimagedownloader.ImageDownloaderService;
+import shiro.am.i.chesto.model.Post;
+import shiro.am.i.chesto.serviceimagedownloader.DownloadService;
 import shiro.am.i.chesto.subscription.Subscription;
 import shiro.am.i.chesto.viewmodel.PostAlbum;
 
@@ -175,9 +176,8 @@ public final class PostActivity extends AppCompatActivity {
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-            Intent intent = new Intent(this, ImageDownloaderService.class);
-            intent.putExtra("default", currentIndex);
-            startService(intent);
+            Post post = album.get(currentIndex);
+            DownloadService.queue(this, post);
             Snackbar.make(recyclerView, "Download queued", Snackbar.LENGTH_SHORT).show();
         } else {
             Snackbar.make(recyclerView, "Please allow access to save image", Snackbar.LENGTH_SHORT).show();

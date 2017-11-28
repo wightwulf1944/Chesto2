@@ -13,6 +13,10 @@ import shiro.am.i.chesto.R;
 import shiro.am.i.chesto.model.Post;
 import shiro.am.i.chesto.viewmodel.PostAlbum;
 
+import static com.bumptech.glide.request.RequestOptions.diskCacheStrategyOf;
+import static com.bumptech.glide.request.RequestOptions.errorOf;
+import static com.bumptech.glide.request.RequestOptions.placeholderOf;
+
 /**
  * Created by Shiro on 8/4/2016.
  */
@@ -44,9 +48,9 @@ final class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
 
         Glide.with(parentActivity)
                 .load(post.getSmallFileUrl())
-                .placeholder(R.drawable.image_placeholder)
-                .error(R.drawable.image_broken)
-                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+                .apply(placeholderOf(R.drawable.image_placeholder))
+                .apply(errorOf(R.drawable.image_broken))
+                .apply(diskCacheStrategyOf(DiskCacheStrategy.ALL))
                 .into(imageView);
     }
 
