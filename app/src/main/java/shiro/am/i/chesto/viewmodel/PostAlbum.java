@@ -31,6 +31,8 @@ public final class PostAlbum {
 
     private final Notifier1<Boolean> onLoadingNotifier = new Notifier1<>();
 
+    private final Notifier0 onSuccessNotifier = new Notifier0();
+
     private final Notifier0 onErrorNotifier = new Notifier0();
 
     private final ArrayList<Post> list = new ArrayList<>();
@@ -110,10 +112,13 @@ public final class PostAlbum {
                 onPostAddedNotifier.fireEvent(list.size());
             }
         }
+
+        onSuccessNotifier.fireEvent();
     }
 
     private void onLoadError(Throwable throwable) {
         Timber.e(throwable, "Error fetching posts");
+
         onErrorNotifier.fireEvent();
     }
 
@@ -127,6 +132,10 @@ public final class PostAlbum {
 
     public shiro.am.i.chesto.subscription.Subscription addOnLoadingListener(Listener1<Boolean> listener) {
         return onLoadingNotifier.addListener(listener);
+    }
+
+    public shiro.am.i.chesto.subscription.Subscription addOnSuccessListener(Listener0 listener) {
+        return onSuccessNotifier.addListener(listener);
     }
 
     public shiro.am.i.chesto.subscription.Subscription addOnErrorListener(Listener0 listener) {

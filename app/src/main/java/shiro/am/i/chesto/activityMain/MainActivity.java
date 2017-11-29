@@ -35,7 +35,6 @@ public final class MainActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private PostAlbum postAlbum;
     private GreedoLayoutManager layoutManager;
-    private Snackbar errorSnackbar;
     private Subscription subscription;
 
     private long mBackPressed;
@@ -84,14 +83,14 @@ public final class MainActivity extends AppCompatActivity {
         swipeLayout.setColorSchemeResources(R.color.primary_dark);
         swipeLayout.setOnRefreshListener(postAlbum::refresh);
 
-        errorSnackbar = Snackbar.make(recyclerView, "Check your connection", LENGTH_INDEFINITE)
+        Snackbar errorSnackbar = Snackbar.make(recyclerView, "Check your connection", LENGTH_INDEFINITE)
                 .setAction("Retry", view -> postAlbum.fetchPosts());
 
         subscription = Subscription.from(
                 postAlbum.addOnPostAddedListener(adapter::notifyItemInserted),
                 postAlbum.addOnPostsClearedListener(adapter::notifyDataSetChanged),
                 postAlbum.addOnLoadingListener(swipeLayout::setRefreshing),
-                postAlbum.addOnLoadingListener(b -> errorSnackbar.dismiss()),
+                postAlbum.addOnSuccessListener(errorSnackbar::dismiss),
                 postAlbum.addOnErrorListener(errorSnackbar::show)
         );
         postAlbum.fetchPosts();
