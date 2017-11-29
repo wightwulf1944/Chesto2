@@ -9,11 +9,10 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.PagerSnapHelper;
 import android.support.v7.widget.RecyclerView;
-import android.view.Menu;
+import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
@@ -43,12 +42,11 @@ public final class PostActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_post);
 
-        setSupportActionBar(findViewById(R.id.toolbar));
-        ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.setDisplayHomeAsUpEnabled(true);
-            actionBar.setDisplayShowTitleEnabled(false);
-        }
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        toolbar.setNavigationIcon(R.drawable.ic_nav_arrow_back);
+        toolbar.setNavigationOnClickListener(view -> finishAndReturnResult());
+        toolbar.inflateMenu(R.menu.activity_post);
+        toolbar.setOnMenuItemClickListener(this::onMenuItemClicked);
 
         currentIndex = getIntent().getIntExtra("default", -1);
 
@@ -110,31 +108,37 @@ public final class PostActivity extends AppCompatActivity {
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.activity_post, menu);
-        return true;
+    public void onBackPressed() {
+        if (bottomSheetBehavior.getState() != BottomSheetBehavior.STATE_COLLAPSED) {
+            bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+        } else {
+            finishAndReturnResult();
+        }
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            Post post = album.get(currentIndex);
+            DownloadService.queue(this, post);
+            Snackbar.make(recyclerView, "Download queued", Snackbar.LENGTH_SHORT).show();
+        } else {
+            Snackbar.make(recyclerView, "Please allow access to save image", Snackbar.LENGTH_SHORT).show();
+        }
+    }
+
+    private boolean onMenuItemClicked(MenuItem item) {
         Uri uri;
         Intent intent;
         switch (item.getItemId()) {
-
-            case android.R.id.home:
-                finishAndReturnResult();
-                return true;
-
             case R.id.action_download:
                 ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 0);
                 return true;
-
             case R.id.action_open_browser:
                 uri = album.get(currentIndex).getWebUri();
                 intent = new Intent(Intent.ACTION_VIEW, uri);
                 startActivity(intent);
                 return true;
-
             case R.id.action_share:
                 String url = album.get(currentIndex).getWebUrl();
                 uri = album.get(currentIndex).getWebUri();
@@ -143,7 +147,6 @@ public final class PostActivity extends AppCompatActivity {
                 intent.setType("text/plain");
                 startActivity(Intent.createChooser(intent, "Share link - " + url));
                 return true;
-
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -156,31 +159,11 @@ public final class PostActivity extends AppCompatActivity {
         finish();
     }
 
-    @Override
-    public void onBackPressed() {
-        if (bottomSheetBehavior.getState() != BottomSheetBehavior.STATE_COLLAPSED) {
-            bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-        } else {
-            finishAndReturnResult();
-        }
-    }
-
     public void onInfoButtonClicked(View view) {
         if (bottomSheetBehavior.getState() == BottomSheetBehavior.STATE_COLLAPSED) {
             bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
         } else {
             bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-        }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-            Post post = album.get(currentIndex);
-            DownloadService.queue(this, post);
-            Snackbar.make(recyclerView, "Download queued", Snackbar.LENGTH_SHORT).show();
-        } else {
-            Snackbar.make(recyclerView, "Please allow access to save image", Snackbar.LENGTH_SHORT).show();
         }
     }
 }
