@@ -1,6 +1,5 @@
 package shiro.am.i.chesto.activitysearch;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
@@ -61,10 +60,7 @@ public final class SearchActivity extends AppCompatActivity implements SearchVie
 
     @Override
     public boolean onQueryTextSubmit(String query) {
-        Intent intent = new Intent(this, MainActivity.class);
-        intent.setAction(Intent.ACTION_SEARCH);
-        intent.putExtra("default", query);
-        startActivity(intent);
+        MainActivity.start(this, query);
         finish();
         return true;
     }

@@ -1,8 +1,6 @@
 package shiro.am.i.chesto.activitypost;
 
 import android.content.Context;
-import android.content.Intent;
-import android.net.Uri;
 import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.widget.TextView;
@@ -58,14 +56,7 @@ final class TagLayoutDecorator {
         for (String tagString : tags.split(" ")) {
             TextView tagTextView = addTextView(tagString, R.layout.item_tag);
             tagTextView.setTextColor(textColor);
-            tagTextView.setOnClickListener(v -> mContext.startActivity(
-                    new Intent(
-                            Intent.ACTION_SEARCH,
-                            Uri.parse(tagString),
-                            mContext,
-                            MainActivity.class
-                    )
-            ));
+            tagTextView.setOnClickListener(v -> MainActivity.start(mContext, tagString));
         }
     }
 

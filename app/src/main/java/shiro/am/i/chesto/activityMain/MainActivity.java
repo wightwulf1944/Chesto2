@@ -1,5 +1,6 @@
 package shiro.am.i.chesto.activitymain;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
@@ -22,10 +23,13 @@ import shiro.am.i.chesto.model.AlbumStack;
 import shiro.am.i.chesto.subscription.Subscription;
 import shiro.am.i.chesto.viewmodel.PostAlbum;
 
+import static android.content.Intent.ACTION_SEARCH;
 import static android.support.design.widget.Snackbar.LENGTH_INDEFINITE;
 import static android.support.design.widget.Snackbar.LENGTH_SHORT;
 
 public final class MainActivity extends AppCompatActivity {
+
+    private static final String QUERY_EXTRA = "query";
 
     private AppBarLayout appbar;
     private RecyclerView recyclerView;
@@ -35,6 +39,13 @@ public final class MainActivity extends AppCompatActivity {
     private Subscription subscription;
 
     private long mBackPressed;
+
+    public static void start(Context context, String query) {
+        Intent starter = new Intent(context, MainActivity.class);
+        starter.setAction(ACTION_SEARCH);
+        starter.putExtra(QUERY_EXTRA, query);
+        context.startActivity(starter);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,8 +104,8 @@ public final class MainActivity extends AppCompatActivity {
         String intentAction = intent.getAction();
         if (intentAction.equals(Intent.ACTION_MAIN)) {
             return new PostAlbum("");
-        } else if (intentAction.equals(Intent.ACTION_SEARCH)) {
-            return new PostAlbum(intent.getStringExtra("default"));
+        } else if (intentAction.equals(ACTION_SEARCH)) {
+            return new PostAlbum(intent.getStringExtra(QUERY_EXTRA));
         } else if (savedInstanceState != null) {
             return AlbumStack.getTop();
         } else {
