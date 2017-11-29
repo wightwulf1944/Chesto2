@@ -17,6 +17,7 @@ public class Post extends RealmObject {
     private int width;
     private int height;
     private String fileName;
+    private int tagCount;
     private String tagStringArtist;
     private String tagStringCharacter;
     private String tagStringCopyright;
@@ -37,6 +38,7 @@ public class Post extends RealmObject {
         width = postJson.width;
         height = postJson.height;
         fileName = postJson.id + "." + postJson.fileExt;
+        tagCount = postJson.tagCount;
         tagStringArtist = postJson.tagStringArtist;
         tagStringCharacter = postJson.tagStringCharacter;
         tagStringCopyright = postJson.tagStringCopyright;
@@ -59,6 +61,10 @@ public class Post extends RealmObject {
 
     public String getFileName() {
         return fileName;
+    }
+
+    public int getTagCount() {
+        return tagCount;
     }
 
     public int getId() {
